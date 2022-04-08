@@ -1,17 +1,21 @@
-import React from 'react';
+import React, {Suspense} from 'react';
 import ReactDOM from 'react-dom';
+import App from './App/App';
 import './index.css';
-import App from './App';
 import reportWebVitals from './reportWebVitals';
+import Theme from "./App/Theme/Theme";
+import Fallback from "./App/SuspenseFallback/SuspenseFallback";
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <Theme>
+      <Suspense fallback={<Fallback/>}>
+        <App/>
+      </Suspense>
+    </Theme>
   </React.StrictMode>,
   document.getElementById('root')
 );
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
+
 reportWebVitals();
