@@ -3,6 +3,11 @@ import {useTheme} from "@mui/material/styles";
 import {CartesianGrid, Legend, Line, LineChart, ReferenceLine, Tooltip, XAxis, YAxis,} from "recharts";
 import {alpha, Box, Card, Typography} from "@mui/material";
 import AutoSizer from "react-virtualized-auto-sizer";
+import {DataGrid} from "@mui/x-data-grid";
+import CustomGridToolbar from "../DatagridComponents/DatagridToolbar";
+import NoRowsOverlay from "../DatagridComponents/DatagridNoRow";
+import DatagridError from "../DatagridComponents/DatagridError";
+import LoadingOverlay from "../DatagridComponents/DatagridLoading";
 
 const getLineColor = (index: number, theme: any) => {
   /* switch (index) {
@@ -43,13 +48,16 @@ const DataChart = (
     data: any,
     max?: number,
     keys: string[],
+    loading: boolean,
+    rows: any,
+    columns: any,
   }
 ) => {
   const theme = useTheme();
 
   return (
     <Card variant="outlined">
-      <Box pr={4} m={2} height={350}>
+      <Box height={350}>
         <AutoSizer>
           {({width, height}) =>
             <LineChart width={width} height={height} data={props.data} margin={{top: 8, bottom: 8}}>
@@ -82,6 +90,26 @@ const DataChart = (
             </LineChart>}
         </AutoSizer>
       </Box>
+      <div style={{height: "auto", width: "100%"}}>
+        <DataGrid
+          rows={props.rows}
+          columns={props.columns}
+          getRowId={(row) => row.id}
+          autoHeight
+          pagination
+          rowsPerPageOptions={[5]}
+          error={null}
+          disableSelectionOnClick
+          loading={props.loading}
+          disableColumnMenu
+          components={{
+            Toolbar: CustomGridToolbar,
+            NoRowsOverlay: NoRowsOverlay,
+            ErrorOverlay: DatagridError,
+            LoadingOverlay: LoadingOverlay,
+          }}
+        />
+      </div>
     </Card>
   );
 }

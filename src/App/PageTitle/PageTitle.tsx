@@ -6,7 +6,9 @@ type PageTitleProps = {
   title: string,
   icon: any,
   loading?: boolean,
+  children?: React.ReactNode,
 }
+
 
 const PageTitle: FC<PageTitleProps> = ({title, icon, loading, children}) => {
   const theme = useTheme();

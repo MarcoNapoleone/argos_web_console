@@ -4,12 +4,15 @@ import {useTheme} from '@mui/material/styles';
 import SearchIcon from '@mui/icons-material/SearchRounded';
 import NotificationsOutlinedIcon from '@mui/icons-material/NotificationsOutlined';
 import MenuItem from '@mui/material/MenuItem';
-import MenuOpenIcon from '@mui/icons-material/MenuOpen';
-
+import KeyboardArrowLeftOutlinedIcon from '@mui/icons-material/KeyboardArrowLeftOutlined';
+import AddIcon from '@mui/icons-material/Add';
+import MoreVertOutlinedIcon from '@mui/icons-material/MoreVertOutlined';
 import {
   alpha,
   Avatar,
   Badge,
+  Box,
+  Button,
   ButtonBase,
   Card,
   Container,
@@ -20,7 +23,6 @@ import {
   ListItemIcon,
   ListItemText,
   Menu,
-  ToggleButton,
   Tooltip,
   Typography,
   useMediaQuery,
@@ -29,9 +31,9 @@ import {
 } from "@mui/material";
 import {AccountCircleOutlined, Logout} from "@mui/icons-material";
 import {useNavigate} from "react-router-dom";
-
 import {makeStyles} from "@mui/styles";
 import {useAuth} from "../Authorization/Authorization";
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 const useStyles = makeStyles((theme) => ({
   inputRoot: {
@@ -96,7 +98,9 @@ const TopBar: React.FC<TopBarProps> = ({onMenuClick, isOpen, title}) => {
   const navigate = useNavigate();
   const {loggedUser, setLoggedUser} = useAuth();
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
+  const [anchorElCompany, setAnchorElCompany] = React.useState<null | HTMLElement>(null);
   const openUserMenu = Boolean(anchorElUser);
+  const openCompanyMenu = Boolean(anchorElCompany);
 
   const logout = () => {
     /* users
@@ -122,6 +126,14 @@ const TopBar: React.FC<TopBarProps> = ({onMenuClick, isOpen, title}) => {
 
   const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElUser(event.currentTarget);
+  };
+
+  const handleOpenCompanyMenu = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorElCompany(event.currentTarget);
+  };
+
+  const handleCloseCompanyMenu = () => {
+    setAnchorElCompany(null);
   };
 
   const handleCloseUserMenu = () => {
@@ -155,14 +167,14 @@ const TopBar: React.FC<TopBarProps> = ({onMenuClick, isOpen, title}) => {
         <Grid item xs={6} container justifyContent="flex-start" alignItems="center" spacing={2}>
           <Grid item>
             <Zoom in={!isOpen} style={{transitionDelay: '200ms'}}>
-              <ToggleButton
+              <IconButton
                 sx={{borderRadius: '8px'}}
                 size="small"
                 value="check"
-                onChange={onMenuClick}
+                onClick={onMenuClick}
               >
-                <MenuOpenIcon sx={{transform: 'rotate(180deg)'}}/>
-              </ToggleButton>
+                <KeyboardArrowLeftOutlinedIcon sx={{transform: 'rotate(180deg)'}}/>
+              </IconButton>
             </Zoom>
           </Grid>
           <Grid
@@ -177,16 +189,26 @@ const TopBar: React.FC<TopBarProps> = ({onMenuClick, isOpen, title}) => {
               isMobile
                 ? theme.spacing(0)
                 : isLargeScreen
-                  ? theme.spacing(37)
+                  ? theme.spacing(40)
                   : isOpen
-                    ? theme.spacing(37)
-                    : theme.spacing(6)
+                    ? theme.spacing(40)
+                    : theme.spacing(9)
             }>
-            <Grow
-              in={trigger}
-              style={{transformOrigin: '50% 0 0'}}>
+            <Grow in style={{transformOrigin: '50% 0 0', transitionDelay: '50ms'}}>
               <Typography variant="h6" sx={{fontWeight: 600}}>
-                {title}
+                <Box>
+                  {!isMobile && <Button
+                    color="inherit"
+                    endIcon={<ExpandMoreIcon/>}
+                    onClick={handleOpenCompanyMenu}
+                    sx={{textTransform: 'none'}}
+                  >
+                    <Typography>
+                      Alphabet Inc.
+                    </Typography>
+                  </Button>
+                  }
+                </Box>
               </Typography>
             </Grow>
           </Grid>
@@ -202,6 +224,15 @@ const TopBar: React.FC<TopBarProps> = ({onMenuClick, isOpen, title}) => {
                   </IconButton>
                 </Tooltip>
                 : <SearchBar/>
+              }
+            </Grid>
+            <Grid item>
+              {isMobile &&
+                <Tooltip TransitionComponent={Zoom} title="Aziende" arrow>
+                  <IconButton onClick={handleOpenCompanyMenu}>
+                    <MoreVertOutlinedIcon/>
+                  </IconButton>
+                </Tooltip>
               }
             </Grid>
             <Grid item>
@@ -243,6 +274,47 @@ const TopBar: React.FC<TopBarProps> = ({onMenuClick, isOpen, title}) => {
             <Logout fontSize="small"/>
           </ListItemIcon>
           Logout
+        </MenuItem>
+      </Menu>
+      <Menu
+        anchorEl={anchorElCompany}
+        open={openCompanyMenu}
+        onClose={handleCloseCompanyMenu}
+        onClick={handleCloseCompanyMenu}
+        TransitionComponent={Zoom}
+        anchorOrigin={{vertical: 'top', horizontal: 'left',}}
+        transformOrigin={{vertical: 'top', horizontal: 'left',}}
+      >
+        <MenuItem selected>
+          <ListItemIcon/>
+          <Typography>
+            Alphabet Inc.
+          </Typography>
+        </MenuItem>
+        <MenuItem>
+          <ListItemIcon/>
+          JohnDoe & Co.
+        </MenuItem>
+        <MenuItem>
+          <ListItemIcon/>
+          MyCompany S.R.L.
+        </MenuItem>
+        <Divider/>
+        <MenuItem>
+          <ListItemIcon>
+            <MoreVertOutlinedIcon/>
+          </ListItemIcon>
+          <ListItemText>
+            Tutte le aziende
+          </ListItemText>
+        </MenuItem>
+        <MenuItem>
+          <ListItemIcon>
+            <AddIcon/>
+          </ListItemIcon>
+          <ListItemText>
+            Aggiungi Azienda
+          </ListItemText>
         </MenuItem>
       </Menu>
     </>

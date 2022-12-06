@@ -8,24 +8,19 @@ import CssBaseline from '@mui/material/CssBaseline';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import TopBar from "../TopBar/TopBar";
-import SensorsIcon from '@mui/icons-material/Sensors';
-import {
-  Collapse,
-  Container,
-  Drawer,
-  ListItemButton,
-  ListSubheader,
-  SwipeableDrawer,
-  useMediaQuery,
-} from "@mui/material";
+import KeyboardArrowLeftOutlinedIcon from '@mui/icons-material/KeyboardArrowLeftOutlined';
+import {Container, Drawer, ListItemButton, ListSubheader, SwipeableDrawer, useMediaQuery,} from "@mui/material";
 import {DarkModeOutlined, LightModeOutlined} from "@mui/icons-material";
 import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
-import {useLocation, useNavigate} from "react-router-dom";
-import MenuOpenIcon from '@mui/icons-material/MenuOpen';
-import ExpandLess from '@mui/icons-material/ExpandLess';
+import {useLocation, useNavigate, useParams} from "react-router-dom";
 import {ThemeModeContext} from "../Theme/Theme";
+import {DrawerElements} from "../../utils/DrawerItems";
 
 const drawerWidth = 320;
+
+type PageParamsType = {
+  pagePath: string;
+};
 
 interface PageFrameProps {
   children?: React.ReactNode,
@@ -73,7 +68,6 @@ const ResponsiveDrawer = styled(MuiDrawer, {shouldForwardProp: (prop) => prop !=
   }),
 );
 
-
 const PageFrame: React.FC<PageFrameProps> = ({children, title}) => {
   const theme = useTheme();
   const {mode, setMode} = useContext(ThemeModeContext);
@@ -82,11 +76,13 @@ const PageFrame: React.FC<PageFrameProps> = ({children, title}) => {
   const isLargeScreen = useMediaQuery(theme.breakpoints.up("xl"))
   const [open, setOpen] = React.useState(Boolean(isLargeScreen));
   const location = useLocation();
+  const {pagePath} = useParams<PageParamsType>();
+
   const [nestedListToggle, setNestedListToggle] = useState(true)
 
-
   const handlePageSelection = (path: string) => {
-    if (isMobile) handleDrawerClose();
+    navigate(`/app/${path}`)
+    handleDrawerClose();
   }
   const handleDrawerToggle = () => {
     setOpen(!open)
@@ -106,26 +102,29 @@ const PageFrame: React.FC<PageFrameProps> = ({children, title}) => {
       localStorage.setItem("theme", JSON.stringify('light'))
     }
   };
-  const handleNestedListToggle = () => {
+  const handleNestedListToggle = (event: any) => {
+    const element = document.getElementById("drawer-content-id");
     if (open) {
       setNestedListToggle(!nestedListToggle)
     } else {
       setOpen(true)
+      element.scrollTo(0, element.scrollHeight);
       setNestedListToggle(true)
     }
   };
 
   const DrawerContent = () => {
     return (
-      <Box p={1}>
+      <Box px={1} id="drawer-content-id">
         <List>
           <ListItemButton
             sx={{height: '57px', width: '57px'}}
+            key={0}
             onClick={handleDrawerToggle}
             disabled={isLargeScreen}
           >
             <ListItemIcon>
-              <MenuOpenIcon
+              <KeyboardArrowLeftOutlinedIcon
                 sx={{
                   transition: 'transform 0.3s ease-out',
                   transform: open ? 'rotate(0deg)' : 'rotate(180deg)',
@@ -138,18 +137,38 @@ const PageFrame: React.FC<PageFrameProps> = ({children, title}) => {
           subheader={open && <ListSubheader component="div">Console</ListSubheader>}
           component="nav"
         >
-          <ListItemButton
-            onClick={handleNestedListToggle}
+          {DrawerElements.map((el) => (
+            <Box pb={1} key={el.index}>
+              <ListItemButton
+                sx={{height: isMobile ? '48px' : '57px', py: '8px'}}
+                onClick={() => handlePageSelection(el.path)}
+                selected={el.path === pagePath}
+              >
+                <ListItemIcon>
+                  {el.icon}
+                </ListItemIcon>
+                <ListItemText
+                  primary={el.label}
+                  primaryTypographyProps={{
+                    color: el.path === pagePath ? 'primary' : '',
+                    fontWeight: el.path === pagePath ? 'bold' : '',
+                  }}
+                />
+              </ListItemButton>
+            </Box>
+          ))}
+          {/*<ListItemButton
+            onClick={(event) => handleNestedListToggle(event)}
             key={1}
-            sx={{height: isMobile ? '48px' : '57px'}}
-            selected={location.pathname === '/home'}
+            sx={{height: isMobile ? '48px' : '57px', py: '8px'}}
+            selected={location.pathname === 'app/pod'}
           >
             <ListItemIcon>
               <SensorsIcon sx={{color: location.pathname === '/home' ? 'primary.main' : ''}}/>
             </ListItemIcon>
             <ListItemText primary="Pod"/>
             <ExpandLess sx={{
-              transform: nestedListToggle ? 'rotate(180deg)' : 'none',
+              transform: !nestedListToggle ? 'rotate(180deg)' : 'none',
               transition: theme.transitions.create('all', {
                 easing: theme.transitions.easing.easeOut,
                 duration: theme.transitions.duration.standard,
@@ -158,49 +177,56 @@ const PageFrame: React.FC<PageFrameProps> = ({children, title}) => {
           </ListItemButton>
           <Collapse in={nestedListToggle && open} timeout="auto" unmountOnExit>
             <List component="div" disablePadding>
-              <ListItemButton sx={{pl: 4}} onClick={() => navigate('/home')}>
+              <Box pb={1}>
+              <ListItemButton sx={{pl: 4}} onClick={() => navigate('/app/pod')}>
                 <ListItemText primary="Sala macchine"/>
               </ListItemButton>
-              <ListItemButton sx={{pl: 4}} onClick={() => navigate('/home')}>
+              </Box>
+              <Box pb={1}>
+              <ListItemButton sx={{pl: 4}} onClick={() => navigate('/app/pod')}>
                 <ListItemText primary="Ventola Nord"/>
               </ListItemButton>
-              <ListItemButton sx={{pl: 4}} onClick={() => navigate('/home')}>
+              </Box>
+              <Box pb={1}>
+              <ListItemButton sx={{pl: 4}} onClick={() => navigate('/app/pod')}>
                 <ListItemText primary="Ventola Sud"/>
               </ListItemButton>
-              <ListItemButton sx={{pl: 4}} onClick={() => navigate('/home')}>
-                <ListItemText primary="Forno"/>
-              </ListItemButton>
+              </Box>
             </List>
-          </Collapse>
+          </Collapse>*/}
         </List>
         <List
-          subheader={open && <ListSubheader component="div">App</ListSubheader>}
+          subheader={<ListSubheader component="div">App</ListSubheader>}
         >
-          <ListItemButton
-            onClick={() => navigate('/impostazioni')}
-            key={1}
-            sx={{height: isMobile ? '48px' : '57px'}}
-            selected={location.pathname === '/settings'}
-          >
-            <ListItemIcon>
-              <SettingsOutlinedIcon sx={{color: location.pathname === '/settings' ? 'primary.main' : ''}}/>
-            </ListItemIcon>
-            <ListItemText primary="Impostazioni"/>
-          </ListItemButton>
-          <ListItemButton onClick={handleThemeSwitch} key={2} sx={{height: isMobile ? '48px' : '57px'}}>
-            <ListItemIcon>
-              {theme.palette.mode === 'dark'
-                ? <LightModeOutlined/>
-                : <DarkModeOutlined/>
-              }
-            </ListItemIcon>
-            <ListItemText
-              primary={theme.palette.mode === 'dark'
-                ? "Tema Chiaro"
-                : "Tema Scuro"
-              }
-            />
-          </ListItemButton>
+          <Box pb={1}>
+            <ListItemButton
+              onClick={() => navigate('/settings')}
+              key={2}
+              sx={{height: isMobile ? '48px' : '57px', py: '8px'}}
+              selected={location.pathname === 'app/settings'}
+            >
+              <ListItemIcon>
+                <SettingsOutlinedIcon sx={{color: location.pathname === '/settings' ? 'primary.main' : ''}}/>
+              </ListItemIcon>
+              <ListItemText primary="Impostazioni"/>
+            </ListItemButton>
+          </Box>
+          <Box pb={1}>
+            <ListItemButton onClick={handleThemeSwitch} key={3} sx={{height: isMobile ? '48px' : '57px'}}>
+              <ListItemIcon>
+                {theme.palette.mode === 'dark'
+                  ? <LightModeOutlined/>
+                  : <DarkModeOutlined/>
+                }
+              </ListItemIcon>
+              <ListItemText
+                primary={theme.palette.mode === 'dark'
+                  ? "Tema Chiaro"
+                  : "Tema Scuro"
+                }
+              />
+            </ListItemButton>
+          </Box>
         </List>
       </Box>
     )

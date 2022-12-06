@@ -7,6 +7,7 @@ type DetailsSectionProps = {
   sectionTextContent?: string | number | null,
   contentRedirect?: string,
   adornment?: string,
+  children?: React.ReactNode,
   divider?: boolean,
 }
 

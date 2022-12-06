@@ -1,8 +1,10 @@
 import React, {useEffect, useState} from 'react';
 import {createTheme, ThemeProvider as MuiThemeProvider} from '@mui/material/styles';
 import {deepOrange, indigo, red, teal} from "@mui/material/colors";
-import {CssBaseline, NoSsr} from '@mui/material';
+import {CssBaseline, darken, lighten, NoSsr} from '@mui/material';
 import {ThemeProvider} from "@emotion/react";
+import {itIT} from "@mui/x-data-grid";
+
 
 export const ThemeModeContext = React.createContext({
     mode: 'ligth' as string,
@@ -11,7 +13,11 @@ export const ThemeModeContext = React.createContext({
   }
 );
 
-const Theme: React.FC = ({children}) => {
+interface ThemeProps {
+  children?: React.ReactNode,
+}
+
+const Theme: React.FC<ThemeProps> = ({children}) => {
   const [mode, setMode] = useState('light');
   const themeValue = {mode, setMode}
   const palletType = mode === 'dark' ? 'dark' : 'light';
@@ -40,7 +46,7 @@ const Theme: React.FC = ({children}) => {
         paper: backgroundPaper,
       }
     },
-  });
+  }, [itIT]);
   theme = createTheme(theme, {
     components: {
       MuiDataGrid: {
@@ -131,8 +137,8 @@ const Theme: React.FC = ({children}) => {
             },
             '& .MuiSwitch-thumb': {
               boxShadow: 'none',
-              width: 16,
               height: 16,
+              width: 16,
               margin: 2,
             },
           },
@@ -151,7 +157,6 @@ const Theme: React.FC = ({children}) => {
             borderRadius: '8px',
             marginLeft: '8px',
             marginBottom: '4px',
-            marginTop: '4px',
             marginRight: '8px',
           },
         },
@@ -173,7 +178,14 @@ const Theme: React.FC = ({children}) => {
       MuiToggleButton: {
         styleOverrides: {
           root: {
-            borderRadius: '8px',
+            color: theme.palette.grey["500"],
+            borderRadius: '32px',
+            border: 'none',
+            "&.MuiToggleButtonGroup-grouped": {
+              borderRadius: "32px !important",
+              mx: 1,
+              border: "none"
+            }
           }
         }
       },
@@ -184,7 +196,44 @@ const Theme: React.FC = ({children}) => {
           }
         }
       },
-    },
+      MuiFab: {
+        styleOverrides: {
+          root: {
+            borderRadius: '16px',
+            backgroundColor: mode === 'light'
+              ? lighten(theme.palette.primary.main, 0.75)
+              : darken(theme.palette.primary.main, 0.4),
+            "&:hover": {
+              backgroundColor: mode === 'light'
+                ? lighten(theme.palette.primary.main, 0.75)
+                : darken(theme.palette.primary.main, 0.4)
+            },
+            "&:active": {
+              boxShadow: '0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24)',
+            },
+            color: mode === 'light' ? theme.palette.primary.main : 'white',
+            boxShadow: '0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24)',
+          },
+        }
+      },
+      MuiDrawer: {
+        styleOverrides: {
+          paper: {
+            border: 'none',
+          }
+        }
+      },
+      MuiTextField: {
+        defaultProps: {
+          variant: 'standard'
+        }
+      },
+      MuiFormControl: {
+        defaultProps: {
+          variant: 'standard'
+        }
+      }
+    }
   });
 
   useEffect(() => {

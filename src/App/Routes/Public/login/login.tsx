@@ -13,13 +13,14 @@ import {useAuth} from "../../../Authorization/Authorization";
 import {Alert, alpha, Card, Checkbox, CircularProgress, Collapse, FormControlLabel, Zoom} from "@mui/material";
 import {useTheme} from "@mui/material/styles";
 import {useAlertContext} from "../../../Alert/Alert";
+import {servicePath} from "../../../../services/services";
 
 function Copyright(props: any) {
   return (
     <Typography variant="body2" color="text.secondary" align="center" {...props}>
       {'Copyright © '}
-      <Link color="inherit" href="https://www.intergroup.it/">
-        Intergroup
+      <Link color="inherit" href="https://google,com/">
+        Argos
       </Link>{' '}
       {new Date().getFullYear()}
       {'.'}
@@ -37,8 +38,31 @@ export default function LogIn() {
   const {loggedUser, setLoggedUser} = useAuth();
   const {setAlertEvent} = useContext(useAlertContext);
 
-  const login = (user: string, pwd: string) => {
+  const login = (email: string, pwd: string) => {
     setLoading(true)
+    servicePath
+      .post('/auth/login', {
+        "password": pwd,
+        "email": email
+      })
+      .then(res => {
+        if (res.status !== 200) {
+          setLoading(false)
+          return setError({
+            status: true,
+            message: res.data["message"]
+          })
+        }
+        console.log(res.data)
+        navigate('/aziende')
+      })
+      .catch((err) => {
+        setLoading(false)
+        return setError({
+          status: true,
+          message: err.message
+        })
+      })
   }
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
