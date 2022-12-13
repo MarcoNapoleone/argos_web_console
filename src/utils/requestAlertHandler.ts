@@ -1,5 +1,5 @@
 import {AxiosError, AxiosResponse} from "axios";
-import {AlertEvent} from "../App/Alert/Alert";
+import {AlertEvent} from "../Components/Providers/Alert/Alert.provider";
 
 export const getResponseAlert = (response: AxiosResponse): AlertEvent => {
   if (response?.status === 200 || response?.status === 201) {
