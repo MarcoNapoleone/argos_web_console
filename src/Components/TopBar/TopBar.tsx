@@ -105,25 +105,10 @@ const TopBar: React.FC<TopBarProps> = ({onMenuClick, isOpen, title}) => {
   const openUserMenu = Boolean(anchorElUser);
   const openCompanyMenu = Boolean(anchorElCompany);
 
-  const logout = () => {
-    /* users
-       .get<LoginResponseType>(`/Login/${user}/${pwd}`)
-       .then(response => {
-         const newLoggedUser: LoggedUser = {
-           user: response.data.data,
-           isLogged: response.data.status,
-         }
-         setLoggedUser(newLoggedUser);
-         setAlertEvent(getResponseAlert(response));
-         navigate("/app/dashboard");
-       })
-       .catch((err) => {
-         setError(true)
-         setAlertEvent(getReasonAlert(err));
-       })*/
-    setLoggedUser({isLogged: false, user: null})
+  const logout = async () => {
     deleteCookie("token")
-    navigate('/login')
+    navigate("/login")
+    setLoggedUser(null)
   }
 
   const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
@@ -262,7 +247,7 @@ const TopBar: React.FC<TopBarProps> = ({onMenuClick, isOpen, title}) => {
             <AccountCircleOutlined
               fontSize="small"/>
           </ListItemIcon>
-          <ListItemText>{loggedUser?.user?.name + ' ' + loggedUser?.user?.surname}</ListItemText>
+          <ListItemText>{loggedUser?.name + ' ' + loggedUser?.surname}</ListItemText>
         </MenuItem>
         <MenuItem>
           <ListItemIcon>

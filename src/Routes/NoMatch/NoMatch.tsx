@@ -6,7 +6,6 @@ import {useTheme} from "@mui/material/styles";
 
 function NoMatch() {
   let location = useLocation();
-  const theme = useTheme();
   const navigate = useNavigate();
   return (
     <Box paddingTop="84px">
@@ -43,6 +42,7 @@ function NoMatch() {
             >
               <img
                 src="/Teamwork-gears.png"
+                alt="404 - NOT FOUND, Teamwork gears"
                 style={{
                   width: '100%',
                   display: 'block',

@@ -13,10 +13,10 @@ function DetailsLoading(props: { rows?: number, columns?: number }) {
 
   return <CardContent>
     <Grid container direction="column" spacing={1} py={2}>
-      {[...Array(usedRows)].map(() => (
-          <Grid item container spacing={1} pt={1}>
-            {[...Array(usedColumns)].map(() => (
-              <Grid item xs={12} sm={6}>
+      {[...Array(usedRows)].map((row, rowKey) => (
+          <Grid item key={rowKey} container spacing={1} pt={1}>
+            {[...Array(usedColumns)].map((column,columnKey) => (
+              <Grid item  key={columnKey} xs={12} sm={6}>
                 <Typography variant="h6" color="text.secondary">
                   <Skeleton animation="wave" width="180px"/>
                 </Typography>

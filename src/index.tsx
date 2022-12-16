@@ -6,17 +6,21 @@ import Routes from "./Routes/Routes";
 import {createRoot} from 'react-dom/client';
 import {LocalizationProvider} from "@mui/x-date-pickers";
 import {AdapterDateFns} from "@mui/x-date-pickers/AdapterDateFns";
+import {I18nextProvider} from "react-i18next";
+import i18n from './i18n/config';
 
 const container = document.getElementById('root');
 const root = createRoot(container!); // createRoot(container!) if you use TypeScript
 root.render(
   <React.StrictMode>
-    <Theme>
-      <Suspense fallback={<Fallback/>}>
-        <LocalizationProvider dateAdapter={AdapterDateFns}>
-          <Routes/>
-        </LocalizationProvider>
-      </Suspense>
-    </Theme>
+    <I18nextProvider i18n={i18n}>
+      <Theme>
+        <Suspense fallback={<Fallback/>}>
+          <LocalizationProvider dateAdapter={AdapterDateFns}>
+            <Routes/>
+          </LocalizationProvider>
+        </Suspense>
+      </Theme>
+    </I18nextProvider>
   </React.StrictMode>
 );

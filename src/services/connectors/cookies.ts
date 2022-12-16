@@ -1,6 +1,9 @@
-export const setCookie = (name: string, value: string, days: number) => {
-    const expires = new Date(Date.now() + days * 864e5).toUTCString()
-    document.cookie = name + '=' + encodeURIComponent(value) + '; expires=' + expires + '; path=/' + '; SameSite=Lax'
+export const setCookie = async (name: string, value: string, days: number) => {
+    return new Promise(resolve => {
+        const expires = new Date(Date.now() + days * 864e5).toUTCString()
+        document.cookie = name + '=' + encodeURIComponent(value) + '; expires=' + expires + '; path=/' + '; SameSite=Lax'
+        setTimeout(resolve, 1000);
+    })
 }
 
 export const getCookie = (name: string) => {

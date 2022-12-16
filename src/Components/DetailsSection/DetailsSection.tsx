@@ -22,7 +22,6 @@ const DetailsSection: FC<DetailsSectionProps> = (
   }
 ) => {
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   if (sectionTextContent === ""
     || sectionTextContent === null
     || sectionTextContent === undefined

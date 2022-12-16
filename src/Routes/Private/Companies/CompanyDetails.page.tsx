@@ -10,11 +10,8 @@ function CompanyDetailsPage() {
 
   const theme = useTheme();
   const [loading, setLoading] = useState(true);
-  const {company, setCompany} = useCurrentCompany();
-  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const {company} = useCurrentCompany();
   const [updatedTime, setUpdatedTime] = useState("00:00");
-
-  const {setAlertEvent} = useAlert();
 
   useEffect(() => {
     const interval = setInterval(() => {

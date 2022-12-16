@@ -1,7 +1,7 @@
 // @ts-ignore
 import {BrowserRouter, Outlet, Route, Routes as Router, useParams,} from "react-router-dom";
 import React, {lazy, useEffect, useRef} from 'react';
-import {AuthProvider, useAuth} from "../Components/Providers/Authorization/Authorization.provider";
+import {AuthProvider, RequireAuth, useAuth} from "../Components/Providers/Authorization/Authorization.provider";
 import {AlertProvider} from "../Components/Providers/Alert/Alert.provider";
 import PodsPage from "./Private/Pod/Pods.page";
 import PageFrame from "../Components/PageFrame/PageFrame";
@@ -38,7 +38,7 @@ const Routes = () => {
             <Router>
               <Route path="/" element={<Login/>}/>
               <Route path="login" element={<Login/>}/>
-              <Route path="/app/companies" element={<CompaniesPage/>}/>
+              <Route path="/app/companies" element={<RequireAuth><CompaniesPage/></RequireAuth>}/>
               <Route path="/app/companies/:companyId" element={<CompanyDetailsPage/>}/>
               <Route path="/app/companies/:companyId" element={<PageFrame><Outlet/></PageFrame>}>
                 <Route path="local-units" element={<LocalUnitsPage/>}>

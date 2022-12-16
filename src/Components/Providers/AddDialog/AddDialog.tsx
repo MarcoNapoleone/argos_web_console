@@ -70,11 +70,6 @@ const AddDialog: FC<AddDialogProps> = (
       onClose={handleClose}
       fullWidth
       disableEscapeKeyDown
-      BackdropProps={{
-        sx: {
-          backgroundColor: 'rgba(0,0,0,0.2)',
-        }
-      }}
       PaperProps={{
         sx: {
           boxShadow: 0,

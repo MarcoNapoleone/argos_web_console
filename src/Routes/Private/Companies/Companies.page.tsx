@@ -28,7 +28,7 @@ import {useNavigate} from "react-router-dom";
 import {useAuth} from "../../../Components/Providers/Authorization/Authorization.provider";
 import {useCurrentCompany} from "../../../Components/Providers/Company/Company.provider";
 import {Id} from "../../../services/entities";
-import {setCookie} from "../../../services/connectors/cookies";
+import {deleteCookie, setCookie} from "../../../services/connectors/cookies";
 
 function CompaniesPage() {
 
@@ -105,7 +105,6 @@ function CompaniesPage() {
   );
 }
 
-
 const CompaniesTopBar = () => {
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
   const theme = useTheme();
@@ -121,28 +120,11 @@ const CompaniesTopBar = () => {
     setAnchorElUser(null);
   };
 
-  const logout = () => {
-    /* users
-       .get<LoginResponseType>(`/Login/${user}/${pwd}`)
-       .then(response => {
-         const newLoggedUser: LoggedUser = {
-           user: response.data.data,
-           isLogged: response.data.status,
-         }
-         setLoggedUser(newLoggedUser);
-         setAlertEvent(getResponseAlert(response));
-         navigate("/app/dashboard");
-       })
-       .catch((err) => {
-         setError(true)
-         setAlertEvent(getReasonAlert(err));
-       })*/
-    setLoggedUser({isLogged: false, user: null})
-    sessionStorage.removeItem("auth")
-    sessionStorage.clear();
-    navigate('/login')
+  const logout = async () => {
+    deleteCookie("token")
+    navigate("/login")
+    setLoggedUser(null)
   }
-
 
   return (
     <>
@@ -189,7 +171,7 @@ const CompaniesTopBar = () => {
             <AccountCircleOutlined
               fontSize="small"/>
           </ListItemIcon>
-          <ListItemText>{loggedUser?.user?.name + ' ' + loggedUser?.user?.surname}</ListItemText>
+          <ListItemText>{loggedUser?.name + ' ' + loggedUser?.surname}</ListItemText>
         </MenuItem>
         <MenuItem>
           <ListItemIcon>

@@ -14,7 +14,7 @@ import {Alert, alpha, Card, Checkbox, CircularProgress, Collapse, FormControlLab
 import {useTheme} from "@mui/material/styles";
 import {useAlertContext} from "../../../Components/Providers/Alert/Alert.provider";
 import {login} from "../../../services/auth.services";
-
+import { useTranslation } from 'react-i18next';
 
 function Copyright(props: any) {
   return (
@@ -35,6 +35,7 @@ export default function LogIn() {
   const [error, setError] = useState({status: false, message: 'error'});
   const [loading, setLoading] = useState(false);
   const {loggedUser, setLoggedUser} = useAuth();
+  const {t} = useTranslation();
   const {setAlertEvent} = useContext(useAlertContext);
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -44,7 +45,11 @@ export default function LogIn() {
     try {
       setLoading(true)
       login(data.get('username') as string, data.get('password') as string)
-        .then(() => navigate('/app/companies'))
+        .then((user) => {
+          console.log(user)
+          setLoggedUser(user)
+          navigate('/app/companies')
+        })
     } catch (e) {
       setLoading(false)
       setError({
@@ -78,7 +83,7 @@ export default function LogIn() {
             }
           </Avatar>
           <Typography component="h1" variant="h5">
-            Log in
+            {t('title')}
           </Typography>
           <Box component="form" onSubmit={handleSubmit} noValidate sx={{mt: 1}}>
             <TextField
@@ -86,7 +91,7 @@ export default function LogIn() {
               required
               fullWidth
               id="username"
-              label="Username"
+              label={t('username')}
               name="username"
               autoComplete="username"
               autoFocus
@@ -96,14 +101,14 @@ export default function LogIn() {
               required
               fullWidth
               name="password"
-              label="Password"
+              label={t('password')}
               type="password"
               id="password"
               autoComplete="password"
             />
             <FormControlLabel
               control={<Checkbox value="remember" color="primary"/>}
-              label="Ricordami"
+              label={t('remember')}
             />
             <Collapse in={error.status} sx={{my: 1}}>
               <Alert sx={{borderRadius: '8px'}} severity="error">{error.message}</Alert>

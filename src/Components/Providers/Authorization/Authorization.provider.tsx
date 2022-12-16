@@ -1,16 +1,17 @@
-import React, {createContext, useState} from "react";
-import {defaultLoggedUser, LoggedUser} from "../../../services/connectors/axios";
-import {useLocation} from "react-router-dom";
+import React, {createContext, useEffect, useState} from "react";
+import {Navigate, useLocation, useNavigate} from "react-router-dom";
+import {User} from "../../../services/users.services";
+import {deleteCookie, getCookie} from "../../../services/connectors/cookies";
 
 
 export const useAuthContext = createContext({
-  loggedUser: defaultLoggedUser,
-  setLoggedUser: (state: LoggedUser) => {
-  },
+  loggedUser: null as User,
+  setLoggedUser: (user: User) => {
+  }
 });
 
 export function AuthProvider(props: { children?: React.ReactNode }) {
-  const [loggedUser, setLoggedUser] = useState(defaultLoggedUser)
+  const [loggedUser, setLoggedUser] = useState<User>(null)
   const loginValue = {loggedUser, setLoggedUser}
   return (
     <useAuthContext.Provider value={loginValue}>
@@ -19,22 +20,21 @@ export function AuthProvider(props: { children?: React.ReactNode }) {
   );
 }
 
+
 export const useAuth = () => {
   return React.useContext(useAuthContext);
 }
 
+
 export const RequireAuth = ({children}: { children: JSX.Element }) => {
   let {loggedUser, setLoggedUser} = useAuth();
-  let location = useLocation();
+  const navigate = useNavigate();
 
-  /*useEffect(() => {
-    const sessionUser: LoggedUser = JSON.parse(sessionStorage.getItem("auth"))
-    if (sessionUser) setLoggedUser(sessionUser);
-  }, [])*/
-
-  /*if (!loggedUser.isLogged) {
-    return <Navigate to="/login" state={{ from: location }} replace />;
-  }*/
+  useEffect(() => {
+    if (!getCookie('token')) {
+      navigate('/login');
+    }
+  }, [])
 
   return children;
 }
