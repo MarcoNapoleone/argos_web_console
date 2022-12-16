@@ -2,8 +2,9 @@ import {servicePath} from "./connectors/axios";
 import {deleteCookie, setCookie} from "./connectors/cookies";
 import {useNavigate} from "react-router-dom";
 import {useAuth} from "../Components/Providers/Authorization/Authorization.provider";
+import {User} from "./users.services";
 
-export const login = async <User>(email: string, pwd: string) => {
+export const login = async (email: string, pwd: string) => {
   let user = {} as User;
   servicePath
     .post('/auth/login', {
