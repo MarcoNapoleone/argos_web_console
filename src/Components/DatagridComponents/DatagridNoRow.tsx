@@ -2,8 +2,8 @@ import {GridOverlay} from "@mui/x-data-grid";
 import React from "react";
 import {createStyles, makeStyles} from "@mui/styles";
 import {createTheme} from "@mui/material/styles";
-import NoContentIcon from "../NoContentIcon/NoContentIcon";
-import {Box, Stack, Typography} from "@mui/material";
+import EmptyGridContent from "../NoContentIcon/EmptyGridContent";
+import {Stack} from "@mui/material";
 
 const defaultTheme = createTheme();
 const useStyles = makeStyles((theme) => createStyles({
@@ -15,15 +15,11 @@ const useStyles = makeStyles((theme) => createStyles({
 function NoRowsOverlay() {
   const classes = useStyles();
   return (
-    <Box py={6}>
-      <GridOverlay>
-        <Stack>
-          <NoContentIcon/>
-          <Typography variant="caption" color="text.scondary" align="center" className={classes.label}>No
-            Elements</Typography>
-        </Stack>
-      </GridOverlay>
-    </Box>
+    <GridOverlay>
+      <Stack>
+        <EmptyGridContent caption="Nessun elemento"/>
+      </Stack>
+    </GridOverlay>
   );
 }
 

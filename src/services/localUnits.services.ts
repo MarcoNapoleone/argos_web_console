@@ -2,31 +2,29 @@ import {Id, UUID} from "./entities";
 import {servicePath} from "./connectors/axios";
 import {getCookie} from "./connectors/cookies";
 
-export class Company {
+export class LocalUnit {
   id?: Id;
   uuid?: UUID;
   name?: string;
-  address?: string;
   email?: string;
-  province?: string;
+  address?: string;
+  municipality?: string;
   postalCode?: string;
-  fiscalCode?: string;
-  vatCode?: string;
-  registeredMunicipality?: string;
   phone?: string;
+  companyId?: Id;
   createdAt?: Date;
   deletedAt?: Date;
   version?: number;
   updatedAt?: Date;
 }
 
-export const defaultCompanies: Company[] = [];
-export const defaultCompany: Company = {};
+export const defaultLocalUnits: LocalUnit[] = [];
+export const defaultLocalUnit: LocalUnit = {};
 
-export async function getAllCompanies(): Promise<Company[]> {
+export async function getAllLocalUnits(companyId: Id): Promise<LocalUnit[]> {
   let data = [];
   await servicePath
-    .get('/companies', {
+    .get(`/companies/${companyId}/local-units`, {
       headers: {
         Authorization: `Bearer ${getCookie('token')}`
       }

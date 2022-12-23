@@ -37,14 +37,31 @@ function CompaniesPage() {
   const [companies, setCompanies] = useState(defaultCompanies);
   const {company, setCompany} = useCurrentCompany();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-  const navigate = useNavigate();
   const {setAlertEvent} = useAlert();
+  const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
+  const openUserMenu = Boolean(anchorElUser);
+  const navigate = useNavigate();
+  const {loggedUser, setLoggedUser} = useAuth();
 
   const handleClick = async (id: Id) => {
     const company = companies.find(c => c.id === id);
     setCompany(company);
-    setCookie('company', JSON.stringify(company), 1)
+    await setCookie('company', JSON.stringify(company), 1)
     navigate(`/app/companies/${id}`)
+  }
+
+  const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorElUser(event.currentTarget);
+  };
+
+  const handleCloseUserMenu = () => {
+    setAnchorElUser(null);
+  };
+
+  const logout = async () => {
+    deleteCookie("token")
+    navigate("/login")
+    setLoggedUser(null)
   }
 
   useEffect(() => {
@@ -64,7 +81,36 @@ function CompaniesPage() {
 
   return (
     <>
-      <CompaniesTopBar/>
+      <Grid
+        container
+        justifyContent="space-between"
+        alignItems="center"
+        py={1} px={2}
+        sx={{
+          position: 'fixed',
+          top: 0,
+          right: 0,
+          width: '100%',
+          borderBottom: theme.palette.mode === 'light' ? '#f0f0f0' : '#303030',
+          bgcolor: alpha(theme.palette.background.default, 0.8),
+          backdropFilter: 'blur(40px)',
+          zIndex: theme => theme.zIndex.appBar,
+        }}
+      >
+        <Grid item xs={12}>
+          <Grid container justifyContent="flex-end" alignItems="center" spacing={2}>
+            <Grid item>
+              <IconButton sx={{borderRadius: '16px'}} disableRipple>
+                <Badge variant="dot" overlap="rectangular" color="secondary">
+                  <Avatar variant="rounded" sx={{borderRadius: '8px'}} onClick={handleOpenUserMenu}
+                          alt="User profile picture"
+                          src="https://mui.com/static/images/avatar/1.jpg"/>
+                </Badge>
+              </IconButton>
+            </Grid>
+          </Grid>
+        </Grid>
+      </Grid>
       <Box py={16}>
         <Container maxWidth="xl" disableGutters={isMobile}>
           <Grid container spacing={2}>
@@ -101,63 +147,6 @@ function CompaniesPage() {
           </Grid>
         </Container>
       </Box>
-    </>
-  );
-}
-
-const CompaniesTopBar = () => {
-  const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
-  const theme = useTheme();
-  const openUserMenu = Boolean(anchorElUser);
-  const navigate = useNavigate();
-  const {loggedUser, setLoggedUser} = useAuth();
-
-  const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorElUser(event.currentTarget);
-  };
-
-  const handleCloseUserMenu = () => {
-    setAnchorElUser(null);
-  };
-
-  const logout = async () => {
-    deleteCookie("token")
-    navigate("/login")
-    setLoggedUser(null)
-  }
-
-  return (
-    <>
-      <Grid
-        container
-        justifyContent="space-between"
-        alignItems="center"
-        py={1} px={2}
-        sx={{
-          position: 'fixed',
-          top: 0,
-          right: 0,
-          width: '100%',
-          borderBottom: theme.palette.mode === 'light' ? '#f0f0f0' : '#303030',
-          bgcolor: alpha(theme.palette.background.default, 0.8),
-          backdropFilter: 'blur(40px)',
-          zIndex: theme => theme.zIndex.appBar,
-        }}
-      >
-        <Grid item xs={12}>
-          <Grid container justifyContent="flex-end" alignItems="center" spacing={2}>
-            <Grid item>
-              <IconButton sx={{borderRadius: '16px'}} disableRipple>
-                <Badge variant="dot" overlap="rectangular" color="secondary">
-                  <Avatar variant="rounded" sx={{borderRadius: '8px'}} onClick={handleOpenUserMenu}
-                          alt="User profile picture"
-                          src="https://mui.com/static/images/avatar/1.jpg"/>
-                </Badge>
-              </IconButton>
-            </Grid>
-          </Grid>
-        </Grid>
-      </Grid>
       <Menu
         anchorEl={anchorElUser}
         open={openUserMenu}
@@ -188,7 +177,7 @@ const CompaniesTopBar = () => {
         </MenuItem>
       </Menu>
     </>
-  )
+  );
 }
 export default CompaniesPage;
 

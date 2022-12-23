@@ -6,7 +6,7 @@ import {User} from "./users.services";
 
 export const login = async (email: string, pwd: string) => {
   let user = {} as User;
-  servicePath
+  return servicePath
     .post('/auth/login', {
       "password": pwd,
       "email": email
@@ -20,8 +20,12 @@ export const login = async (email: string, pwd: string) => {
       }
       await setCookie('token', res.data["token"], 1)
       user = res.data["user"]
+      if (user) {
+        return user
+      } else {
+        return new Error("Missing user")
+      }
     })
-  return user
 }
 
 

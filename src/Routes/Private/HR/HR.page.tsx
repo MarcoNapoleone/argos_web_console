@@ -21,12 +21,13 @@ type PageParamsType = {
   companyId: string;
 };
 
-const LocalUnitsPage = () => {
+const HRPage = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const navigate = useNavigate();
   const {companyId} = useParams<PageParamsType>();
   const {company} = useCurrentCompany();
+
   const [localUnits, setLocalUnits] = useState(defaultLocalUnits);
   const [loading, setLoading] = useState(true);
   const [updatedTime, setUpdatedTime] = useState("00:00");
@@ -199,4 +200,4 @@ const LocalUnitsPage = () => {
   );
 }
 
-export default LocalUnitsPage;
+export default HRPage;

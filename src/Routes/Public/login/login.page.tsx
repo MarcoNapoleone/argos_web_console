@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {useContext, useState} from 'react';
+import {useContext, useEffect, useState} from 'react';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
@@ -12,9 +12,8 @@ import {useNavigate} from "react-router-dom";
 import {useAuth} from "../../../Components/Providers/Authorization/Authorization.provider";
 import {Alert, alpha, Card, Checkbox, CircularProgress, Collapse, FormControlLabel, Zoom} from "@mui/material";
 import {useTheme} from "@mui/material/styles";
-import {useAlertContext} from "../../../Components/Providers/Alert/Alert.provider";
 import {login} from "../../../services/auth.services";
-import { useTranslation } from 'react-i18next';
+import {useTranslation} from 'react-i18next';
 
 function Copyright(props: any) {
   return (
@@ -29,34 +28,33 @@ function Copyright(props: any) {
   );
 }
 
-export default function LogIn() {
+export default function LoginPage() {
   const navigate = useNavigate();
   const theme = useTheme();
   const [error, setError] = useState({status: false, message: 'error'});
   const [loading, setLoading] = useState(false);
   const {loggedUser, setLoggedUser} = useAuth();
   const {t} = useTranslation();
-  const {setAlertEvent} = useContext(useAlertContext);
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    setError({status: false, message: error.message});
     const data = new FormData(event.currentTarget);
 
-    try {
       setLoading(true)
-      login(data.get('username') as string, data.get('password') as string)
-        .then((user) => {
-          console.log(user)
-          setLoggedUser(user)
-          navigate('/app/companies')
+      login(
+        data.get('username') as string,
+        data.get('password') as string
+      ).then((user) => {
+        setLoggedUser(user)
+        navigate('/app/companies')
+      }).catch((err) => {
+        setLoading(false)
+        setError({
+          status: true,
+          message: err.response.data["message"]
         })
-    } catch (e) {
-      setLoading(false)
-      setError({
-        status: true,
-        message: e.message
-      });
-    }
+      })
   };
 
   return (
@@ -111,7 +109,7 @@ export default function LogIn() {
               label={t('remember')}
             />
             <Collapse in={error.status} sx={{my: 1}}>
-              <Alert sx={{borderRadius: '8px'}} severity="error">{error.message}</Alert>
+              <Alert sx={{bgcolor: 'transparent', p: 0}} severity="error">{error.message}</Alert>
             </Collapse>
             <Button
               color="primary"

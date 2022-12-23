@@ -741,12 +741,10 @@ function PodsPage() {
               <DetailsSection
                 sectionTitle="id"
                 sectionTextContent={sampleData.device.id}
-                divider
               />
               <DetailsSection
                 sectionTitle="Ip"
                 sectionTextContent={sampleData.device.ip}
-                divider
               />
               <DetailsSection
                 sectionTitle="Mac"

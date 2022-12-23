@@ -1,5 +1,5 @@
 import React, {FC} from "react";
-import {Box, Divider, Grid, Link, Typography, useMediaQuery} from "@mui/material";
+import {Box, Grid, Link, Typography, useMediaQuery} from "@mui/material";
 import {useTheme} from "@mui/material/styles";
 
 type DetailsSectionProps = {
@@ -7,8 +7,8 @@ type DetailsSectionProps = {
   sectionTextContent?: string | number | null,
   contentRedirect?: string,
   adornment?: string,
+  fullWidth?: boolean,
   children?: React.ReactNode,
-  divider?: boolean,
 }
 
 const DetailsSection: FC<DetailsSectionProps> = (
@@ -17,11 +17,12 @@ const DetailsSection: FC<DetailsSectionProps> = (
     sectionTextContent,
     children,
     contentRedirect,
+    fullWidth,
     adornment,
-    divider,
   }
 ) => {
   const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   if (sectionTextContent === ""
     || sectionTextContent === null
     || sectionTextContent === undefined
@@ -31,27 +32,26 @@ const DetailsSection: FC<DetailsSectionProps> = (
     return (
       <Box>
         <Grid container alignItems="center">
-          <Grid item xs={12}>
+          <Grid item xs={fullWidth ? 2 : 4}>
             <Typography variant="caption" color="text.secondary"><em>{sectionTitle}</em></Typography>
           </Grid>
-          <Grid item xs>
-            <Typography color="text.secondary"><em>N/D</em></Typography>
+          <Grid item xs container={isMobile} justifyContent="flex-end">
+            <Typography color="text.secondary"><em>n/d</em></Typography>
           </Grid>
-          {divider && <Grid item xs={12} my={1}><Divider/></Grid>}
         </Grid>
       </Box>
     );
   else return (
     <Box>
-      <Grid container alignItems="center">
-        <Grid item xs={12}>
+      <Grid container alignItems="flex-start">
+        <Grid item xs={fullWidth ? 2 : 4}>
           <Typography variant="caption" color="text.secondary"><em>{sectionTitle}</em></Typography>
         </Grid>
         {children
-          ? <Grid item xs={12}>
-            <Typography>{children}</Typography>
+          ? <Grid item xs container={isMobile} justifyContent="flex-end">
+            <Typography variant="caption">{children}</Typography>
           </Grid>
-          : <Grid item xs={12}>
+          : <Grid item xs container={isMobile} justifyContent="flex-end">
             {Boolean(contentRedirect)
               ? <Link
                 underline="always"
@@ -67,7 +67,6 @@ const DetailsSection: FC<DetailsSectionProps> = (
             }
           </Grid>
         }
-        {divider && <Grid item xs={12} my={1}><Divider/></Grid>}
       </Grid>
     </Box>
   );

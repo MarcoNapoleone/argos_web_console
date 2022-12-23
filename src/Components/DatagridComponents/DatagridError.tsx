@@ -1,11 +1,12 @@
-import React from "react";
-import {GridOverlay} from "@mui/x-data-grid";
+import React, {useContext} from "react";
+import {GridOverlay, GridOverlayProps} from "@mui/x-data-grid";
 import {Container, Grid, IconButton, Typography} from "@mui/material";
 import CancelIcon from '@mui/icons-material/Cancel';
-import {useAlert} from "../Providers/Alert/Alert.provider";
+import {useAlertContext} from "../Providers/Alert/Alert.provider";
 
-function ErrorOverlay({ allowAdd: boolean }) {
-  const {alertEvent} = useAlert();
+function ErrorOverlay(props: GridOverlayProps & { allowAdd: boolean }) {
+
+  const {alertEvent, setAlertEvent} = useContext(useAlertContext);
   return (
     <GridOverlay>
       <Container>

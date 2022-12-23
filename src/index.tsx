@@ -13,7 +13,7 @@ const container = document.getElementById('root');
 const root = createRoot(container!); // createRoot(container!) if you use TypeScript
 root.render(
   <React.StrictMode>
-    <I18nextProvider i18n={i18n}>
+    {/*<I18nextProvider i18n={i18n}>*/}
       <Theme>
         <Suspense fallback={<Fallback/>}>
           <LocalizationProvider dateAdapter={AdapterDateFns}>
@@ -21,6 +21,6 @@ root.render(
           </LocalizationProvider>
         </Suspense>
       </Theme>
-    </I18nextProvider>
-  </React.StrictMode>
+    {/*</I18nextProvider>*/}
+</React.StrictMode>
 );

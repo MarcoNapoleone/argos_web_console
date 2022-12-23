@@ -21,12 +21,9 @@ const CompanyCard: React.FC<CompanyCardProps> = (
 
   const theme = useTheme();
 
-
   const getLabel = (company: Company) => {
    return 'ACTIVE'
   }
-
-
 
   return (
     <>

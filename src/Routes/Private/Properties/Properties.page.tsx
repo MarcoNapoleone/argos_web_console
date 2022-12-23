@@ -9,26 +9,50 @@ import {GridColumns} from "@mui/x-data-grid";
 import {DirectionsBoatFilledOutlined} from "@mui/icons-material";
 import OpenInNewOutlinedIcon from "@mui/icons-material/OpenInNewOutlined";
 import DeleteDialog, {useDeleteDialogContext} from "../../../Components/Providers/DeleteDialog/DeleteDialog";
-import {useNavigate} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import {useTheme} from "@mui/material/styles";
+import {defaultCompanies, getAllCompanies} from "../../../services/companies.services";
+import {getReasonAlert} from "../../../utils/requestAlertHandler";
+import {defaultLocalUnits, getAllLocalUnits} from "../../../services/localUnits.services";
+import {useCurrentCompany} from "../../../Components/Providers/Company/Company.provider";
 
-const LocalUnitsPage = () => {
+
+type PageParamsType = {
+  companyId: string;
+};
+
+const PropertiesPage = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const navigate = useNavigate();
+  const {companyId} = useParams<PageParamsType>();
+  const {company} = useCurrentCompany();
+
+  const [localUnits, setLocalUnits] = useState(defaultLocalUnits);
   const [loading, setLoading] = useState(true);
   const [updatedTime, setUpdatedTime] = useState("00:00");
   const {setOpenAddDialog} = useContext(useAddDialogContext);
   const {setOpenDeleteDialog} = useContext(useDeleteDialogContext);
   const {setAlertEvent} = useContext(useAlertContext);
 
-  useEffect(() => {
+  const fetchData = async () => {
+    const res = await getAllLocalUnits(companyId)
+    setLocalUnits(res);
+  }
 
+  useEffect(() => {
+    setLoading(true)
+    fetchData()
+      .then(() => setLoading(false))
+      .catch((err) => {
+        setAlertEvent(getReasonAlert(err));
+        setLoading(false)
+      })
   }, []);
 
   const RenderMoreButton = (e: any) => {
     const handleMoreClick = () => {
-      navigate(`/app/navi/${e.row.shipId}`);
+      navigate(`/app/companies/${e.row.companyId}/local-units/${e.row.id}`);
     };
     return (
       <IconButton
@@ -58,13 +82,24 @@ const LocalUnitsPage = () => {
   }
 
   const handleDoubleClick = (e: any) => {
-    navigate(`/app/navi/${e.row.shipId}`);
+    navigate(`/app/companies/${e.row.companyId}/local-units/${e.row.id}`);
   }
 
-  const rows = [];
+  const rows = localUnits.map((localUnit) => {
+    return {
+      id: localUnit.id,
+      companyId: localUnit.companyId,
+      name: localUnit.name,
+      email: localUnit.email,
+      phone: localUnit.phone,
+      address: localUnit.address,
+      postalCode: localUnit.postalCode,
+      municipality: localUnit.municipality
+    }
+  })
   const columns: GridColumns = [
     {
-      field: 'shipId',
+      field: 'id',
       headerName: 'Id',
       width: 90,
       align: 'center',
@@ -74,61 +109,42 @@ const LocalUnitsPage = () => {
     {
       field: 'name',
       headerName: 'Nome',
-      width: 150,
-      editable: false,
-    },
-    {
-      field: 'description',
-      headerName: 'Descrizione',
       minWidth: 150,
+      editable: false,
       flex: 1,
+    },
+    {
+      field: 'email',
+      headerName: 'Email',
+      minWidth: 150,
+      editable: false,
+      flex: 1,
+    },
+    {
+      field: 'address',
+      headerName: 'Address',
+      minWidth: 150,
+      editable: false,
+      flex: 1,
+    },
+    {
+      field: 'municipality',
+      headerName: 'Municipality',
+      minWidth: 150,
+      editable: false,
+      flex: 1,
+    },
+    {
+      field: 'postalCode',
+      headerName: 'Postal code',
+      minWidth: 150,
       editable: false,
     },
     {
-      field: 'imoNumber',
-      headerName: 'IMO',
-      description: 'Numero IMO',
-      width: 100,
+      field: 'phone',
+      headerName: 'Phone',
+      minWidth: 150,
       editable: false,
-    },
-    {
-      field: 'length',
-      headerName: 'Lunghezza',
-      description: 'Lunghezza',
-      width: 100,
-      editable: false,
-    },
-    {
-      field: 'width',
-      headerName: 'Larghezza',
-      description: 'Larghezza',
-      width: 100,
-      editable: false,
-    },
-    {
-      field: 'thruster',
-      headerName: 'Eliche',
-      description: 'Eliche di manovra',
-      type: 'boolean',
-      width: 100,
-      editable: false,
-      sortable: false,
-    },
-    {
-      field: 'crane',
-      headerName: 'Gru',
-      description: 'Gru di bordo',
-      width: 100,
-      editable: false,
-      sortable: false,
-    },
-    {
-      field: 'holdsType',
-      headerName: 'Stive',
-      description: 'Tipo sive',
-      width: 100,
-      editable: false,
-      sortable: false,
     },
     {
       field: 'more',
@@ -156,11 +172,17 @@ const LocalUnitsPage = () => {
 
   const handleUpdate = () => {
     setLoading(true)
-
+    fetchData()
+      .then(() => setLoading(false))
+      .catch((err) => {
+        setAlertEvent(getReasonAlert(err));
+        setLoading(false)
+      })
   }
 
   return (
-    <MainPage title="" icon={<DirectionsBoatFilledOutlined/>} onUpdate={handleUpdate} updatedTime={updatedTime}>
+    <MainPage title="Local Units" icon={<DirectionsBoatFilledOutlined/>} onUpdate={handleUpdate}
+              updatedTime={updatedTime}>
       <DatagridTable
         rows={rows}
         allowAdd
@@ -168,7 +190,8 @@ const LocalUnitsPage = () => {
         loading={loading}
         onRowDoubleClick={handleDoubleClick}
       />
-      <AddDialog title={"Aggiungi "} handleSubmit={()=>{}}>
+      <AddDialog title={"Aggiungi "} handleSubmit={() => {
+      }}>
         <Grid container direction="column" spacing={1}>
 
         </Grid>
@@ -176,3 +199,5 @@ const LocalUnitsPage = () => {
     </MainPage>
   );
 }
+
+export default PropertiesPage;

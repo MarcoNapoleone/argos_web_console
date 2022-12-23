@@ -1,10 +1,13 @@
 import React, {useEffect, useState} from 'react';
-import {Grid, useMediaQuery} from "@mui/material";
+import {Box, Divider, Grid, Typography, useMediaQuery} from "@mui/material";
 import {useTheme} from "@mui/material/styles";
 import {useAlert} from "../../../Components/Providers/Alert/Alert.provider";
 import PageFrame from "../../../Components/PageFrame/PageFrame";
 import DetailsPage from "../../../Components/DetailsPage/DetailsPage";
 import {useCurrentCompany} from "../../../Components/Providers/Company/Company.provider";
+import DetailsSection from '../../../Components/DetailsSection/DetailsSection';
+import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
+import {useTranslation} from "react-i18next";
 
 function CompanyDetailsPage() {
 
@@ -12,6 +15,7 @@ function CompanyDetailsPage() {
   const [loading, setLoading] = useState(true);
   const {company} = useCurrentCompany();
   const [updatedTime, setUpdatedTime] = useState("00:00");
+  const {t} = useTranslation();
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -31,81 +35,57 @@ function CompanyDetailsPage() {
     <PageFrame>
       <DetailsPage
         title={company.name}
+        icon={<HomeOutlinedIcon fontSize="large"/>}
         updatedTime={updatedTime}
         loading={loading}
-        onUpdate={()=>{}}
+        onUpdate={() => {
+        }}
         baseChildren={
           <Grid container direction="column" spacing={1}>
-           {/* <Grid item container spacing={1}>
+            <Grid item container spacing={1}>
               <Grid item xs={12} sm={6}>
-                <DetailsSection sectionTitle="Data inizio:" sectionTextContent={getFormattedDate(Order?.dataInizio)}/>
+                <DetailsSection sectionTitle="Vat code" sectionTextContent={company?.vatCode}/>
               </Grid>
               <Grid item xs={12} sm={6}>
-                <DetailsSection sectionTitle="Data fine"
-                                sectionTextContent={Boolean(Order?.statoCommessa) ? "In corso" : getFormattedDate(Order?.dataFine)}/>
+                <DetailsSection sectionTitle="Fiscal code" sectionTextContent={company?.fiscalCode}/>
               </Grid>
             </Grid>
-            <Grid item xs={12}>
-              <DetailsSection fullWidth sectionTitle="Fatturazione" sectionTextContent={Order?.previstaFatturazione}>
-                <YeoOrNotChip isYes={Boolean(Order?.previstaFatturazione)}/>
-              </DetailsSection>
+            <Grid item container spacing={1}>
+              <Grid item xs={12} sm={6}>
+                <DetailsSection sectionTitle="Municipality" sectionTextContent={company?.email}/>
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <DetailsSection sectionTitle="Address" sectionTextContent={company?.address}/>
+              </Grid>
             </Grid>
-            <Grid item xs={12}>
-              <DetailsSection fullWidth sectionTitle="Descrizione:" sectionTextContent={Order?.descrizioneCommessa}/>
+            <Grid item container spacing={1}>
+              <Grid item xs={12} sm={6}>
+                <DetailsSection sectionTitle="Province" sectionTextContent={company?.province}/>
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <DetailsSection sectionTitle="Postal code" sectionTextContent={company?.postalCode}/>
+              </Grid>
             </Grid>
+
             <Box py={2}>
-              <Divider textAlign="left"><Typography variant="body2"
-                                                    color="text.secondary">Tipologia</Typography></Divider>
+              <Divider textAlign="left">
+                <Typography variant="body2" color="text.secondary">Contacts</Typography>
+              </Divider>
             </Box>
             <Grid item container spacing={1}>
               <Grid item xs={12} sm={6}>
-                <DetailsSection sectionTitle="Attività:"
-                                sectionTextContent={Order?.tipoAttivitaCommessa?.descrizioneTipoAttivitaCommessa}>
-                  <Chip variant="filled" size="small"
-                        icon={getOrderIcon(Order?.tipoAttivitaCommessa?.idTipoAttivitaCommessa)}
-                        label={Order?.tipoAttivitaCommessa?.descrizioneTipoAttivitaCommessa}/>
-                </DetailsSection>
+                <DetailsSection sectionTitle="Email" sectionTextContent={company?.email}
+                                contentRedirect={"mailto:" + company?.email}/>
               </Grid>
-              {Order?.tipoAttivitaCommessa?.idTipoAttivitaCommessa === 1 &&
-                  <Grid item xs={12} sm={6}>
-                    <DetailsSection sectionTitle="Nave:" sectionTextContent={Order?.nave?.nome}>
-                      <Chip variant="filled" size="small"
-                            label={<Link color="inherit"
-                                         href={`/app/navi/${Order?.nave?.idNave}`}>{Order?.nave?.nome}</Link>}/>
-                    </DetailsSection>
-                  </Grid>
-              }
-            </Grid>
-            <Box py={2}>
-              <Divider textAlign="left"><Typography variant="body2"
-                                                    color="text.secondary">Cliente</Typography></Divider>
-            </Box>
-            <Grid item container spacing={1}>
               <Grid item xs={12} sm={6}>
-                <DetailsSection sectionTitle="Cliente:" sectionTextContent={Order?.cliente?.ragioneSociale}>
-                  <Chip
-                    variant="filled"
-                    size="small"
-                    label={
-                      <Link color="inherit" href={`/app/clienti/${Order?.cliente?.idCliente}`}>
-                        {Order?.cliente?.ragioneSociale}
-                      </Link>
-                    }
-                  />
-                </DetailsSection>
+                <DetailsSection sectionTitle="Phone" sectionTextContent={company?.phone}
+                                contentRedirect={"tel:" + company?.phone}/>
               </Grid>
             </Grid>
-            <Box py={2}>
-              <Divider textAlign="left"><Typography variant="body2" color="text.secondary">Prodotti</Typography></Divider>
-            </Box>
-            <Grid item xs={12} sm={6}>
-              <ListDetailsSection sectionTitle="Prodotti:" sectionArray={Order?.commessaProdotti?.map((el) => {
-                return el?.prodotto?.descrizioneProdotto
-              })}/>
-            </Grid>*/}
           </Grid>
         }
-        ></DetailsPage>
+      >
+      </DetailsPage>
     </PageFrame>
   );
 }

@@ -1,4 +1,4 @@
-import React, {useRef} from 'react';
+import React, {useRef, useState} from 'react';
 import IconButton from '@mui/material/IconButton';
 import {useTheme} from '@mui/material/styles';
 import SearchIcon from '@mui/icons-material/SearchRounded';
@@ -14,7 +14,7 @@ import {
   Box,
   Button,
   ButtonBase,
-  Card,
+  Card, CircularProgress,
   Container,
   Divider,
   Grid,
@@ -22,7 +22,8 @@ import {
   InputBase,
   ListItemIcon,
   ListItemText,
-  Menu,
+  Menu, Skeleton,
+  Stack,
   Tooltip,
   Typography,
   useMediaQuery,
@@ -34,8 +35,13 @@ import {useNavigate} from "react-router-dom";
 import {makeStyles} from "@mui/styles";
 import {useAuth} from "../Providers/Authorization/Authorization.provider";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import {deleteCookie} from "../../services/connectors/cookies";
+import {deleteCookie, setCookie} from "../../services/connectors/cookies";
 import {useCurrentCompany} from "../Providers/Company/Company.provider";
+import {defaultCompanies, getAllCompanies} from "../../services/companies.services";
+import {getReasonAlert} from "../../utils/requestAlertHandler";
+import {useAlert} from "../Providers/Alert/Alert.provider";
+import CompanyCard from "../../Routes/Private/Companies/CompanyCard";
+import {Id} from "../../services/entities";
 
 const useStyles = makeStyles((theme) => ({
   inputRoot: {
@@ -97,12 +103,15 @@ const TopBar: React.FC<TopBarProps> = ({onMenuClick, isOpen, title}) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const isLargeScreen = useMediaQuery(theme.breakpoints.up("xl"))
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const {company, setCompany} = useCurrentCompany();
+  const [companies, setCompanies] = useState(defaultCompanies);
   const {loggedUser, setLoggedUser} = useAuth();
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
   const [anchorElCompany, setAnchorElCompany] = React.useState<null | HTMLElement>(null);
   const openUserMenu = Boolean(anchorElUser);
+  const {setAlertEvent} = useAlert();
   const openCompanyMenu = Boolean(anchorElCompany);
 
   const logout = async () => {
@@ -111,12 +120,33 @@ const TopBar: React.FC<TopBarProps> = ({onMenuClick, isOpen, title}) => {
     setLoggedUser(null)
   }
 
+  const handleClick = async (id: Id) => {
+    setLoading(true)
+    const company = companies.find(c => c.id === id);
+    setCompany(company);
+    await setCookie('company', JSON.stringify(company), 1).then(() =>
+      navigate(`/app/companies/${id}`)
+    )
+  }
+
   const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElUser(event.currentTarget);
   };
 
   const handleOpenCompanyMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElCompany(event.currentTarget);
+    setLoading(true)
+    const fetchData = async () => {
+      const res = await getAllCompanies()
+      setCompanies(res);
+    }
+
+    fetchData()
+      .then(() => setLoading(false))
+      .catch((err) => {
+        setAlertEvent(getReasonAlert(err));
+        setLoading(false)
+      })
   };
 
   const handleCloseCompanyMenu = () => {
@@ -126,6 +156,7 @@ const TopBar: React.FC<TopBarProps> = ({onMenuClick, isOpen, title}) => {
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
   };
+
   const trigger = useScrollTrigger(
     {
       disableHysteresis: true,
@@ -185,10 +216,10 @@ const TopBar: React.FC<TopBarProps> = ({onMenuClick, isOpen, title}) => {
               <Typography variant="h6" sx={{fontWeight: 600}}>
                 <Box>
                   {!isMobile && <Button
-                    color="inherit"
-                    endIcon={<ExpandMoreIcon/>}
-                    onClick={handleOpenCompanyMenu}
-                    sx={{textTransform: 'none'}}
+                      color="inherit"
+                      endIcon={<ExpandMoreIcon/>}
+                      onClick={handleOpenCompanyMenu}
+                      sx={{textTransform: 'none'}}
                   >
                     <Typography>
                       Alphabet Inc.
@@ -215,11 +246,11 @@ const TopBar: React.FC<TopBarProps> = ({onMenuClick, isOpen, title}) => {
             </Grid>
             <Grid item>
               {isMobile &&
-                <Tooltip TransitionComponent={Zoom} title="Aziende" arrow>
-                  <IconButton onClick={handleOpenCompanyMenu}>
-                    <MoreVertOutlinedIcon/>
-                  </IconButton>
-                </Tooltip>
+                  <Tooltip TransitionComponent={Zoom} title="Aziende" arrow>
+                    <IconButton onClick={handleOpenCompanyMenu}>
+                      <MoreVertOutlinedIcon/>
+                    </IconButton>
+                  </Tooltip>
               }
             </Grid>
             <Grid item>
@@ -253,7 +284,7 @@ const TopBar: React.FC<TopBarProps> = ({onMenuClick, isOpen, title}) => {
           <ListItemIcon>
             <NotificationsOutlinedIcon/>
           </ListItemIcon>
-          <ListItemText>Notifiche</ListItemText>
+          <ListItemText>Notifications</ListItemText>
         </MenuItem>
         <Divider/>
         <MenuItem key={3} onClick={logout}>
@@ -272,37 +303,33 @@ const TopBar: React.FC<TopBarProps> = ({onMenuClick, isOpen, title}) => {
         anchorOrigin={{vertical: 'top', horizontal: 'left',}}
         transformOrigin={{vertical: 'top', horizontal: 'left',}}
       >
-        <MenuItem selected>
-          <ListItemIcon/>
-          <Typography>
-            Alphabet Inc.
-          </Typography>
-        </MenuItem>
-        <MenuItem>
-          <ListItemIcon/>
-          JohnDoe & Co.
-        </MenuItem>
-        <MenuItem>
-          <ListItemIcon/>
-          MyCompany S.R.L.
-        </MenuItem>
-        <Divider/>
-        <MenuItem>
-          <ListItemIcon>
-            <MoreVertOutlinedIcon/>
-          </ListItemIcon>
-          <ListItemText>
-            Tutte le aziende
-          </ListItemText>
-        </MenuItem>
-        <MenuItem>
-          <ListItemIcon>
-            <AddIcon/>
-          </ListItemIcon>
-          <ListItemText>
-            Aggiungi Azienda
-          </ListItemText>
-        </MenuItem>
+        {
+          loading
+            ? <Stack sx={{width: '194px', height: '164px'}} justifyContent="center" alignItems="center" px={2}>
+              <CircularProgress size={32}/>
+            </Stack>
+            : <>
+              {companies.map((c, index) => (
+                <MenuItem
+                  key={index}
+                  selected={c.id === company.id}
+                  onClick={()=>{handleClick(c.id)}}
+                >
+                  <ListItemIcon/>
+                  <ListItemText primary={c.name}/>
+                </MenuItem>
+              ))}
+              <Divider/>
+              <MenuItem onClick={() => navigate('/app/companies')}>
+                <ListItemIcon>
+                  <MoreVertOutlinedIcon/>
+                </ListItemIcon>
+                <ListItemText>
+                  All Companies
+                </ListItemText>
+              </MenuItem>
+            </>
+        }
       </Menu>
     </>
   );
