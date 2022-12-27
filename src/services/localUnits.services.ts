@@ -37,3 +37,20 @@ export async function getAllLocalUnits(companyId: Id): Promise<LocalUnit[]> {
     })
   return data;
 }
+
+export async function getLocalUnit(localUnitId: Id): Promise<LocalUnit> {
+    let data = {};
+    await servicePath
+      .get(`/local-units/${localUnitId}`, {
+        headers: {
+          Authorization: `Bearer ${getCookie('token')}`
+        }
+      })
+      .then(res => {
+        if (res.status !== 200) {
+          return new Error(res.data["message"])
+        }
+        data = res.data
+      })
+    return data;
+}

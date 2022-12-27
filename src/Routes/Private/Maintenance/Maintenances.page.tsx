@@ -15,6 +15,7 @@ import {defaultCompanies, getAllCompanies} from "../../../services/companies.ser
 import {getReasonAlert} from "../../../utils/requestAlertHandler";
 import {defaultLocalUnits, getAllLocalUnits} from "../../../services/localUnits.services";
 import {useCurrentCompany} from "../../../Components/Providers/Company/Company.provider";
+import EngineeringOutlinedIcon from "@mui/icons-material/EngineeringOutlined";
 
 
 type PageParamsType = {
@@ -181,16 +182,10 @@ const MaintenancesPage = () => {
   }
 
   return (
-    <MainPage title="Local Units" icon={<DirectionsBoatFilledOutlined/>} onUpdate={handleUpdate}
+    <MainPage title="Maintenances" icon={<EngineeringOutlinedIcon fontSize="large"/>} onUpdate={handleUpdate}
               updatedTime={updatedTime}>
-      <DatagridTable
-        rows={rows}
-        allowAdd
-        columns={columns}
-        loading={loading}
-        onRowDoubleClick={handleDoubleClick}
-      />
-      <AddDialog title={"Aggiungi "} handleSubmit={() => {
+      mainten
+      <AddDialog title={"Add "} handleSubmit={() => {
       }}>
         <Grid container direction="column" spacing={1}>
 

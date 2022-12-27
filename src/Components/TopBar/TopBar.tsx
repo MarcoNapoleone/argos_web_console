@@ -170,7 +170,7 @@ const TopBar: React.FC<TopBarProps> = ({onMenuClick, isOpen, title}) => {
         container
         justifyContent="space-between"
         alignItems="center"
-        py={1} px={2}
+        py={2} px={2}
         sx={{
           position: 'fixed',
           top: 0,
@@ -207,10 +207,10 @@ const TopBar: React.FC<TopBarProps> = ({onMenuClick, isOpen, title}) => {
               isMobile
                 ? theme.spacing(0)
                 : isLargeScreen
-                  ? theme.spacing(40)
+                  ? theme.spacing(34)
                   : isOpen
-                    ? theme.spacing(40)
-                    : theme.spacing(9)
+                    ? theme.spacing(30)
+                    : theme.spacing(6)
             }>
             <Grow in style={{transformOrigin: '50% 0 0', transitionDelay: '50ms'}}>
               <Typography variant="h6" sx={{fontWeight: 600}}>

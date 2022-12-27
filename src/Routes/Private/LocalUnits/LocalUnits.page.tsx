@@ -6,7 +6,7 @@ import AddDialog, {useAddDialogContext} from "../../../Components/Providers/AddD
 import DeleteIcon from "@mui/icons-material/DeleteOutlined";
 import MainPage from "../../../Components/MainPage/MainPage";
 import {GridColumns} from "@mui/x-data-grid";
-import {DirectionsBoatFilledOutlined} from "@mui/icons-material";
+import {BusinessOutlined, DirectionsBoatFilledOutlined} from "@mui/icons-material";
 import OpenInNewOutlinedIcon from "@mui/icons-material/OpenInNewOutlined";
 import DeleteDialog, {useDeleteDialogContext} from "../../../Components/Providers/DeleteDialog/DeleteDialog";
 import {useNavigate, useParams} from "react-router-dom";
@@ -180,8 +180,12 @@ const LocalUnitsPage = () => {
   }
 
   return (
-    <MainPage title="Local Units" icon={<DirectionsBoatFilledOutlined/>} onUpdate={handleUpdate}
-              updatedTime={updatedTime}>
+    <MainPage
+      title="Local Units"
+      icon={<BusinessOutlined fontSize="large"/>}
+      onUpdate={handleUpdate}
+      updatedTime={updatedTime}
+    >
       <DatagridTable
         rows={rows}
         allowAdd
@@ -189,7 +193,7 @@ const LocalUnitsPage = () => {
         loading={loading}
         onRowDoubleClick={handleDoubleClick}
       />
-      <AddDialog title={"Aggiungi "} handleSubmit={() => {
+      <AddDialog title={"Add "} handleSubmit={() => {
       }}>
         <Grid container direction="column" spacing={1}>
 

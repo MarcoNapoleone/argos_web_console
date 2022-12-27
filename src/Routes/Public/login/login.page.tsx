@@ -34,7 +34,6 @@ export default function LoginPage() {
   const [error, setError] = useState({status: false, message: 'error'});
   const [loading, setLoading] = useState(false);
   const {loggedUser, setLoggedUser} = useAuth();
-  const {t} = useTranslation();
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -81,7 +80,7 @@ export default function LoginPage() {
             }
           </Avatar>
           <Typography component="h1" variant="h5">
-            {t('title')}
+            Log in
           </Typography>
           <Box component="form" onSubmit={handleSubmit} noValidate sx={{mt: 1}}>
             <TextField
@@ -89,7 +88,7 @@ export default function LoginPage() {
               required
               fullWidth
               id="username"
-              label={t('username')}
+              label="Username"
               name="username"
               autoComplete="username"
               autoFocus
@@ -99,14 +98,14 @@ export default function LoginPage() {
               required
               fullWidth
               name="password"
-              label={t('password')}
+              label="Password"
               type="password"
               id="password"
               autoComplete="password"
             />
             <FormControlLabel
               control={<Checkbox value="remember" color="primary"/>}
-              label={t('remember')}
+              label="Remember me"
             />
             <Collapse in={error.status} sx={{my: 1}}>
               <Alert sx={{bgcolor: 'transparent', p: 0}} severity="error">{error.message}</Alert>

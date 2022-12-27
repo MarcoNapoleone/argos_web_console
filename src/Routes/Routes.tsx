@@ -9,7 +9,7 @@ import CompaniesPage from "./Private/Companies/Companies.page";
 import CompanyDetailsPage from "./Private/Companies/CompanyDetails.page";
 import {CompanyProvider} from "../Components/Providers/Company/Company.provider";
 import LocalUnitsPage from "./Private/LocalUnits/LocalUnits.page";
-import LocalUnitDetailsPage from "./Private/LocalUnits/LocalUnitDetailsPage";
+import LocalUnitDetailsPage from "./Private/LocalUnits/LocalUnitDetails.page";
 import DepartmentsPage from "./Private/Departments/Departments.page";
 import DepartmentDetailsPage from "./Private/Departments/DepartmentDetails.page";
 import HRPage from "./Private/HR/HR.page";

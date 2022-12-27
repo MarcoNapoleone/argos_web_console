@@ -6,15 +6,14 @@ import AddDialog, {useAddDialogContext} from "../../../Components/Providers/AddD
 import DeleteIcon from "@mui/icons-material/DeleteOutlined";
 import MainPage from "../../../Components/MainPage/MainPage";
 import {GridColumns} from "@mui/x-data-grid";
-import {DirectionsBoatFilledOutlined} from "@mui/icons-material";
 import OpenInNewOutlinedIcon from "@mui/icons-material/OpenInNewOutlined";
 import DeleteDialog, {useDeleteDialogContext} from "../../../Components/Providers/DeleteDialog/DeleteDialog";
 import {useNavigate, useParams} from "react-router-dom";
 import {useTheme} from "@mui/material/styles";
-import {defaultCompanies, getAllCompanies} from "../../../services/companies.services";
 import {getReasonAlert} from "../../../utils/requestAlertHandler";
 import {defaultLocalUnits, getAllLocalUnits} from "../../../services/localUnits.services";
 import {useCurrentCompany} from "../../../Components/Providers/Company/Company.provider";
+import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
 
 
 type PageParamsType = {
@@ -181,16 +180,10 @@ const DocumentsPage = () => {
   }
 
   return (
-    <MainPage title="Local Units" icon={<DirectionsBoatFilledOutlined/>} onUpdate={handleUpdate}
+    <MainPage title="Documents" icon={<DescriptionOutlinedIcon fontSize="large"/>} onUpdate={handleUpdate}
               updatedTime={updatedTime}>
-      <DatagridTable
-        rows={rows}
-        allowAdd
-        columns={columns}
-        loading={loading}
-        onRowDoubleClick={handleDoubleClick}
-      />
-      <AddDialog title={"Aggiungi "} handleSubmit={() => {
+      docs
+      <AddDialog title={"Add "} handleSubmit={() => {
       }}>
         <Grid container direction="column" spacing={1}>
 

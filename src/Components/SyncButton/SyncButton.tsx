@@ -18,7 +18,7 @@ const SyncButton = (
         },
       }}
       size="small"
-      label={"Aggiornato alle " + props.updatedTime}
+      label={"Updated at " + props.updatedTime}
       onClick={props.onClick}
     />
   );

@@ -15,6 +15,7 @@ import {defaultCompanies, getAllCompanies} from "../../../services/companies.ser
 import {getReasonAlert} from "../../../utils/requestAlertHandler";
 import {defaultLocalUnits, getAllLocalUnits} from "../../../services/localUnits.services";
 import {useCurrentCompany} from "../../../Components/Providers/Company/Company.provider";
+import EventOutlinedIcon from "@mui/icons-material/EventOutlined";
 
 
 type PageParamsType = {
@@ -181,16 +182,10 @@ const DeadlinePage = () => {
   }
 
   return (
-    <MainPage title="Local Units" icon={<DirectionsBoatFilledOutlined/>} onUpdate={handleUpdate}
+    <MainPage title="Deadlines" icon={<EventOutlinedIcon fontSize="large"/>} onUpdate={handleUpdate}
               updatedTime={updatedTime}>
-      <DatagridTable
-        rows={rows}
-        allowAdd
-        columns={columns}
-        loading={loading}
-        onRowDoubleClick={handleDoubleClick}
-      />
-      <AddDialog title={"Aggiungi "} handleSubmit={() => {
+      deadlines
+      <AddDialog title={"Add "} handleSubmit={() => {
       }}>
         <Grid container direction="column" spacing={1}>
 

@@ -15,6 +15,7 @@ import {defaultCompanies, getAllCompanies} from "../../../services/companies.ser
 import {getReasonAlert} from "../../../utils/requestAlertHandler";
 import {defaultLocalUnits, getAllLocalUnits} from "../../../services/localUnits.services";
 import {useCurrentCompany} from "../../../Components/Providers/Company/Company.provider";
+import HomeWorkOutlinedIcon from "@mui/icons-material/HomeWorkOutlined";
 
 
 type PageParamsType = {
@@ -181,16 +182,10 @@ const PropertiesPage = () => {
   }
 
   return (
-    <MainPage title="Local Units" icon={<DirectionsBoatFilledOutlined/>} onUpdate={handleUpdate}
+    <MainPage title="Properties" icon={<HomeWorkOutlinedIcon fontSize="large"/>} onUpdate={handleUpdate}
               updatedTime={updatedTime}>
-      <DatagridTable
-        rows={rows}
-        allowAdd
-        columns={columns}
-        loading={loading}
-        onRowDoubleClick={handleDoubleClick}
-      />
-      <AddDialog title={"Aggiungi "} handleSubmit={() => {
+      props
+      <AddDialog title={"Add "} handleSubmit={() => {
       }}>
         <Grid container direction="column" spacing={1}>
 

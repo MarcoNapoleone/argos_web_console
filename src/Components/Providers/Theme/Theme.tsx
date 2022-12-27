@@ -46,195 +46,205 @@ const Theme: React.FC<ThemeProps> = ({children}) => {
         paper: backgroundPaper,
       }
     },
-  }, [itIT]);
+  }, itIT);
   theme = createTheme(theme, {
-    components: {
-      MuiDataGrid: {
-        styleOverrides: {
-          root: {
-            WebkitFontSmoothing: 'auto',
-            letterSpacing: 'normal',
-            border: 0,
-            backgroundColor: theme.palette.background.paper,
-            '& .MuiDataGrid-columnHeaderTitle': {
-              fontWeight: 900,
-            },
-            '& .MuiDataGrid-columnHeaderTitleContainer': {
-              padding: 0,
-            },
-            '& .MuiDataGrid-columnsContainer': {
-              borderTop: `1px solid ${
-                theme.palette.mode === 'light' ? '#f0f0f0' : '#ffffff1f'
-              }`,
-            },
-            '& .MuiDataGrid-row--editing': {
-              boxShadow: 'none',
-            },
-            '& .MuiDataGrid-iconSeparator': {},
-            '& .MuiDataGrid-columnHeader, .MuiDataGrid-cell': {},
-            '& .MuiDataGrid-columnsContainer, .MuiDataGrid-cell': {
-              borderBottom: `1px solid ${
-                theme.palette.mode === 'light' ? '#f0f0f0' : '#ffffff1f'
-              }`,
-            },
-          }
-        }
-      },
-      MuiChip: {
-        styleOverrides: {
-          root: {
-            borderRadius: '8px',
-          }
-        }
-      },
-      MuiOutlinedInput: {
-        styleOverrides: {
-          root: {
-            borderRadius: '8px',
-          }
-        }
-      },
-      MuiStaticDatePicker: {
-        styleOverrides: {
-          root: {
-            borderRadius: '16px',
-          }
-        }
-      },
-      MuiAccordion: {
-        styleOverrides: {
-          root: {
-            border: `1px solid ${theme.palette.divider}`,
-            '&:not(:last-child)': {
-              borderBottom: 0,
-            },
-            '&:before': {
-              display: 'none',
-            },
-          }
-        }
-      },
-      MuiSwitch: {
-        styleOverrides: {
-          root: {
-            padding: 8,
-            '& .MuiSwitch-track': {
-              borderRadius: 22 / 2,
-              '&:before, &:after': {
-                content: '""',
-                position: 'absolute',
-                top: '50%',
-                transform: 'translateY(-50%)',
-                width: 16,
-                height: 16,
+      components: {
+        MuiDataGrid: {
+          styleOverrides: {
+            root: {
+              WebkitFontSmoothing: 'auto',
+              letterSpacing: 'normal',
+              border: 0,
+              backgroundColor: theme.palette.background.paper,
+              '& .MuiDataGrid-columnHeaderTitle': {
+                fontWeight: 900,
               },
-              '&:before': {
-                backgroundImage: `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" height="16" width="16" viewBox="0 0 24 24">{<path fill="${encodeURIComponent(
-                  theme.palette.getContrastText(theme.palette.primary.main),
-                )}" d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z"/></svg>')`,
-                left: 12,
+              '& .MuiDataGrid-columnHeaderTitleContainer': {
+                padding: 0,
               },
-            },
-            '& .MuiSwitch-thumb': {
-              boxShadow: 'none',
-              height: 16,
-              width: 16,
-              margin: 2,
-            },
-          },
-        },
-      },
-      MuiListItemButton: {
-        styleOverrides: {
-          root: {
-            borderRadius: '50px',
-          },
-        },
-      },
-      MuiMenuItem: {
-        styleOverrides: {
-          root: {
-            borderRadius: '8px',
-            marginLeft: '8px',
-            marginBottom: '4px',
-            marginRight: '8px',
-          },
-        },
-      },
-      MuiButton: {
-        styleOverrides: {
-          root: {
-            borderRadius: '32px',
-          }
-        }
-      },
-      MuiButtonBase: {
-        styleOverrides: {
-          root: {
-            borderRadius: '8px',
-          }
-        }
-      },
-      MuiToggleButton: {
-        styleOverrides: {
-          root: {
-            color: theme.palette.grey["500"],
-            borderRadius: '32px',
-            border: 'none',
-            "&.MuiToggleButtonGroup-grouped": {
-              borderRadius: "32px !important",
-              mx: 1,
-              border: "none"
+              '& .MuiDataGrid-columnsContainer': {
+                borderTop: `1px solid ${
+                  theme.palette.mode === 'light' ? '#f0f0f0' : '#ffffff1f'
+                }`,
+              },
+              '& .MuiDataGrid-row--editing': {
+                boxShadow: 'none',
+              },
+              '& .MuiDataGrid-iconSeparator': {},
+              '& .MuiDataGrid-columnHeader, .MuiDataGrid-cell': {},
+              '& .MuiDataGrid-columnsContainer, .MuiDataGrid-cell': {
+                borderBottom: `1px solid ${
+                  theme.palette.mode === 'light' ? '#f0f0f0' : '#ffffff1f'
+                }`,
+              },
             }
           }
-        }
-      },
-      MuiCard: {
-        styleOverrides: {
-          root: {
-            border: 0,
+        },
+        MuiChip: {
+          styleOverrides: {
+            root: {
+              borderRadius: '8px',
+            }
           }
-        }
-      },
-      MuiFab: {
-        styleOverrides: {
-          root: {
-            borderRadius: '16px',
-            backgroundColor: mode === 'light'
-              ? lighten(theme.palette.primary.main, 0.75)
-              : darken(theme.palette.primary.main, 0.4),
-            "&:hover": {
+        },
+        MuiOutlinedInput: {
+          styleOverrides: {
+            root: {
+              borderRadius: '8px',
+            }
+          }
+        },
+        MuiStaticDatePicker: {
+          styleOverrides: {
+            root: {
+              borderRadius: '16px',
+            }
+          }
+        },
+        MuiAccordion: {
+          styleOverrides: {
+            root: {
+              border: `1px solid ${theme.palette.divider}`,
+              '&:not(:last-child)': {
+                borderBottom: 0,
+              },
+              '&:before': {
+                display: 'none',
+              },
+            }
+          }
+        },
+        MuiSwitch: {
+          styleOverrides: {
+            root: {
+              padding: 8,
+              '& .MuiSwitch-track': {
+                borderRadius: 22 / 2,
+                '&:before, &:after': {
+                  content: '""',
+                  position: 'absolute',
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  width: 16,
+                  height: 16,
+                },
+                '&:before': {
+                  backgroundImage: `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" height="16" width="16" viewBox="0 0 24 24">{<path fill="${encodeURIComponent(
+                    theme.palette.getContrastText(theme.palette.primary.main),
+                  )}" d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z"/></svg>')`,
+                  left: 12,
+                },
+              },
+              '& .MuiSwitch-thumb': {
+                boxShadow: 'none',
+                height: 16,
+                width: 16,
+                margin: 2,
+              },
+            },
+          },
+        },
+        MuiListItemButton: {
+          styleOverrides: {
+            root: {
+              borderRadius: '50px',
+            },
+          },
+        },
+        MuiMenuItem: {
+          styleOverrides: {
+            root: {
+              borderRadius: '8px',
+              marginLeft: '8px',
+              marginBottom: '4px',
+              marginRight: '8px',
+            },
+          },
+        },
+        MuiButton: {
+          styleOverrides: {
+            root: {
+              borderRadius: '32px',
+            }
+          }
+        },
+        MuiButtonBase: {
+          styleOverrides: {
+            root: {
+              borderRadius: '8px',
+            }
+          }
+        },
+        MuiToggleButton: {
+          styleOverrides: {
+            root: {
+              color: theme.palette.grey["500"],
+              borderRadius: '32px',
+              border: 'none',
+              "&.MuiToggleButtonGroup-grouped": {
+                borderRadius: "32px !important",
+                mx: 1,
+                border: "none"
+              }
+            }
+          }
+        },
+        MuiCard: {
+          styleOverrides: {
+            root: {
+              //border: 0,
+            }
+          }
+        },
+        MuiAvatar: {
+          styleOverrides: {
+            root: {
+              color: theme.palette.primary.main,
               backgroundColor: mode === 'light'
                 ? lighten(theme.palette.primary.main, 0.75)
-                : darken(theme.palette.primary.main, 0.4)
-            },
-            "&:active": {
+                : darken(theme.palette.primary.main, 0.6),
+            }
+          }
+        },
+        MuiFab: {
+          styleOverrides: {
+            root: {
+              borderRadius: '16px',
+              backgroundColor: mode === 'light'
+                ? lighten(theme.palette.primary.main, 0.75)
+                : darken(theme.palette.primary.main, 0.4),
+              "&:hover": {
+                backgroundColor: mode === 'light'
+                  ? lighten(theme.palette.primary.main, 0.75)
+                  : darken(theme.palette.primary.main, 0.4)
+              },
+              "&:active": {
+                boxShadow: '0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24)',
+              },
+              color: mode === 'light' ? theme.palette.primary.main : 'white',
               boxShadow: '0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24)',
             },
-            color: mode === 'light' ? theme.palette.primary.main : 'white',
-            boxShadow: '0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24)',
-          },
-        }
-      },
-      MuiDrawer: {
-        styleOverrides: {
-          paper: {
-            border: 'none',
+          }
+        },
+        MuiDrawer: {
+          styleOverrides: {
+            paper: {
+              //border: 'none',
+            }
+          }
+        },
+        MuiTextField: {
+          defaultProps: {
+            variant: 'standard'
+          }
+        },
+        MuiFormControl: {
+          defaultProps: {
+            variant: 'standard'
           }
         }
-      },
-      MuiTextField: {
-        defaultProps: {
-          variant: 'standard'
-        }
-      },
-      MuiFormControl: {
-        defaultProps: {
-          variant: 'standard'
-        }
       }
-    }
-  });
+    });
 
   useEffect(() => {
     const preferredMode = localStorage.getItem("mode")

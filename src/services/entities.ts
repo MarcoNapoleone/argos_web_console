@@ -9,34 +9,3 @@ export type Id = number | string;
  * @format uuid
  */
 export type UUID = string;
-
-
-
-export class Module {
-    id?: Id;
-
-    uuid?: UUID;
-
-    name?: string;
-
-    createdAt?: Date;
-
-    deletedAt?: Date;
-
-    version?: number;
-
-    updatedAt?: Date;
-}
-
-export class LocalUnit {
-    id?: Id;
-    uuid?: UUID;
-    name?: string;
-    companyId?: Id;
-    createdAt?: Date;
-    deletedAt?: Date;
-    version?: number;
-    updatedAt?: Date;
-}
-
-

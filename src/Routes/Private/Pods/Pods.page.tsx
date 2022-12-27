@@ -44,6 +44,8 @@ import DateRangeOutlinedIcon from '@mui/icons-material/DateRangeOutlined';
 import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined';
 import TextField from "@mui/material/TextField";
 import {MonthPicker, StaticDatePicker, StaticTimePicker} from '@mui/x-date-pickers';
+import ConstructionOutlinedIcon from "@mui/icons-material/ConstructionOutlined";
+import MainPage from '../../../Components/MainPage/MainPage';
 
 const sampleData = {
   "device": {
@@ -245,29 +247,8 @@ function PodsPage() {
   }
 
   return (
-    <Container maxWidth="xl" disableGutters={isMobile}>
-      <Grid container spacing={2}>
-        <Grid item xs={12}>
-          <PageTitle
-            title={sampleData?.device?.name}
-            icon={
-              <SensorsIcon
-                fontSize="large"/>
-            }
-            loading={loading}
-          >
-            <Box pt={1}>
-              <Grow in key={1}>
-                <IconButton
-                  color="primary"
-                  disabled={loading}
-                  children={<InfoOutlinedIcon/>}
-                  onClick={() => setOpenInfoDialog(true)}
-                />
-              </Grow>
-            </Box>
-          </PageTitle>
-        </Grid>
+    <MainPage title="Pods" icon={<SensorsIcon fontSize="large"/>} onUpdate={handleUpdate} updatedTime={updatedTime}>
+    <Grid container spacing={2}>
         <Grid item xs={12}>
           <Card variant="outlined">
             <Stack spacing={1} p={2}>
@@ -764,7 +745,7 @@ function PodsPage() {
           </DialogActions>
         </Box>
       </Dialog>
-    </Container>
+    </MainPage>
   );
 }
 
