@@ -17,8 +17,7 @@ export const DrawerElements = [
   {index: 4, path: "properties", icon: <HomeWorkOutlinedIcon color="inherit"/>, label: 'Properties'},
   {index: 5, path: "vehicles", icon: <LocalShippingOutlinedIcon color="inherit"/>, label: 'Vehicles'},
   {index: 6, path: "equipments", icon: <ConstructionOutlinedIcon color="inherit"/>, label: 'Equipments'},
-  {index: 7, path: "maintenance", icon: <EngineeringOutlinedIcon color="inherit"/>, label: 'Maintenance'},
-  {index: 8, path: "deadlines", icon: <EventOutlinedIcon color="inherit"/>, label: 'Deadlines'},
-  {index: 9, path: "documents", icon: <DescriptionOutlinedIcon color="inherit"/>, label: 'Documents'},
-  {index: 10, path: "pods", icon: <SensorsIcon color="inherit"/>, label: 'Pods'},
+  {index: 7, path: "timetables", icon: <EventOutlinedIcon color="inherit"/>, label: 'Timetables'},
+  {index: 8, path: "documents", icon: <DescriptionOutlinedIcon color="inherit"/>, label: 'Documents'},
+  {index: 9, path: "pods", icon: <SensorsIcon color="inherit"/>, label: 'Pods'},
 ];

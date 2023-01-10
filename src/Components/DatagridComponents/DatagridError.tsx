@@ -20,7 +20,7 @@ function ErrorOverlay(props: GridOverlayProps & { allowAdd: boolean }) {
           </Grid>
           <Grid item>
             <Typography align="center" variant="h4">
-              Errore
+              Error
             </Typography>
           </Grid>
           <Grid item>

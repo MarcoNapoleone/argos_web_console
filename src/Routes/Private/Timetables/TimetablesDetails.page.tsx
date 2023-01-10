@@ -13,7 +13,7 @@ import {useNavigate} from "react-router-dom";
 import {useTheme} from "@mui/material/styles";
 import DetailsPage from "../../../Components/DetailsPage/DetailsPage";
 
-const MaintenanceDetailsPage = () => {
+const TimetablesDetailsPage = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const navigate = useNavigate();
@@ -78,4 +78,4 @@ const MaintenanceDetailsPage = () => {
   );
 }
 
-export default MaintenanceDetailsPage;
+export default TimetablesDetailsPage;

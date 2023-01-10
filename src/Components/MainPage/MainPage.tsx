@@ -5,6 +5,7 @@ import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import PageTitle from "../PageTitle/PageTitle";
 import SyncButton from "../SyncButton/SyncButton";
 import {useTheme} from "@mui/material/styles";
+import {AddDialogProvider} from "../Providers/AddDialog/AddDialog";
 
 interface MainPageProps {
   icon?: React.ReactNode,
@@ -48,29 +49,29 @@ const MainPage: FC<MainPageProps> = (
   ];
 
   return (
-    <Container maxWidth="xl" disableGutters={isMobile}>
-      <Grid container justifyContent="center" direction="column" spacing={1} pt={10}>
-        <Grid item>
-          <Breadcrumbs
-            separator={<NavigateNextIcon fontSize="small"/>}
-          >
-            {usedBreadcrumbs}
-          </Breadcrumbs>
-        </Grid>
-        <Grid item>
-          <PageTitle title={title} icon={!isMobile && icon} loading={loading}/>
-        </Grid>
-        {Boolean(updatedTime)
-          ? <Grid item>
-            <SyncButton updatedTime={updatedTime} onClick={onUpdate}/>
+      <Container maxWidth="xl" disableGutters={isMobile}>
+        <Grid container justifyContent="center" direction="column" spacing={1} pt={10}>
+          <Grid item>
+            <Breadcrumbs
+              separator={<NavigateNextIcon fontSize="small"/>}
+            >
+              {usedBreadcrumbs}
+            </Breadcrumbs>
           </Grid>
-          : null
-        }
-        <Grid item mt={3}>
-          {children}
+          <Grid item>
+            <PageTitle title={title} icon={!isMobile && icon} loading={loading}/>
+          </Grid>
+          {Boolean(updatedTime)
+            ? <Grid item>
+              <SyncButton updatedTime={updatedTime} onClick={onUpdate}/>
+            </Grid>
+            : null
+          }
+          <Grid item mt={3}>
+            {children}
+          </Grid>
         </Grid>
-      </Grid>
-    </Container>
+      </Container>
   );
 }
 

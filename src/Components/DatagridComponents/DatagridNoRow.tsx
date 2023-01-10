@@ -17,7 +17,7 @@ function NoRowsOverlay() {
   return (
     <GridOverlay>
       <Stack>
-        <EmptyGridContent caption="Nessun elemento"/>
+        <EmptyGridContent caption="No elements"/>
       </Stack>
     </GridOverlay>
   );

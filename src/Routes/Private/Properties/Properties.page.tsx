@@ -13,9 +13,9 @@ import {useNavigate, useParams} from "react-router-dom";
 import {useTheme} from "@mui/material/styles";
 import {defaultCompanies, getAllCompanies} from "../../../services/companies.services";
 import {getReasonAlert} from "../../../utils/requestAlertHandler";
-import {defaultLocalUnits, getAllLocalUnits} from "../../../services/localUnits.services";
 import {useCurrentCompany} from "../../../Components/Providers/Company/Company.provider";
 import HomeWorkOutlinedIcon from "@mui/icons-material/HomeWorkOutlined";
+import {defaultProperties, getAllProperties} from "../../../services/properties.services";
 
 
 type PageParamsType = {
@@ -29,7 +29,7 @@ const PropertiesPage = () => {
   const {companyId} = useParams<PageParamsType>();
   const {company} = useCurrentCompany();
 
-  const [localUnits, setLocalUnits] = useState(defaultLocalUnits);
+  const [properties, setProperties] = useState(defaultProperties);
   const [loading, setLoading] = useState(true);
   const [updatedTime, setUpdatedTime] = useState("00:00");
   const {setOpenAddDialog} = useContext(useAddDialogContext);
@@ -37,8 +37,8 @@ const PropertiesPage = () => {
   const {setAlertEvent} = useContext(useAlertContext);
 
   const fetchData = async () => {
-    const res = await getAllLocalUnits(companyId)
-    setLocalUnits(res);
+    const res = await getAllProperties(companyId)
+    setProperties(res);
   }
 
   useEffect(() => {
@@ -86,16 +86,13 @@ const PropertiesPage = () => {
     navigate(`/app/companies/${e.row.companyId}/local-units/${e.row.id}`);
   }
 
-  const rows = localUnits.map((localUnit) => {
+  const rows = properties.map((property) => {
     return {
-      id: localUnit.id,
-      companyId: localUnit.companyId,
-      name: localUnit.name,
-      email: localUnit.email,
-      phone: localUnit.phone,
-      address: localUnit.address,
-      postalCode: localUnit.postalCode,
-      municipality: localUnit.municipality
+      id: property.id,
+      companyId: property.companyId,
+      name: property.name,
+      phone: property.phone,
+      address: property.address,
     }
   })
   const columns: GridColumns = [
@@ -115,31 +112,11 @@ const PropertiesPage = () => {
       flex: 1,
     },
     {
-      field: 'email',
-      headerName: 'Email',
-      minWidth: 150,
-      editable: false,
-      flex: 1,
-    },
-    {
       field: 'address',
       headerName: 'Address',
       minWidth: 150,
       editable: false,
       flex: 1,
-    },
-    {
-      field: 'municipality',
-      headerName: 'Municipality',
-      minWidth: 150,
-      editable: false,
-      flex: 1,
-    },
-    {
-      field: 'postalCode',
-      headerName: 'Postal code',
-      minWidth: 150,
-      editable: false,
     },
     {
       field: 'phone',
@@ -184,7 +161,13 @@ const PropertiesPage = () => {
   return (
     <MainPage title="Properties" icon={<HomeWorkOutlinedIcon fontSize="large"/>} onUpdate={handleUpdate}
               updatedTime={updatedTime}>
-      props
+      <DatagridTable
+        rows={rows}
+        allowAdd
+        columns={columns}
+        loading={loading}
+        onRowDoubleClick={handleDoubleClick}
+      />
       <AddDialog title={"Add "} handleSubmit={() => {
       }}>
         <Grid container direction="column" spacing={1}>

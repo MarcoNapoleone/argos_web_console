@@ -189,12 +189,17 @@ const LocalUnitsPage = () => {
       <DatagridTable
         rows={rows}
         allowAdd
+        onAdd={() => setOpenAddDialog(true)}
         columns={columns}
         loading={loading}
         onRowDoubleClick={handleDoubleClick}
       />
-      <AddDialog title={"Add "} handleSubmit={() => {
-      }}>
+      <AddDialog
+        title={"Add local unit"}
+        handleSubmit={() => {}}
+        loading={loading}
+        onClose={() => setOpenAddDialog(false)}
+      >
         <Grid container direction="column" spacing={1}>
 
         </Grid>

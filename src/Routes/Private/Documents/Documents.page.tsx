@@ -11,9 +11,10 @@ import DeleteDialog, {useDeleteDialogContext} from "../../../Components/Provider
 import {useNavigate, useParams} from "react-router-dom";
 import {useTheme} from "@mui/material/styles";
 import {getReasonAlert} from "../../../utils/requestAlertHandler";
-import {defaultLocalUnits, getAllLocalUnits} from "../../../services/localUnits.services";
 import {useCurrentCompany} from "../../../Components/Providers/Company/Company.provider";
+import {Document, getAllDocuments} from "../../../services/documents.services";
 import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
+import FileContainer from "../../../Components/files/FileContainer/FileContainer";
 
 
 type PageParamsType = {
@@ -26,17 +27,44 @@ const DocumentsPage = () => {
   const navigate = useNavigate();
   const {companyId} = useParams<PageParamsType>();
   const {company} = useCurrentCompany();
-
-  const [localUnits, setLocalUnits] = useState(defaultLocalUnits);
   const [loading, setLoading] = useState(true);
   const [updatedTime, setUpdatedTime] = useState("00:00");
   const {setOpenAddDialog} = useContext(useAddDialogContext);
   const {setOpenDeleteDialog} = useContext(useDeleteDialogContext);
   const {setAlertEvent} = useContext(useAlertContext);
+  const [documents, setDocuments] = useState<Document[]>([
+    {
+      "id": 1,
+      "name": "file1.jpg",
+      "description": "file 1",
+      "refId": 0,
+      "moduleId": "string",
+      "fileType": "string",
+      "path": "string",
+    },
+    {
+      "id": 2,
+      "name": "Scadenze_maggio23.pdf",
+      "description": "Un pdf",
+      "refId": 0,
+      "moduleId": "string",
+      "fileType": "string",
+      "path": "string",
+    },
+    {
+      "id": 3,
+      "name": "file3.jpg",
+      "description": "A photo",
+      "refId": 0,
+      "moduleId": "string",
+      "fileType": "string",
+      "path": "string",
+    },
+  ])
 
   const fetchData = async () => {
-    const res = await getAllLocalUnits(companyId)
-    setLocalUnits(res);
+    const res = await getAllDocuments(companyId)
+    setDocuments(res);
   }
 
   useEffect(() => {
@@ -84,16 +112,15 @@ const DocumentsPage = () => {
     navigate(`/app/companies/${e.row.companyId}/local-units/${e.row.id}`);
   }
 
-  const rows = localUnits.map((localUnit) => {
+  const rows = documents.map((document) => {
     return {
-      id: localUnit.id,
-      companyId: localUnit.companyId,
-      name: localUnit.name,
-      email: localUnit.email,
-      phone: localUnit.phone,
-      address: localUnit.address,
-      postalCode: localUnit.postalCode,
-      municipality: localUnit.municipality
+      id: document.id,
+      name: document.name,
+      description: document.description,
+      refId: document.refId,
+      moduleId: document.moduleId,
+      fileType: document.fileType,
+      path: document.path
     }
   })
   const columns: GridColumns = [
@@ -111,39 +138,6 @@ const DocumentsPage = () => {
       minWidth: 150,
       editable: false,
       flex: 1,
-    },
-    {
-      field: 'email',
-      headerName: 'Email',
-      minWidth: 150,
-      editable: false,
-      flex: 1,
-    },
-    {
-      field: 'address',
-      headerName: 'Address',
-      minWidth: 150,
-      editable: false,
-      flex: 1,
-    },
-    {
-      field: 'municipality',
-      headerName: 'Municipality',
-      minWidth: 150,
-      editable: false,
-      flex: 1,
-    },
-    {
-      field: 'postalCode',
-      headerName: 'Postal code',
-      minWidth: 150,
-      editable: false,
-    },
-    {
-      field: 'phone',
-      headerName: 'Phone',
-      minWidth: 150,
-      editable: false,
     },
     {
       field: 'more',
@@ -180,9 +174,8 @@ const DocumentsPage = () => {
   }
 
   return (
-    <MainPage title="Documents" icon={<DescriptionOutlinedIcon fontSize="large"/>} onUpdate={handleUpdate}
-              updatedTime={updatedTime}>
-      docs
+    <MainPage title="Documents" icon={<DescriptionOutlinedIcon fontSize="large"/>} onUpdate={handleUpdate} updatedTime={updatedTime}>
+          <FileContainer files={documents} setFiles={setDocuments} loading={loading}/>
       <AddDialog title={"Add "} handleSubmit={() => {
       }}>
         <Grid container direction="column" spacing={1}>

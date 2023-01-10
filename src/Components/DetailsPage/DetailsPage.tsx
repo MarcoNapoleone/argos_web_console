@@ -93,14 +93,6 @@ const DetailsPage: FC<DetailsPageProps> = (
     >
       App
     </Link>,
-    <Link
-      underline="hover"
-      key="2"
-      color="inherit"
-      href={`/app/${pagePath}`}
-    >
-      testo
-    </Link>,
     <Typography
       key="3" color="text.primary"
     >

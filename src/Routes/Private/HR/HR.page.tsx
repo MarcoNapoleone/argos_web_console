@@ -15,6 +15,7 @@ import {defaultCompanies, getAllCompanies} from "../../../services/companies.ser
 import {getReasonAlert} from "../../../utils/requestAlertHandler";
 import {defaultLocalUnits, getAllLocalUnits} from "../../../services/localUnits.services";
 import {useCurrentCompany} from "../../../Components/Providers/Company/Company.provider";
+import {defaultHRs, getAllHR} from "../../../services/hr.services";
 
 
 type PageParamsType = {
@@ -28,7 +29,7 @@ const HRPage = () => {
   const {companyId} = useParams<PageParamsType>();
   const {company} = useCurrentCompany();
 
-  const [localUnits, setLocalUnits] = useState(defaultLocalUnits);
+  const [hr, setHR] = useState(defaultHRs);
   const [loading, setLoading] = useState(true);
   const [updatedTime, setUpdatedTime] = useState("00:00");
   const {setOpenAddDialog} = useContext(useAddDialogContext);
@@ -36,8 +37,8 @@ const HRPage = () => {
   const {setAlertEvent} = useContext(useAlertContext);
 
   const fetchData = async () => {
-    const res = await getAllLocalUnits(companyId)
-    setLocalUnits(res);
+    const res = await getAllHR(companyId)
+    setHR(res);
   }
 
   useEffect(() => {
@@ -85,16 +86,12 @@ const HRPage = () => {
     navigate(`/app/companies/${e.row.companyId}/local-units/${e.row.id}`);
   }
 
-  const rows = localUnits.map((localUnit) => {
+  const rows = hr.map((hr) => {
     return {
-      id: localUnit.id,
-      companyId: localUnit.companyId,
-      name: localUnit.name,
-      email: localUnit.email,
-      phone: localUnit.phone,
-      address: localUnit.address,
-      postalCode: localUnit.postalCode,
-      municipality: localUnit.municipality
+      id: hr.id,
+      departmentId: hr.departmentId,
+      name: hr.name,
+      surname: hr.surname,
     }
   })
   const columns: GridColumns = [
@@ -108,43 +105,17 @@ const HRPage = () => {
     },
     {
       field: 'name',
-      headerName: 'Nome',
+      headerName: 'Name',
       minWidth: 150,
       editable: false,
       flex: 1,
     },
     {
-      field: 'email',
-      headerName: 'Email',
+      field: 'surname',
+      headerName: 'Surname',
       minWidth: 150,
       editable: false,
       flex: 1,
-    },
-    {
-      field: 'address',
-      headerName: 'Address',
-      minWidth: 150,
-      editable: false,
-      flex: 1,
-    },
-    {
-      field: 'municipality',
-      headerName: 'Municipality',
-      minWidth: 150,
-      editable: false,
-      flex: 1,
-    },
-    {
-      field: 'postalCode',
-      headerName: 'Postal code',
-      minWidth: 150,
-      editable: false,
-    },
-    {
-      field: 'phone',
-      headerName: 'Phone',
-      minWidth: 150,
-      editable: false,
     },
     {
       field: 'more',
@@ -183,7 +154,13 @@ const HRPage = () => {
   return (
     <MainPage title="HR" icon={<GroupOutlined fontSize="large"/>} onUpdate={handleUpdate}
               updatedTime={updatedTime}>
-      hr
+      <DatagridTable
+        rows={rows}
+        allowAdd
+        columns={columns}
+        loading={loading}
+        onRowDoubleClick={handleDoubleClick}
+      />
       <AddDialog title={"Add "} handleSubmit={() => {
       }}>
         <Grid container direction="column" spacing={1}>

@@ -178,7 +178,6 @@ const Theme: React.FC<ThemeProps> = ({children}) => {
         MuiToggleButton: {
           styleOverrides: {
             root: {
-              color: theme.palette.grey["500"],
               borderRadius: '32px',
               border: 'none',
               "&.MuiToggleButtonGroup-grouped": {

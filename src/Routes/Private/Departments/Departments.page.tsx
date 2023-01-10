@@ -16,6 +16,7 @@ import {getReasonAlert} from "../../../utils/requestAlertHandler";
 import {defaultLocalUnits, getAllLocalUnits} from "../../../services/localUnits.services";
 import {useCurrentCompany} from "../../../Components/Providers/Company/Company.provider";
 import PersonPinCircleOutlinedIcon from "@mui/icons-material/PersonPinCircleOutlined";
+import {defaultDepartments, getAllDepartments} from "../../../services/departments.services";
 
 
 type PageParamsType = {
@@ -29,7 +30,7 @@ const DepartmentsPage = () => {
   const {companyId} = useParams<PageParamsType>();
   const {company} = useCurrentCompany();
 
-  const [localUnits, setLocalUnits] = useState(defaultLocalUnits);
+  const [departments, setDepartments] = useState(defaultDepartments);
   const [loading, setLoading] = useState(true);
   const [updatedTime, setUpdatedTime] = useState("00:00");
   const {setOpenAddDialog} = useContext(useAddDialogContext);
@@ -37,8 +38,8 @@ const DepartmentsPage = () => {
   const {setAlertEvent} = useContext(useAlertContext);
 
   const fetchData = async () => {
-    const res = await getAllLocalUnits(companyId)
-    setLocalUnits(res);
+    const res = await getAllDepartments(companyId)
+    setDepartments(res);
   }
 
   useEffect(() => {
@@ -86,16 +87,11 @@ const DepartmentsPage = () => {
     navigate(`/app/companies/${e.row.companyId}/local-units/${e.row.id}`);
   }
 
-  const rows = localUnits.map((localUnit) => {
+  const rows = departments.map((department) => {
     return {
-      id: localUnit.id,
-      companyId: localUnit.companyId,
-      name: localUnit.name,
-      email: localUnit.email,
-      phone: localUnit.phone,
-      address: localUnit.address,
-      postalCode: localUnit.postalCode,
-      municipality: localUnit.municipality
+      id: department.id,
+      localUnitId: department.localUnitId,
+      name: department.name,
     }
   })
   const columns: GridColumns = [
@@ -109,43 +105,10 @@ const DepartmentsPage = () => {
     },
     {
       field: 'name',
-      headerName: 'Nome',
+      headerName: 'Name',
       minWidth: 150,
       editable: false,
       flex: 1,
-    },
-    {
-      field: 'email',
-      headerName: 'Email',
-      minWidth: 150,
-      editable: false,
-      flex: 1,
-    },
-    {
-      field: 'address',
-      headerName: 'Address',
-      minWidth: 150,
-      editable: false,
-      flex: 1,
-    },
-    {
-      field: 'municipality',
-      headerName: 'Municipality',
-      minWidth: 150,
-      editable: false,
-      flex: 1,
-    },
-    {
-      field: 'postalCode',
-      headerName: 'Postal code',
-      minWidth: 150,
-      editable: false,
-    },
-    {
-      field: 'phone',
-      headerName: 'Phone',
-      minWidth: 150,
-      editable: false,
     },
     {
       field: 'more',
@@ -184,7 +147,13 @@ const DepartmentsPage = () => {
   return (
     <MainPage title="Departments" icon={<PersonPinCircleOutlinedIcon fontSize="large"/>} onUpdate={handleUpdate}
               updatedTime={updatedTime}>
-      departs
+      <DatagridTable
+        rows={rows}
+        allowAdd
+        columns={columns}
+        loading={loading}
+        onRowDoubleClick={handleDoubleClick}
+      />
       <AddDialog title={"Add "} handleSubmit={() => {
       }}>
         <Grid container direction="column" spacing={1}>
