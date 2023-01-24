@@ -148,7 +148,7 @@ const PropertiesPage = () => {
     }
   ];
 
-  const handleUpdate = () => {
+  const handleRefresh = () => {
     setLoading(true)
     fetchData()
       .then(() => setLoading(false))
@@ -159,7 +159,7 @@ const PropertiesPage = () => {
   }
 
   return (
-    <MainPage title="Properties" icon={<HomeWorkOutlinedIcon fontSize="large"/>} onUpdate={handleUpdate}
+    <MainPage title="Properties" icon={<HomeWorkOutlinedIcon fontSize="large"/>} onRefresh={handleRefresh}
               updatedTime={updatedTime}>
       <DatagridTable
         rows={rows}

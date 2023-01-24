@@ -62,7 +62,7 @@ const DepartmentDetailsPage = () => {
   }
 
 
-  const handleUpdate = () => {
+  const handleRefresh = () => {
     setLoading(true)
 
   }
@@ -72,7 +72,7 @@ const DepartmentDetailsPage = () => {
       title={'Local Units'}
       loading={loading}
       updatedTime={updatedTime}
-      onUpdate={handleUpdate}
+      onRefresh={handleRefresh}
       baseChildren={<></>}
       editChildren={<></>}
     ></DetailsPage>

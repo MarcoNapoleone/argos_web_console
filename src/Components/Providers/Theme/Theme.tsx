@@ -156,7 +156,6 @@ const Theme: React.FC<ThemeProps> = ({children}) => {
             root: {
               borderRadius: '8px',
               marginLeft: '8px',
-              marginBottom: '4px',
               marginRight: '8px',
             },
           },

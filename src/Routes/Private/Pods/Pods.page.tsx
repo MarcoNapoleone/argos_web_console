@@ -226,7 +226,7 @@ function PodsPage() {
     return columns
   }
 
-  const handleUpdate = () => {
+  const handleRefresh = () => {
     setLoading(true)
     podServicePath
       .get('/getgraph.php')
@@ -247,7 +247,7 @@ function PodsPage() {
   }
 
   return (
-    <MainPage title="Pods" icon={<SensorsIcon fontSize="large"/>} onUpdate={handleUpdate} updatedTime={updatedTime}>
+    <MainPage title="Pods" icon={<SensorsIcon fontSize="large"/>} onRefresh={handleRefresh} updatedTime={updatedTime}>
     <Grid container spacing={2}>
         <Grid item xs={12}>
           <Card variant="outlined">

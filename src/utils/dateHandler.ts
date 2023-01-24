@@ -18,3 +18,9 @@ export const getFormattedMonth = (date: Date | string | number) => {
   let dt = new Date(date)
   return (`${monthNames[dt.getMonth()]}`)
 };
+
+
+export const getUpdatedTime = () => {
+  let dt = new Date()
+  return (("0" + dt.getHours()).slice(-2) + ":" + ("0" + dt.getMinutes()).slice(-2))
+}

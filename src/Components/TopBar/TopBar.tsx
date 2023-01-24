@@ -74,7 +74,7 @@ const SearchBar = () => {
           <Grid container alignItems="center">
             <Grid item>
               <InputBase
-                placeholder="Cerca…"
+                placeholder="Search…"
                 inputRef={textInput}
                 fullWidth
                 classes={{
@@ -308,7 +308,7 @@ const TopBar: React.FC<TopBarProps> = ({onMenuClick, isOpen, title}) => {
             ? <Stack sx={{width: '194px', height: '164px'}} justifyContent="center" alignItems="center" px={2}>
               <CircularProgress size={32}/>
             </Stack>
-            : <>
+            : <Box>
               {companies.map((c, index) => (
                 <MenuItem
                   key={index}
@@ -328,7 +328,7 @@ const TopBar: React.FC<TopBarProps> = ({onMenuClick, isOpen, title}) => {
                   All Companies
                 </ListItemText>
               </MenuItem>
-            </>
+            </Box>
         }
       </Menu>
     </>

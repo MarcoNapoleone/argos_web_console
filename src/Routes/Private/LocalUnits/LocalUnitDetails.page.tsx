@@ -1,18 +1,22 @@
 import React, {useContext, useEffect, useState} from "react";
 import {useAlertContext} from "../../../Components/Providers/Alert/Alert.provider";
-import {Box, Divider, Grid, IconButton, Link, Skeleton, TextField, Typography, useMediaQuery} from "@mui/material";
-import DatagridTable from "../../../Components/DatagridComponents/DatagridTable";
-import AddDialog, {useAddDialogContext} from "../../../Components/Providers/AddDialog/AddDialog";
-import DeleteIcon from "@mui/icons-material/DeleteOutlined";
-import OpenInNewOutlinedIcon from "@mui/icons-material/OpenInNewOutlined";
-import DeleteDialog, {useDeleteDialogContext} from "../../../Components/Providers/DeleteDialog/DeleteDialog";
+import {Box, Divider, Grid, Link, Skeleton, TextField, Typography, useMediaQuery} from "@mui/material";
+import {useAddDialogContext} from "../../../Components/Providers/AddDialog/AddDialog";
+import {useDeleteDialogContext} from "../../../Components/Providers/DeleteDialog/DeleteDialog";
 import {useNavigate, useParams} from "react-router-dom";
 import {useTheme} from "@mui/material/styles";
 import DetailsPage from "../../../Components/DetailsPage/DetailsPage";
 import DetailsSection from "../../../Components/DetailsSection/DetailsSection";
-import {defaultLocalUnit, getLocalUnit, LocalUnit} from "../../../services/localUnits.services";
-import {getReasonAlert} from "../../../utils/requestAlertHandler";
+import {
+  defaultLocalUnit,
+  deleteLocalUnit,
+  getLocalUnit,
+  LocalUnit,
+  updateLocalUnit
+} from "../../../services/localUnits.services";
+import {getReasonAlert, getResponseAlert} from "../../../utils/requestAlertHandler";
 import DialogFormLabel from "../../../Components/DialogFormLabel/DialoFormLabel";
+import {getUpdatedTime} from "../../../utils/dateHandler";
 
 type PageParamsType = {
   companyId: string;
@@ -24,8 +28,7 @@ const LocalUnitDetailsPage = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const navigate = useNavigate();
-  const {companyId} = useParams<PageParamsType>();
-  const {localUnitId} = useParams<PageParamsType>();
+  const {companyId, localUnitId} = useParams<PageParamsType>();
   const [loading, setLoading] = useState(true);
   const [localUnit, setLocalUnit] = useState(defaultLocalUnit);
   const [updatedTime, setUpdatedTime] = useState("00:00");
@@ -66,17 +69,12 @@ const LocalUnitDetailsPage = () => {
   }
 
   useEffect(() => {
-    setLoading(true)
-    fetchData()
-      .then(() => setLoading(false))
-      .catch((err) => {
-        setAlertEvent(getReasonAlert(err));
-        setLoading(false)
-      })
+    handleRefresh()
   }, []);
 
-  const handleUpdate = () => {
+  const handleRefresh = () => {
     setLoading(true)
+    setUpdatedTime(getUpdatedTime());
     fetchData()
       .then(() => setLoading(false))
       .catch((err) => {
@@ -85,15 +83,38 @@ const LocalUnitDetailsPage = () => {
       })
   }
 
-  const handleSubmitEdit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.stopPropagation();
+  const handleDelete = () => {
+    deleteLocalUnit(localUnitId)
+      .then((res) => {
+        setAlertEvent(getResponseAlert(res));
+        setOpenDeleteDialog(false);
+        navigate(`/app/companies/${companyId}/local-units`)
+      })
+      .catch((err) => {
+          setAlertEvent(getReasonAlert(err));
+        }
+      )
+  }
+
+  const handleSubmitEdit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    console.log(data);
-  };
-
-  const handleDelete = () => {
-
+    const newLocalUnit: LocalUnit = {
+      name: data.get("name") as string,
+      email: data.get("email") as string,
+      phone: data.get("phone") as string,
+      address: data.get("address") as string,
+      municipality: data.get("municipality") as string,
+      postalCode: data.get("postalCode") as string,
+    }
+    await updateLocalUnit(localUnitId, newLocalUnit)
+      .then((res) => {
+        setAlertEvent(getResponseAlert(res));
+        handleRefresh();
+      })
+      .catch((err) => {
+        setAlertEvent(getReasonAlert(err));
+      })
   };
 
   return (
@@ -102,10 +123,10 @@ const LocalUnitDetailsPage = () => {
       loading={loading}
       updatedTime={updatedTime}
       breadcrumbs={breadcrumbs}
-      allowEdit
+      allowModify={{edit: true, delete: true}}
       onDelete={handleDelete}
       onSubmit={handleSubmitEdit}
-      onUpdate={handleUpdate}
+      onRefresh={handleRefresh}
       baseChildren={
         <Grid container direction="column" spacing={1}>
           <Grid item container spacing={1}>

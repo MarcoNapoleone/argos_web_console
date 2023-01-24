@@ -134,7 +134,7 @@ const DepartmentsPage = () => {
     }
   ];
 
-  const handleUpdate = () => {
+  const handleRefresh = () => {
     setLoading(true)
     fetchData()
       .then(() => setLoading(false))
@@ -145,7 +145,7 @@ const DepartmentsPage = () => {
   }
 
   return (
-    <MainPage title="Departments" icon={<PersonPinCircleOutlinedIcon fontSize="large"/>} onUpdate={handleUpdate}
+    <MainPage title="Departments" icon={<PersonPinCircleOutlinedIcon fontSize="large"/>} onRefresh={handleRefresh}
               updatedTime={updatedTime}>
       <DatagridTable
         rows={rows}

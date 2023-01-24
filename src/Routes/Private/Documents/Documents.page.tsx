@@ -163,7 +163,7 @@ const DocumentsPage = () => {
     }
   ];
 
-  const handleUpdate = () => {
+  const handleRefresh = () => {
     setLoading(true)
     fetchData()
       .then(() => setLoading(false))
@@ -174,7 +174,7 @@ const DocumentsPage = () => {
   }
 
   return (
-    <MainPage title="Documents" icon={<DescriptionOutlinedIcon fontSize="large"/>} onUpdate={handleUpdate} updatedTime={updatedTime}>
+    <MainPage title="Documents" icon={<DescriptionOutlinedIcon fontSize="large"/>} onRefresh={handleRefresh} updatedTime={updatedTime}>
           <FileContainer files={documents} setFiles={setDocuments} loading={loading}/>
       <AddDialog title={"Add "} handleSubmit={() => {
       }}>

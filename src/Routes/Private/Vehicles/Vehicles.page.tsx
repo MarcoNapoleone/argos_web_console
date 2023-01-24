@@ -171,7 +171,7 @@ const VehiclesPage = () => {
     }
   ];
 
-  const handleUpdate = () => {
+  const handleRefresh = () => {
     setLoading(true)
     fetchData()
       .then(() => setLoading(false))
@@ -182,7 +182,7 @@ const VehiclesPage = () => {
   }
 
   return (
-    <MainPage title="Vehicles" icon={<LocalShippingOutlinedIcon fontSize="large"/>} onUpdate={handleUpdate}
+    <MainPage title="Vehicles" icon={<LocalShippingOutlinedIcon fontSize="large"/>} onRefresh={handleRefresh}
               updatedTime={updatedTime}>
       vehicles
       <AddDialog title={"Add "} handleSubmit={() => {

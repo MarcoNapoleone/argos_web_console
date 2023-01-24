@@ -1,20 +1,27 @@
 import React, {useContext, useEffect, useState} from "react";
 import {useAlertContext} from "../../../Components/Providers/Alert/Alert.provider";
-import {Grid, IconButton, useMediaQuery} from "@mui/material";
+import {Grid, IconButton, TextField, useMediaQuery} from "@mui/material";
 import DatagridTable from "../../../Components/DatagridComponents/DatagridTable";
 import AddDialog, {useAddDialogContext} from "../../../Components/Providers/AddDialog/AddDialog";
 import DeleteIcon from "@mui/icons-material/DeleteOutlined";
 import MainPage from "../../../Components/MainPage/MainPage";
 import {GridColumns} from "@mui/x-data-grid";
-import {BusinessOutlined, DirectionsBoatFilledOutlined} from "@mui/icons-material";
+import {BusinessOutlined} from "@mui/icons-material";
 import OpenInNewOutlinedIcon from "@mui/icons-material/OpenInNewOutlined";
 import DeleteDialog, {useDeleteDialogContext} from "../../../Components/Providers/DeleteDialog/DeleteDialog";
 import {useNavigate, useParams} from "react-router-dom";
 import {useTheme} from "@mui/material/styles";
-import {defaultCompanies, getAllCompanies} from "../../../services/companies.services";
-import {getReasonAlert} from "../../../utils/requestAlertHandler";
-import {defaultLocalUnits, getAllLocalUnits} from "../../../services/localUnits.services";
+import {getReasonAlert, getResponseAlert} from "../../../utils/requestAlertHandler";
+import {
+  createLocalUnit,
+  defaultLocalUnits,
+  deleteLocalUnit,
+  getAllLocalUnits,
+  LocalUnit
+} from "../../../services/localUnits.services";
 import {useCurrentCompany} from "../../../Components/Providers/Company/Company.provider";
+import DialogFormLabel from "../../../Components/DialogFormLabel/DialoFormLabel";
+import {getUpdatedTime} from "../../../utils/dateHandler";
 
 
 type PageParamsType = {
@@ -29,7 +36,7 @@ const LocalUnitsPage = () => {
   const {company} = useCurrentCompany();
   const [localUnits, setLocalUnits] = useState(defaultLocalUnits);
   const [loading, setLoading] = useState(true);
-  const [updatedTime, setUpdatedTime] = useState("00:00");
+  const [updatedTime, setUpdatedTime] = useState(getUpdatedTime());
   const {setOpenAddDialog} = useContext(useAddDialogContext);
   const {setOpenDeleteDialog} = useContext(useDeleteDialogContext);
   const {setAlertEvent} = useContext(useAlertContext);
@@ -40,14 +47,19 @@ const LocalUnitsPage = () => {
   }
 
   useEffect(() => {
+    handleRefresh();
+  }, []);
+
+  const handleRefresh = () => {
     setLoading(true)
+    setUpdatedTime(getUpdatedTime());
     fetchData()
       .then(() => setLoading(false))
       .catch((err) => {
         setAlertEvent(getReasonAlert(err));
         setLoading(false)
       })
-  }, []);
+  }
 
   const RenderMoreButton = (e: any) => {
     const handleMoreClick = () => {
@@ -64,8 +76,16 @@ const LocalUnitsPage = () => {
   }
 
   const RenderDeleteButton = (e: any) => {
-    const handleDeleteClick = () => {
-
+    const handleDeleteClick = async () => {
+      await deleteLocalUnit(e.row.id)
+        .then((res) => {
+          setAlertEvent(getResponseAlert(res));
+          setOpenDeleteDialog(false);
+          handleRefresh();
+        })
+        .catch((err) => {
+          setAlertEvent(getReasonAlert(err));
+        })
     };
     return (
       <>
@@ -75,7 +95,7 @@ const LocalUnitsPage = () => {
         >
           <DeleteIcon/>
         </IconButton>
-        <DeleteDialog handleDelete={handleDeleteClick} title={'gg'}/>
+        <DeleteDialog handleDelete={handleDeleteClick} title="Local unit"/>
       </>
     );
   }
@@ -83,6 +103,28 @@ const LocalUnitsPage = () => {
   const handleDoubleClick = (e: any) => {
     navigate(`/app/companies/${e.row.companyId}/local-units/${e.row.id}`);
   }
+
+  const handleSubmitCreate = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const data = new FormData(event.currentTarget);
+    const newLocalUnit: LocalUnit = {
+      name: data.get("name") as string,
+      email: data.get("email") as string,
+      phone: data.get("phone") as string,
+      address: data.get("address") as string,
+      municipality: data.get("municipality") as string,
+      postalCode: data.get("postalCode") as string,
+    }
+    await createLocalUnit(companyId, newLocalUnit)
+      .then((res) => {
+        setOpenAddDialog(false);
+        handleRefresh();
+      })
+      .catch((err) => {
+        setAlertEvent(getReasonAlert(err));
+      })
+
+  };
 
   const rows = localUnits.map((localUnit) => {
     return {
@@ -169,21 +211,11 @@ const LocalUnitsPage = () => {
     }
   ];
 
-  const handleUpdate = () => {
-    setLoading(true)
-    fetchData()
-      .then(() => setLoading(false))
-      .catch((err) => {
-        setAlertEvent(getReasonAlert(err));
-        setLoading(false)
-      })
-  }
-
   return (
     <MainPage
       title="Local Units"
       icon={<BusinessOutlined fontSize="large"/>}
-      onUpdate={handleUpdate}
+      onRefresh={handleRefresh}
       updatedTime={updatedTime}
     >
       <DatagridTable
@@ -191,17 +223,87 @@ const LocalUnitsPage = () => {
         allowAdd
         onAdd={() => setOpenAddDialog(true)}
         columns={columns}
+
         loading={loading}
         onRowDoubleClick={handleDoubleClick}
       />
       <AddDialog
         title={"Add local unit"}
-        handleSubmit={() => {}}
+        handleSubmit={handleSubmitCreate}
         loading={loading}
         onClose={() => setOpenAddDialog(false)}
       >
         <Grid container direction="column" spacing={1}>
-
+          <Grid item xs={12}>
+            <TextField
+              id="name"
+              name="name"
+              label="Name"
+              autoFocus
+              autoComplete="name"
+              fullWidth
+              required
+            />
+          </Grid>
+          <Grid item container spacing={1}>
+            <Grid item xs={12} sm={4}>
+              <TextField
+                id="address"
+                name="address"
+                label="Address"
+                autoFocus
+                autoComplete="address"
+                fullWidth
+                required
+              />
+            </Grid>
+            <Grid item xs={12} sm={4}>
+              <TextField
+                id="municipality"
+                name="municipality"
+                label="Municipality"
+                autoComplete="municipality"
+                fullWidth
+                required
+              />
+            </Grid>
+            <Grid item xs={12} sm={4}>
+              <TextField
+                id="postalCode"
+                name="postalCode"
+                label="Postal code"
+                autoComplete="postalCode"
+                fullWidth
+                required
+              />
+            </Grid>
+          </Grid>
+          <Grid item>
+            <DialogFormLabel title="Contacts"/>
+          </Grid>
+          <Grid item container spacing={1}>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                id="email"
+                name="email"
+                label="Email"
+                autoFocus
+                autoComplete="email"
+                fullWidth
+                required
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                id="phone"
+                name="phone"
+                label="Phone"
+                autoComplete="phone"
+                fullWidth
+                required
+              />
+            </Grid>
+          </Grid>
         </Grid>
       </AddDialog>
     </MainPage>

@@ -141,7 +141,7 @@ const HRPage = () => {
     }
   ];
 
-  const handleUpdate = () => {
+  const handleRefresh = () => {
     setLoading(true)
     fetchData()
       .then(() => setLoading(false))
@@ -152,7 +152,7 @@ const HRPage = () => {
   }
 
   return (
-    <MainPage title="HR" icon={<GroupOutlined fontSize="large"/>} onUpdate={handleUpdate}
+    <MainPage title="HR" icon={<GroupOutlined fontSize="large"/>} onRefresh={handleRefresh}
               updatedTime={updatedTime}>
       <DatagridTable
         rows={rows}

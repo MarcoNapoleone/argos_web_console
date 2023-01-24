@@ -192,7 +192,7 @@ const TimetablesPage = () => {
     }
   ];
 
-  const handleUpdate = () => {
+  const handleRefresh = () => {
     setLoading(true)
     fetchData()
       .then(() => setLoading(false))
@@ -203,7 +203,7 @@ const TimetablesPage = () => {
   }
 
   return (
-    <MainPage title="Timetables" icon={<EventOutlinedIcon fontSize="large"/>} onUpdate={handleUpdate}
+    <MainPage title="Timetables" icon={<EventOutlinedIcon fontSize="large"/>} onRefresh={handleRefresh}
               updatedTime={updatedTime}>
       <Grid container spacing={2} direction="column">
         <Grid item xs={12}><Typography variant="h6" mx={2}>Close to due</Typography></Grid>

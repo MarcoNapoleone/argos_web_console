@@ -32,6 +32,11 @@ import DetailsLoading from "../DetailsLoading/DetailsLoading";
 import DeleteIcon from "@mui/icons-material/DeleteOutlined";
 import DeleteDialog, {useDeleteDialogContext} from "../Providers/DeleteDialog/DeleteDialog";
 
+interface modifyConfig {
+  edit: boolean;
+  delete: boolean;
+}
+
 type PageParamsType = {
   pagePath: string;
   id: string;
@@ -42,7 +47,7 @@ interface DetailsPageProps {
   title: string,
   updatedTime: string,
   loading: boolean,
-  onUpdate: () => void,
+  onRefresh: () => void,
   onSubmit?: (event: React.FormEvent<HTMLFormElement>) => void,
   onDelete?: () => void,
   onEditMode?: () => void,
@@ -50,7 +55,7 @@ interface DetailsPageProps {
   baseChildren: React.ReactNode,
   chips?: React.ReactNode,
   noEditElement?: React.ReactNode,
-  allowEdit?: boolean,
+  allowModify?: modifyConfig,
   breadcrumbs?: JSX.Element[],
   baseChildrenLoadingRows?: number,
   baseChildrenLoadingColumns?: number,
@@ -63,9 +68,9 @@ const DetailsPage: FC<DetailsPageProps> = (
     title,
     updatedTime,
     loading,
-    onUpdate,
+    onRefresh,
     onSubmit,
-    allowEdit,
+    allowModify,
     noEditElement,
     onDelete,
     breadcrumbs,
@@ -83,7 +88,6 @@ const DetailsPage: FC<DetailsPageProps> = (
   const [editMode, setEditMode] = useState(false);
   const {pagePath} = useParams<PageParamsType>();
   const {setOpenDeleteDialog} = useContext(useDeleteDialogContext);
-
   const usedBreadcrumbs = Boolean(breadcrumbs) ? breadcrumbs : [
     <Link
       underline="hover"
@@ -129,27 +133,27 @@ const DetailsPage: FC<DetailsPageProps> = (
           </Grid>
           <Grid item>
             <PageTitle title={title} icon={!isMobile && icon} loading={loading}>
-              {allowEdit && !isMobile
+              {!isMobile
                 ? !editMode && <Grow in key={2}>
                 <Stack direction="row" spacing={1}>
-                  <Tooltip title="Modifica" arrow TransitionComponent={Zoom}>
+                  {allowModify.edit && <Tooltip title="Edit" arrow TransitionComponent={Zoom}>
                     <IconButton
                       id="3"
                       color="primary"
                       children={<ModeEditOutlineOutlinedIcon/>}
                       onClick={handleEditMode}
                     />
-                  </Tooltip>
-                  <Tooltip title="Elimina" arrow TransitionComponent={Zoom}>
+                  </Tooltip>}
+                  {allowModify.delete && <Tooltip title="Delete" arrow TransitionComponent={Zoom}>
                     <IconButton
                       id="4"
                       onClick={() => setOpenDeleteDialog(true)}
                       children={<DeleteIcon/>}
                     />
-                  </Tooltip>
+                  </Tooltip>}
                 </Stack>
               </Grow>
-                : !loading && !allowEdit && noEditElement
+                : !loading && !allowModify && noEditElement
                 /*<Grow in key={1}>
                 <Stack direction="row" spacing={1}>
                   <Tooltip title="Salva modifiche" arrow TransitionComponent={Zoom}>
@@ -174,7 +178,7 @@ const DetailsPage: FC<DetailsPageProps> = (
           </Grid>
           <Grid item container spacing={1}>
             <Grid item>
-              <SyncButton updatedTime={updatedTime} onClick={onUpdate}/>
+              <SyncButton updatedTime={updatedTime} onClick={onRefresh}/>
             </Grid>
             <Grid item>
               {!loading && chips}
@@ -234,7 +238,7 @@ const DetailsPage: FC<DetailsPageProps> = (
         </Grid>
         <DeleteDialog handleDelete={onDelete} title={title}/>
       </Container>
-      <Zoom in={!loading && isMobile && allowEdit && !editMode} style={{transitionDelay: '200ms'}}>
+      <Zoom in={!loading && isMobile && allowModify && !editMode} style={{transitionDelay: '200ms'}}>
         <Fab
           sx={{
             margin: 0,

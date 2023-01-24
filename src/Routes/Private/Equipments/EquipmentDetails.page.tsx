@@ -61,7 +61,7 @@ const EquipmentDetailsPage = () => {
     navigate(`/app/navi/${e.row.shipId}`);
   }
 
-  const handleUpdate = () => {
+  const handleRefresh = () => {
     setLoading(true)
 
   }
@@ -71,7 +71,7 @@ const EquipmentDetailsPage = () => {
       title={'Local Units'}
       loading={loading}
       updatedTime={updatedTime}
-      onUpdate={handleUpdate}
+      onRefresh={handleRefresh}
       baseChildren={<></>}
       editChildren={<></>}
     ></DetailsPage>

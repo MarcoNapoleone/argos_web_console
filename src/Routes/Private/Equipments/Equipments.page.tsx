@@ -171,7 +171,7 @@ const EquipmentsPage = () => {
     }
   ];
 
-  const handleUpdate = () => {
+  const handleRefresh = () => {
     setLoading(true)
     fetchData()
       .then(() => setLoading(false))
@@ -182,7 +182,7 @@ const EquipmentsPage = () => {
   }
 
   return (
-    <MainPage title="Equipments" icon={<ConstructionOutlinedIcon fontSize="large"/>} onUpdate={handleUpdate}
+    <MainPage title="Equipments" icon={<ConstructionOutlinedIcon fontSize="large"/>} onRefresh={handleRefresh}
               updatedTime={updatedTime}>
       equips
       <AddDialog title={"Add "} handleSubmit={() => {

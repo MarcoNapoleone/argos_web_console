@@ -9,7 +9,7 @@ import {AddDialogProvider} from "../Providers/AddDialog/AddDialog";
 
 interface MainPageProps {
   icon?: React.ReactNode,
-  onUpdate?: () => void,
+  onRefresh?: () => void,
   updatedTime?: string,
   breadcrumbs?: JSX.Element[],
   loading?: boolean,
@@ -21,7 +21,7 @@ interface MainPageProps {
 const MainPage: FC<MainPageProps> = (
   {
     icon,
-    onUpdate,
+    onRefresh,
     updatedTime,
     loading,
     breadcrumbs,
@@ -63,7 +63,7 @@ const MainPage: FC<MainPageProps> = (
           </Grid>
           {Boolean(updatedTime)
             ? <Grid item>
-              <SyncButton updatedTime={updatedTime} onClick={onUpdate}/>
+              <SyncButton updatedTime={updatedTime} onClick={onRefresh}/>
             </Grid>
             : null
           }
