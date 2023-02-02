@@ -28,7 +28,6 @@ import {Document} from "../../../services/documents.services";
 import FileCard from "../FileCard/FileCard";
 import FileRow from "../FileRow/FileRow";
 import {styled} from "@mui/material/styles";
-import axios from "axios";
 import EmptyGridContent from "../../NoContentIcon/EmptyGridContent";
 
 type SortType = 'name' | 'date' | 'size';
@@ -178,13 +177,13 @@ const FileContainer: FC<FileContainerProps> = (
                       : null}
                     {selectedFiles?.length === 1
                       ? <ToggleButton value="info">
-                        <Tooltip title="Dettagli" TransitionComponent={Zoom} arrow>
+                        <Tooltip title="Details" TransitionComponent={Zoom} arrow>
                           <InfoOutlinedIcon/>
                         </Tooltip>
                       </ToggleButton>
                       : null}
                     <ToggleButton value="delete">
-                      <Tooltip title="Elimina" TransitionComponent={Zoom} arrow>
+                      <Tooltip title="Delete" TransitionComponent={Zoom} arrow>
                         <DeleteForeverOutlinedIcon/>
                       </Tooltip>
                     </ToggleButton>

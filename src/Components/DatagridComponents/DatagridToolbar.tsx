@@ -8,7 +8,7 @@ import {
   GridToolbarFilterButton
 } from "@mui/x-data-grid";
 import {useTheme} from "@mui/material/styles";
-import { useAddDialogContext } from "../Providers/AddDialog/AddDialog";
+import {useAddDialogContext} from "../Providers/AddDialog/AddDialog";
 
 
 function CustomGridToolbar(props: GridColumnMenuProps & { allowAdd?: boolean, onAdd?: () => void }) {
@@ -38,7 +38,7 @@ function CustomGridToolbar(props: GridColumnMenuProps & { allowAdd?: boolean, on
           <GridToolbarDensitySelector sx={{borderRadius: '8px'}}/>
         </Grid>
         {!isMobile && <Grid item>
-          <GridToolbarExport translate="yes" sx={{borderRadius: '8px'}}/>
+          <GridToolbarExport sx={{borderRadius: '8px'}}/>
         </Grid>}
       </Grid>
     </Box>

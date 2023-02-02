@@ -6,15 +6,12 @@ import AddDialog, {useAddDialogContext} from "../../../Components/Providers/AddD
 import DeleteIcon from "@mui/icons-material/DeleteOutlined";
 import MainPage from "../../../Components/MainPage/MainPage";
 import {GridColumns} from "@mui/x-data-grid";
-import {DirectionsBoatFilledOutlined} from "@mui/icons-material";
 import OpenInNewOutlinedIcon from "@mui/icons-material/OpenInNewOutlined";
 import DeleteDialog, {useDeleteDialogContext} from "../../../Components/Providers/DeleteDialog/DeleteDialog";
 import {useNavigate, useParams} from "react-router-dom";
 import {useTheme} from "@mui/material/styles";
-import {defaultCompanies, getAllCompanies} from "../../../services/companies.services";
 import {getReasonAlert} from "../../../utils/requestAlertHandler";
 import {useCurrentCompany} from "../../../Components/Providers/Company/Company.provider";
-import HomeWorkOutlinedIcon from "@mui/icons-material/HomeWorkOutlined";
 import {defaultProperties, getAllProperties} from "../../../services/properties.services";
 
 
@@ -126,8 +123,8 @@ const PropertiesPage = () => {
     },
     {
       field: 'more',
-      headerName: 'Altro',
-      description: 'Dettagli',
+      headerName: 'More',
+      description: 'Details',
       align: 'center',
       renderCell: RenderMoreButton,
       width: 90,
@@ -137,8 +134,8 @@ const PropertiesPage = () => {
     },
     {
       field: 'edit',
-      headerName: 'Modifica',
-      description: 'Modifica, Elimina',
+      headerName: 'Edit',
+      description: 'Edit, Delete',
       align: 'center',
       renderCell: RenderDeleteButton,
       width: 110,
@@ -159,8 +156,11 @@ const PropertiesPage = () => {
   }
 
   return (
-    <MainPage title="Properties" icon={<HomeWorkOutlinedIcon fontSize="large"/>} onRefresh={handleRefresh}
-              updatedTime={updatedTime}>
+    <MainPage
+      title="Properties"
+      //icon={<HomeWorkOutlinedIcon fontSize="large"/>}
+      onRefresh={handleRefresh}
+      updatedTime={updatedTime}>
       <DatagridTable
         rows={rows}
         allowAdd

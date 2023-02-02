@@ -6,14 +6,11 @@ import AddDialog, {useAddDialogContext} from "../../../Components/Providers/AddD
 import DeleteIcon from "@mui/icons-material/DeleteOutlined";
 import MainPage from "../../../Components/MainPage/MainPage";
 import {GridColumns} from "@mui/x-data-grid";
-import {DirectionsBoatFilledOutlined, GroupOutlined} from "@mui/icons-material";
 import OpenInNewOutlinedIcon from "@mui/icons-material/OpenInNewOutlined";
 import DeleteDialog, {useDeleteDialogContext} from "../../../Components/Providers/DeleteDialog/DeleteDialog";
 import {useNavigate, useParams} from "react-router-dom";
 import {useTheme} from "@mui/material/styles";
-import {defaultCompanies, getAllCompanies} from "../../../services/companies.services";
 import {getReasonAlert} from "../../../utils/requestAlertHandler";
-import {defaultLocalUnits, getAllLocalUnits} from "../../../services/localUnits.services";
 import {useCurrentCompany} from "../../../Components/Providers/Company/Company.provider";
 import {defaultHRs, getAllHR} from "../../../services/hr.services";
 
@@ -119,8 +116,8 @@ const HRPage = () => {
     },
     {
       field: 'more',
-      headerName: 'Altro',
-      description: 'Dettagli',
+      headerName: 'More',
+      description: 'Details',
       align: 'center',
       renderCell: RenderMoreButton,
       width: 90,
@@ -130,8 +127,8 @@ const HRPage = () => {
     },
     {
       field: 'edit',
-      headerName: 'Modifica',
-      description: 'Modifica, Elimina',
+      headerName: 'Edit',
+      description: 'Edit, Delete',
       align: 'center',
       renderCell: RenderDeleteButton,
       width: 110,
@@ -152,8 +149,11 @@ const HRPage = () => {
   }
 
   return (
-    <MainPage title="HR" icon={<GroupOutlined fontSize="large"/>} onRefresh={handleRefresh}
-              updatedTime={updatedTime}>
+    <MainPage
+      title="HR"
+      //icon={<GroupOutlined fontSize="large"/>}
+      onRefresh={handleRefresh}
+      updatedTime={updatedTime}>
       <DatagridTable
         rows={rows}
         allowAdd

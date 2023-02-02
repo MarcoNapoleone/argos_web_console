@@ -6,7 +6,6 @@ import {
   Card,
   Chip,
   CircularProgress,
-  Container,
   Dialog,
   DialogActions,
   DialogContent,
@@ -27,10 +26,7 @@ import {
   Typography,
   useMediaQuery
 } from "@mui/material";
-import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
-import SensorsIcon from '@mui/icons-material/Sensors';
 import {useTheme} from "@mui/material/styles";
-import PageTitle from "../../../Components/PageTitle/PageTitle";
 import {useAlert} from "../../../Components/Providers/Alert/Alert.provider";
 import {podServicePath} from "../../../services/connectors/axios";
 import DetailsSection from "../../../Components/DetailsSection/DetailsSection";
@@ -44,7 +40,6 @@ import DateRangeOutlinedIcon from '@mui/icons-material/DateRangeOutlined';
 import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined';
 import TextField from "@mui/material/TextField";
 import {MonthPicker, StaticDatePicker, StaticTimePicker} from '@mui/x-date-pickers';
-import ConstructionOutlinedIcon from "@mui/icons-material/ConstructionOutlined";
 import MainPage from '../../../Components/MainPage/MainPage';
 
 const sampleData = {
@@ -247,8 +242,12 @@ function PodsPage() {
   }
 
   return (
-    <MainPage title="Pods" icon={<SensorsIcon fontSize="large"/>} onRefresh={handleRefresh} updatedTime={updatedTime}>
-    <Grid container spacing={2}>
+    <MainPage
+      title="Pods"
+      //icon={<SensorsIcon fontSize="large"/>}
+      onRefresh={handleRefresh}
+      updatedTime={updatedTime}>
+      <Grid container spacing={2}>
         <Grid item xs={12}>
           <Card variant="outlined">
             <Stack spacing={1} p={2}>

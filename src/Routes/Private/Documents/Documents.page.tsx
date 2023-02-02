@@ -1,7 +1,6 @@
 import React, {useContext, useEffect, useState} from "react";
 import {useAlertContext} from "../../../Components/Providers/Alert/Alert.provider";
 import {Grid, IconButton, useMediaQuery} from "@mui/material";
-import DatagridTable from "../../../Components/DatagridComponents/DatagridTable";
 import AddDialog, {useAddDialogContext} from "../../../Components/Providers/AddDialog/AddDialog";
 import DeleteIcon from "@mui/icons-material/DeleteOutlined";
 import MainPage from "../../../Components/MainPage/MainPage";
@@ -13,7 +12,6 @@ import {useTheme} from "@mui/material/styles";
 import {getReasonAlert} from "../../../utils/requestAlertHandler";
 import {useCurrentCompany} from "../../../Components/Providers/Company/Company.provider";
 import {Document, getAllDocuments} from "../../../services/documents.services";
-import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
 import FileContainer from "../../../Components/files/FileContainer/FileContainer";
 
 
@@ -141,8 +139,8 @@ const DocumentsPage = () => {
     },
     {
       field: 'more',
-      headerName: 'Altro',
-      description: 'Dettagli',
+      headerName: 'More',
+      description: 'Details',
       align: 'center',
       renderCell: RenderMoreButton,
       width: 90,
@@ -152,8 +150,8 @@ const DocumentsPage = () => {
     },
     {
       field: 'edit',
-      headerName: 'Modifica',
-      description: 'Modifica, Elimina',
+      headerName: 'Edit',
+      description: 'Edit, Delete',
       align: 'center',
       renderCell: RenderDeleteButton,
       width: 110,
@@ -174,8 +172,12 @@ const DocumentsPage = () => {
   }
 
   return (
-    <MainPage title="Documents" icon={<DescriptionOutlinedIcon fontSize="large"/>} onRefresh={handleRefresh} updatedTime={updatedTime}>
-          <FileContainer files={documents} setFiles={setDocuments} loading={loading}/>
+    <MainPage
+      title="Documents"
+      //icon={<DescriptionOutlinedIcon fontSize="large"/>}
+      onRefresh={handleRefresh}
+      updatedTime={updatedTime}>
+      <FileContainer files={documents} setFiles={setDocuments} loading={loading}/>
       <AddDialog title={"Add "} handleSubmit={() => {
       }}>
         <Grid container direction="column" spacing={1}>

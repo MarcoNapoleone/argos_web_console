@@ -10,6 +10,8 @@ import DetailsSection from "../../../Components/DetailsSection/DetailsSection";
 import {
   defaultLocalUnit,
   deleteLocalUnit,
+  getAllDepartments,
+  getAllVehicles,
   getLocalUnit,
   LocalUnit,
   updateLocalUnit
@@ -17,12 +19,13 @@ import {
 import {getReasonAlert, getResponseAlert} from "../../../utils/requestAlertHandler";
 import DialogFormLabel from "../../../Components/DialogFormLabel/DialoFormLabel";
 import {getUpdatedTime} from "../../../utils/dateHandler";
+import {defaultDepartments} from "../../../services/departments.services";
+import DatagridTable from "../../../Components/DatagridComponents/DatagridTable";
 
 type PageParamsType = {
   companyId: string;
   localUnitId: string;
 };
-
 
 const LocalUnitDetailsPage = () => {
   const theme = useTheme();
@@ -31,6 +34,8 @@ const LocalUnitDetailsPage = () => {
   const {companyId, localUnitId} = useParams<PageParamsType>();
   const [loading, setLoading] = useState(true);
   const [localUnit, setLocalUnit] = useState(defaultLocalUnit);
+  const [departments, setDepartments] = useState(defaultDepartments);
+  const [vehicles, setVehicles] = useState(defaultDepartments);
   const [updatedTime, setUpdatedTime] = useState("00:00");
   const {setOpenAddDialog} = useContext(useAddDialogContext);
   const {setAlertEvent} = useContext(useAlertContext);
@@ -64,8 +69,12 @@ const LocalUnitDetailsPage = () => {
   ];
 
   const fetchData = async () => {
-    const res = await getLocalUnit(localUnitId)
-    setLocalUnit(res);
+    const _localUnit = await getLocalUnit(localUnitId)
+    const _departments = await getAllDepartments(localUnitId)
+    const _vehicles = await getAllVehicles(localUnitId)
+    setLocalUnit(_localUnit);
+    setDepartments(_departments);
+    setVehicles(_vehicles);
   }
 
   useEffect(() => {
@@ -238,7 +247,60 @@ const LocalUnitDetailsPage = () => {
           </Grid>
         </Grid>
       }
-    ></DetailsPage>
+    >
+      <Grid container direction="column" spacing={1} pt={1}>
+        <Grid item mx={2} id="departments">
+          <Typography variant="h6">
+            Departments
+          </Typography>
+        </Grid>
+        <Grid item>
+          {loading
+            ? <Grid item container>
+              {[...Array(3)].map(() => (
+                <Grid item xs={12}>
+                  <Skeleton animation="wave" width="100%" height="48px"/>
+                </Grid>
+              ))}
+            </Grid>
+            : <DatagridTable
+              loading={loading}
+              allowAdd
+              onAdd={() => {
+              }}
+              rows={[]}
+              columns={[]}
+            />
+          }
+        </Grid>
+      </Grid>
+      <Grid container direction="column" spacing={1} pt={1}>
+        <Grid item mx={2}>
+          <Typography variant="h6">
+            Vehicles
+          </Typography>
+        </Grid>
+        <Grid item>
+          {loading
+            ? <Grid item container>
+              {[...Array(3)].map(() => (
+                <Grid item xs={12}>
+                  <Skeleton animation="wave" width="100%" height="48px"/>
+                </Grid>
+              ))}
+            </Grid>
+            : <DatagridTable
+              loading={loading}
+              allowAdd
+              onAdd={() => {
+              }}
+              rows={[]}
+              columns={[]}
+            />
+          }
+        </Grid>
+      </Grid>
+    </DetailsPage>
   );
 }
 

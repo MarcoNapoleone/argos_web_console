@@ -5,7 +5,6 @@ import PageFrame from "../../../Components/PageFrame/PageFrame";
 import DetailsPage from "../../../Components/DetailsPage/DetailsPage";
 import {useCurrentCompany} from "../../../Components/Providers/Company/Company.provider";
 import DetailsSection from '../../../Components/DetailsSection/DetailsSection';
-import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import DialogFormLabel from "../../../Components/DialogFormLabel/DialoFormLabel";
 import {getUpdatedTime} from "../../../utils/dateHandler";
 import {Company, updateCompany} from "../../../services/companies.services";
@@ -61,7 +60,7 @@ function CompanyDetailsPage() {
     <PageFrame>
       <DetailsPage
         title={company.name}
-        icon={<HomeOutlinedIcon fontSize="large"/>}
+        //icon={<HomeOutlinedIcon fontSize="large"/>}
         updatedTime={updatedTime}
         loading={loading}
         allowModify={{edit: true, delete: false}}

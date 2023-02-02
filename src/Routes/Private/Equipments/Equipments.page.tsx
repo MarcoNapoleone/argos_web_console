@@ -1,21 +1,17 @@
 import React, {useContext, useEffect, useState} from "react";
 import {useAlertContext} from "../../../Components/Providers/Alert/Alert.provider";
 import {Grid, IconButton, useMediaQuery} from "@mui/material";
-import DatagridTable from "../../../Components/DatagridComponents/DatagridTable";
 import AddDialog, {useAddDialogContext} from "../../../Components/Providers/AddDialog/AddDialog";
 import DeleteIcon from "@mui/icons-material/DeleteOutlined";
 import MainPage from "../../../Components/MainPage/MainPage";
 import {GridColumns} from "@mui/x-data-grid";
-import {DirectionsBoatFilledOutlined} from "@mui/icons-material";
 import OpenInNewOutlinedIcon from "@mui/icons-material/OpenInNewOutlined";
 import DeleteDialog, {useDeleteDialogContext} from "../../../Components/Providers/DeleteDialog/DeleteDialog";
 import {useNavigate, useParams} from "react-router-dom";
 import {useTheme} from "@mui/material/styles";
-import {defaultCompanies, getAllCompanies} from "../../../services/companies.services";
 import {getReasonAlert} from "../../../utils/requestAlertHandler";
 import {defaultLocalUnits, getAllLocalUnits} from "../../../services/localUnits.services";
 import {useCurrentCompany} from "../../../Components/Providers/Company/Company.provider";
-import ConstructionOutlinedIcon from "@mui/icons-material/ConstructionOutlined";
 
 
 type PageParamsType = {
@@ -149,8 +145,8 @@ const EquipmentsPage = () => {
     },
     {
       field: 'more',
-      headerName: 'Altro',
-      description: 'Dettagli',
+      headerName: 'More',
+      description: 'Details',
       align: 'center',
       renderCell: RenderMoreButton,
       width: 90,
@@ -160,8 +156,8 @@ const EquipmentsPage = () => {
     },
     {
       field: 'edit',
-      headerName: 'Modifica',
-      description: 'Modifica, Elimina',
+      headerName: 'Edit',
+      description: 'Edit, Delete',
       align: 'center',
       renderCell: RenderDeleteButton,
       width: 110,
@@ -182,8 +178,11 @@ const EquipmentsPage = () => {
   }
 
   return (
-    <MainPage title="Equipments" icon={<ConstructionOutlinedIcon fontSize="large"/>} onRefresh={handleRefresh}
-              updatedTime={updatedTime}>
+    <MainPage
+      title="Equipments"
+      //icon={<ConstructionOutlinedIcon fontSize="large"/>}
+      onRefresh={handleRefresh}
+      updatedTime={updatedTime}>
       equips
       <AddDialog title={"Add "} handleSubmit={() => {
       }}>

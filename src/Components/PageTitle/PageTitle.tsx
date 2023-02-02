@@ -15,7 +15,7 @@ const PageTitle: FC<PageTitleProps> = ({title, icon, loading, children}) => {
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   return (
     <Grid container alignItems="center">
-      <Grid item pr={isMobile ? 2 : 3}>
+      {icon && <Grid item pr={isMobile ? 2 : 3}>
         {loading
           ? <Skeleton sx={{borderRadius: '16px'}} variant="rectangular" animation="wave">
             <Avatar
@@ -41,7 +41,7 @@ const PageTitle: FC<PageTitleProps> = ({title, icon, loading, children}) => {
             {icon}
           </Avatar>
         }
-      </Grid>
+      </Grid>}
       <Grid item pr={isMobile ? 2 : 3}>
         {loading
           ? <Skeleton animation="wave">

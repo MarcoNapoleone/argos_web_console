@@ -6,16 +6,12 @@ import AddDialog, {useAddDialogContext} from "../../../Components/Providers/AddD
 import DeleteIcon from "@mui/icons-material/DeleteOutlined";
 import MainPage from "../../../Components/MainPage/MainPage";
 import {GridColumns} from "@mui/x-data-grid";
-import {DirectionsBoatFilledOutlined} from "@mui/icons-material";
 import OpenInNewOutlinedIcon from "@mui/icons-material/OpenInNewOutlined";
 import DeleteDialog, {useDeleteDialogContext} from "../../../Components/Providers/DeleteDialog/DeleteDialog";
 import {useNavigate, useParams} from "react-router-dom";
 import {useTheme} from "@mui/material/styles";
-import {defaultCompanies, getAllCompanies} from "../../../services/companies.services";
 import {getReasonAlert} from "../../../utils/requestAlertHandler";
-import {defaultLocalUnits, getAllLocalUnits} from "../../../services/localUnits.services";
 import {useCurrentCompany} from "../../../Components/Providers/Company/Company.provider";
-import PersonPinCircleOutlinedIcon from "@mui/icons-material/PersonPinCircleOutlined";
 import {defaultDepartments, getAllDepartments} from "../../../services/departments.services";
 
 
@@ -52,13 +48,14 @@ const DepartmentsPage = () => {
       })
   }, []);
 
+  const handleMoreInfoClick = (e: any) => {
+    navigate(`/app/companies/${e.row.companyId}/departments/${e.row.id}`);
+  };
   const RenderMoreButton = (e: any) => {
-    const handleMoreClick = () => {
-      navigate(`/app/companies/${e.row.companyId}/local-units/${e.row.id}`);
-    };
+
     return (
       <IconButton
-        onClick={handleMoreClick}
+        onClick={handleMoreInfoClick}
         size="small"
       >
         <OpenInNewOutlinedIcon/>
@@ -81,10 +78,6 @@ const DepartmentsPage = () => {
         <DeleteDialog handleDelete={handleDeleteClick} title={'gg'}/>
       </>
     );
-  }
-
-  const handleDoubleClick = (e: any) => {
-    navigate(`/app/companies/${e.row.companyId}/local-units/${e.row.id}`);
   }
 
   const rows = departments.map((department) => {
@@ -112,8 +105,8 @@ const DepartmentsPage = () => {
     },
     {
       field: 'more',
-      headerName: 'Altro',
-      description: 'Dettagli',
+      headerName: 'More',
+      description: 'Details',
       align: 'center',
       renderCell: RenderMoreButton,
       width: 90,
@@ -123,8 +116,8 @@ const DepartmentsPage = () => {
     },
     {
       field: 'edit',
-      headerName: 'Modifica',
-      description: 'Modifica, Elimina',
+      headerName: 'Edit',
+      description: 'Edit, Delete',
       align: 'center',
       renderCell: RenderDeleteButton,
       width: 110,
@@ -145,17 +138,23 @@ const DepartmentsPage = () => {
   }
 
   return (
-    <MainPage title="Departments" icon={<PersonPinCircleOutlinedIcon fontSize="large"/>} onRefresh={handleRefresh}
-              updatedTime={updatedTime}>
+    <MainPage
+      title="Departments"
+      //icon={<PersonPinCircleOutlinedIcon fontSize="large"/>}
+      onRefresh={handleRefresh}
+      updatedTime={updatedTime}>
       <DatagridTable
         rows={rows}
         allowAdd
         columns={columns}
         loading={loading}
-        onRowDoubleClick={handleDoubleClick}
+        onRowDoubleClick={handleMoreInfoClick}
       />
-      <AddDialog title={"Add "} handleSubmit={() => {
-      }}>
+      <AddDialog
+        title={"Add department"}
+        handleSubmit={() => {
+        }}
+      >
         <Grid container direction="column" spacing={1}>
 
         </Grid>

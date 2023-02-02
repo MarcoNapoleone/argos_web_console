@@ -5,13 +5,14 @@ import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import PageTitle from "../PageTitle/PageTitle";
 import SyncButton from "../SyncButton/SyncButton";
 import {useTheme} from "@mui/material/styles";
-import {AddDialogProvider} from "../Providers/AddDialog/AddDialog";
 
 interface MainPageProps {
   icon?: React.ReactNode,
   onRefresh?: () => void,
   updatedTime?: string,
   breadcrumbs?: JSX.Element[],
+
+  disableBreadcrumbs?: boolean,
   loading?: boolean,
   children?: React.ReactNode,
   title: string,
@@ -25,6 +26,7 @@ const MainPage: FC<MainPageProps> = (
     updatedTime,
     loading,
     breadcrumbs,
+    disableBreadcrumbs,
     children,
     title
   }
@@ -51,15 +53,15 @@ const MainPage: FC<MainPageProps> = (
   return (
       <Container maxWidth="xl" disableGutters={isMobile}>
         <Grid container justifyContent="center" direction="column" spacing={1} pt={10}>
-          <Grid item>
+          {!disableBreadcrumbs && <Grid item>
             <Breadcrumbs
               separator={<NavigateNextIcon fontSize="small"/>}
             >
               {usedBreadcrumbs}
             </Breadcrumbs>
-          </Grid>
+          </Grid>}
           <Grid item>
-            <PageTitle title={title} icon={!isMobile && icon} loading={loading}/>
+            <PageTitle title={title} icon={!isMobile && icon ? icon : null} loading={loading}/>
           </Grid>
           {Boolean(updatedTime)
             ? <Grid item>

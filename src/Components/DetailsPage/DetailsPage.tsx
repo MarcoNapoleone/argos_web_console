@@ -16,6 +16,8 @@ import {
   Grow,
   IconButton,
   Link,
+  ListItem,
+  ListSubheader,
   Skeleton,
   Stack,
   Tooltip,
@@ -31,6 +33,8 @@ import SyncButton from "../SyncButton/SyncButton";
 import DetailsLoading from "../DetailsLoading/DetailsLoading";
 import DeleteIcon from "@mui/icons-material/DeleteOutlined";
 import DeleteDialog, {useDeleteDialogContext} from "../Providers/DeleteDialog/DeleteDialog";
+import List from "@mui/material/List";
+import ListItemText from "@mui/material/ListItemText";
 
 interface modifyConfig {
   edit: boolean;
@@ -52,13 +56,14 @@ interface DetailsPageProps {
   onDelete?: () => void,
   onEditMode?: () => void,
   editChildren?: React.ReactNode,
-  baseChildren: React.ReactNode,
+  baseChildren?: React.ReactNode,
   chips?: React.ReactNode,
   noEditElement?: React.ReactNode,
   allowModify?: modifyConfig,
   breadcrumbs?: JSX.Element[],
   baseChildrenLoadingRows?: number,
   baseChildrenLoadingColumns?: number,
+  anchors?: string[],
   children?: React.ReactNode,
 }
 
@@ -79,6 +84,7 @@ const DetailsPage: FC<DetailsPageProps> = (
     editChildren,
     baseChildren,
     children,
+    anchors,
     baseChildrenLoadingRows,
     baseChildrenLoadingColumns,
   }
@@ -88,6 +94,7 @@ const DetailsPage: FC<DetailsPageProps> = (
   const [editMode, setEditMode] = useState(false);
   const {pagePath} = useParams<PageParamsType>();
   const {setOpenDeleteDialog} = useContext(useDeleteDialogContext);
+
   const usedBreadcrumbs = Boolean(breadcrumbs) ? breadcrumbs : [
     <Link
       underline="hover"
@@ -123,117 +130,134 @@ const DetailsPage: FC<DetailsPageProps> = (
       }}
     >
       <Container maxWidth="xl" disableGutters={isMobile}>
-        <Grid container justifyContent="center" direction="column" spacing={1} pt={10}>
-          <Grid item>
-            <Breadcrumbs
-              separator={<NavigateNextIcon fontSize="small"/>}
-            >
-              {usedBreadcrumbs}
-            </Breadcrumbs>
-          </Grid>
-          <Grid item>
-            <PageTitle title={title} icon={!isMobile && icon} loading={loading}>
-              {!isMobile
-                ? !editMode && <Grow in key={2}>
-                <Stack direction="row" spacing={1}>
-                  {allowModify.edit && <Tooltip title="Edit" arrow TransitionComponent={Zoom}>
-                    <IconButton
-                      id="3"
-                      color="primary"
-                      children={<ModeEditOutlineOutlinedIcon/>}
-                      onClick={handleEditMode}
-                    />
-                  </Tooltip>}
-                  {allowModify.delete && <Tooltip title="Delete" arrow TransitionComponent={Zoom}>
-                    <IconButton
-                      id="4"
-                      onClick={() => setOpenDeleteDialog(true)}
-                      children={<DeleteIcon/>}
-                    />
-                  </Tooltip>}
-                </Stack>
-              </Grow>
-                : !loading && !allowModify && noEditElement
-                /*<Grow in key={1}>
-                <Stack direction="row" spacing={1}>
-                  <Tooltip title="Salva modifiche" arrow TransitionComponent={Zoom}>
-                    <IconButton
-                      color="primary"
-                      id="1"
-                      form="editForm"
-                      children={<SaveOutlinedIcon/>}
-                      type="submit"
-                    />
-                  </Tooltip>
-                  <Tooltip title="Annulla modifiche" arrow TransitionComponent={Zoom}>
-                    <IconButton
-                      id="2"
-                      children={<CloseIcon/>}
-                      onClick={() => setEditMode(false)}
-                    />
-                  </Tooltip>
-                </Stack>
-              </Grow>*/}
-            </PageTitle>
-          </Grid>
-          <Grid item container spacing={1}>
+        <Grid container spacing={2} pt={10}>
+          <Grid item xs={9} container justifyContent="center" direction="column" spacing={1}>
             <Grid item>
-              <SyncButton updatedTime={updatedTime} onClick={onRefresh}/>
+              <Breadcrumbs
+                separator={<NavigateNextIcon fontSize="small"/>}
+              >
+                {usedBreadcrumbs}
+              </Breadcrumbs>
             </Grid>
             <Grid item>
-              {!loading && chips}
+              <PageTitle title={title} icon={!isMobile && icon ? icon : null} loading={loading}>
+                {!isMobile
+                  ? !editMode && <Grow in key={2}>
+                  <Stack direction="row" spacing={1}>
+                    {allowModify.edit && <Tooltip title="Edit" arrow TransitionComponent={Zoom}>
+                      <IconButton
+                        id="3"
+                        color="primary"
+                        children={<ModeEditOutlineOutlinedIcon/>}
+                        onClick={handleEditMode}
+                      />
+                    </Tooltip>}
+                    {allowModify.delete && <Tooltip title="Delete" arrow TransitionComponent={Zoom}>
+                      <IconButton
+                        id="4"
+                        onClick={() => setOpenDeleteDialog(true)}
+                        children={<DeleteIcon/>}
+                      />
+                    </Tooltip>}
+                  </Stack>
+                </Grow>
+                  : !loading && !allowModify && noEditElement
+                  /*<Grow in key={1}>
+                  <Stack direction="row" spacing={1}>
+                    <Tooltip title="Salva modifiche" arrow TransitionComponent={Zoom}>
+                      <IconButton
+                        color="primary"
+                        id="1"
+                        form="editForm"
+                        children={<SaveOutlinedIcon/>}
+                        type="submit"
+                      />
+                    </Tooltip>
+                    <Tooltip title="Annulla modifiche" arrow TransitionComponent={Zoom}>
+                      <IconButton
+                        id="2"
+                        children={<CloseIcon/>}
+                        onClick={() => setEditMode(false)}
+                      />
+                    </Tooltip>
+                  </Stack>
+                </Grow>*/}
+              </PageTitle>
             </Grid>
-          </Grid>
-          <Grid item mt={3}>
-            {loading
-              ? <Card variant="outlined">
-                <DetailsLoading rows={baseChildrenLoadingRows} columns={baseChildrenLoadingColumns}/>
-              </Card>
-              : editMode
-                ? <Fade in key={1}>
-                  <Card variant="outlined">
-                    <CardContent>
-                      <Box py={2}>
-                        {editChildren}
-                      </Box>
-                      <DialogActions>
-                        <Button color="inherit"
-                                onClick={() => setEditMode(false)}
-                        >
-                          <Box mx={2}>annulla</Box>
-                        </Button>
-                        <Button
-                          color="primary"
-                          id="1"
-                          form="editForm"
-                          type="submit"
-                          sx={{
-                            backgroundColor: alpha(theme.palette.primary.main, 0.2),
-                            "&:hover": {
-                              backgroundColor: alpha(theme.palette.primary.main, 0.25),
-                            },
-                          }}>
-                          <Box mx={2}>
-                            salva
-                          </Box>
-                        </Button>
-                      </DialogActions>
-                    </CardContent>
-                  </Card>
-                </Fade>
-                : <Fade in key={2}>
-                  <div>
+            <Grid item container spacing={1}>
+              <Grid item>
+                <SyncButton updatedTime={updatedTime} onClick={onRefresh}/>
+              </Grid>
+              <Grid item>
+                {!loading && chips}
+              </Grid>
+            </Grid>
+            <Grid item mt={3}>
+              {loading
+                ? <Card variant="outlined">
+                  <DetailsLoading rows={baseChildrenLoadingRows} columns={baseChildrenLoadingColumns}/>
+                </Card>
+                : editMode
+                  ? <Fade in key={1}>
                     <Card variant="outlined">
                       <CardContent>
-                        {baseChildren}
+                        <Box py={2}>
+                          {editChildren}
+                        </Box>
+                        <DialogActions>
+                          <Button color="inherit"
+                                  onClick={() => setEditMode(false)}
+                          >
+                            <Box mx={2}>annulla</Box>
+                          </Button>
+                          <Button
+                            color="primary"
+                            id="1"
+                            form="editForm"
+                            type="submit"
+                            sx={{
+                              backgroundColor: alpha(theme.palette.primary.main, 0.2),
+                              "&:hover": {
+                                backgroundColor: alpha(theme.palette.primary.main, 0.25),
+                              },
+                            }}>
+                            <Box mx={2}>
+                              salva
+                            </Box>
+                          </Button>
+                        </DialogActions>
                       </CardContent>
                     </Card>
-                    <Box pt={2}>
-                      {children}
-                    </Box>
-                  </div>
-                </Fade>
-            }
+                  </Fade>
+                  : <Fade in={Boolean(baseChildren)} key={2}>
+                    <div>
+                      <Card variant="outlined">
+                        <CardContent>
+                          {baseChildren}
+                        </CardContent>
+                      </Card>
+                      <Box pt={2}>
+                        {children}
+                      </Box>
+                    </div>
+                  </Fade>
+              }
+            </Grid>
+          </Grid>
+          <Grid item xs={3}>
+            <List
+              subheader={<ListSubheader component="div">Contents</ListSubheader>}
+            >
+              <ListItem>
+                <ListItemText primary="Details"/>
+              </ListItem>
+              <ListItem>
+                <ListItemText primary="Departments"/>
+              </ListItem>
+              <ListItem>
+                <ListItemText primary="vehicles"/>
+              </ListItem>
+            </List>
           </Grid>
         </Grid>
         <DeleteDialog handleDelete={onDelete} title={title}/>

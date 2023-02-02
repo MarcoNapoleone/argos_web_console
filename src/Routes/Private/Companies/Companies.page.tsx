@@ -4,7 +4,6 @@ import {
   Avatar,
   Badge,
   Box,
-  Container,
   Divider,
   Grid,
   Grow,
@@ -29,6 +28,7 @@ import {useAuth} from "../../../Components/Providers/Authorization/Authorization
 import {useCurrentCompany} from "../../../Components/Providers/Company/Company.provider";
 import {Id} from "../../../services/entities";
 import {deleteCookie, setCookie} from "../../../services/connectors/cookies";
+import MainPage from "../../../Components/MainPage/MainPage";
 
 function CompaniesPage() {
 
@@ -97,22 +97,32 @@ function CompaniesPage() {
           zIndex: theme => theme.zIndex.appBar,
         }}
       >
-        <Grid item xs={12}>
-          <Grid container justifyContent="flex-end" alignItems="center" spacing={2}>
-            <Grid item>
-              <IconButton sx={{borderRadius: '16px'}} disableRipple>
-                <Badge variant="dot" overlap="rectangular" color="secondary">
-                  <Avatar variant="rounded" sx={{borderRadius: '8px'}} onClick={handleOpenUserMenu}
-                          alt="User profile picture"
-                          src="https://mui.com/static/images/avatar/1.jpg"/>
-                </Badge>
-              </IconButton>
-            </Grid>
+        <Grid item xs={12} container justifyContent="space-between" alignItems="center" spacing={2}>
+          <Grid item>
+            <IconButton sx={{borderRadius: '16px'}} disableRipple>
+              <Logo/>
+            </IconButton>
+          </Grid>
+          <Grid item>
+            <IconButton sx={{borderRadius: '16px'}} disableRipple>
+              <Badge variant="dot" overlap="rectangular" color="secondary">
+                <Avatar variant="rounded" sx={{borderRadius: '8px'}} onClick={handleOpenUserMenu}
+                        alt="User profile picture"
+                        src="https://mui.com/static/images/avatar/1.jpg"/>
+              </Badge>
+            </IconButton>
           </Grid>
         </Grid>
       </Grid>
-      <Box py={16}>
-        <Container maxWidth="xl" disableGutters={isMobile}>
+      <Box sx={{
+        py: 16,
+        px: 2,
+      }}>
+        <MainPage
+          title="Your companies"
+          disableBreadcrumbs
+          loading={loading}
+        >
           <Grid container spacing={2}>
             <Grid item xs={12} container spacing={2}>
               {loading
@@ -121,9 +131,11 @@ function CompaniesPage() {
                     <AddCard disabled/>
                   </Grid>
                   {[...Array(5)].map((el, index) => (
-                      <Grid key={index.toString()} item xs={12} md={4}>
-                        <CompanyCard isLoading/>
-                      </Grid>
+                      <Grow in style={{transitionDelay: `50ms`}}>
+                        <Grid key={index.toString()} item xs={12} md={4}>
+                          <CompanyCard isLoading/>
+                        </Grid>
+                      </Grow>
                     )
                   )}
                 </>
@@ -145,39 +157,54 @@ function CompaniesPage() {
               }
             </Grid>
           </Grid>
-        </Container>
+          <Menu
+            anchorEl={anchorElUser}
+            open={openUserMenu}
+            onClose={handleCloseUserMenu}
+            TransitionComponent={Zoom}
+            transformOrigin={{horizontal: 'right', vertical: 'top'}}
+            anchorOrigin={{horizontal: 'right', vertical: 'bottom'}}
+          >
+            <MenuItem key={1} onClick={() => navigate('/Account')}>
+              <ListItemIcon>
+                <AccountCircleOutlined
+                  fontSize="small"/>
+              </ListItemIcon>
+              <ListItemText>{loggedUser?.name + ' ' + loggedUser?.surname}</ListItemText>
+            </MenuItem>
+            <MenuItem>
+              <ListItemIcon>
+                <NotificationsOutlinedIcon/>
+              </ListItemIcon>
+              <ListItemText>Notifiche</ListItemText>
+            </MenuItem>
+            <Divider/>
+            <MenuItem key={3} onClick={logout}>
+              <ListItemIcon>
+                <Logout fontSize="small"/>
+              </ListItemIcon>
+              Logout
+            </MenuItem>
+          </Menu>
+        </MainPage>
       </Box>
-      <Menu
-        anchorEl={anchorElUser}
-        open={openUserMenu}
-        onClose={handleCloseUserMenu}
-        TransitionComponent={Zoom}
-        transformOrigin={{horizontal: 'right', vertical: 'top'}}
-        anchorOrigin={{horizontal: 'right', vertical: 'bottom'}}
-      >
-        <MenuItem key={1} onClick={() => navigate('/Account')}>
-          <ListItemIcon>
-            <AccountCircleOutlined
-              fontSize="small"/>
-          </ListItemIcon>
-          <ListItemText>{loggedUser?.name + ' ' + loggedUser?.surname}</ListItemText>
-        </MenuItem>
-        <MenuItem>
-          <ListItemIcon>
-            <NotificationsOutlinedIcon/>
-          </ListItemIcon>
-          <ListItemText>Notifiche</ListItemText>
-        </MenuItem>
-        <Divider/>
-        <MenuItem key={3} onClick={logout}>
-          <ListItemIcon>
-            <Logout fontSize="small"/>
-          </ListItemIcon>
-          Logout
-        </MenuItem>
-      </Menu>
     </>
   );
 }
+
+
+const Logo = () => {
+  return (
+    <svg style={{marginTop: '7px'}} width="50" height="50" viewBox='0 0 177 100' fill='none'
+         xmlns='http://www.w3.org/2000/svg'>
+      <circle cx='72' cy='50' r='30' fill='#68DBFF'/>
+      <ellipse cx='104.647' cy='50' rx='29.7059' ry='30' fill='#FF7917'/>
+      <path fill-rule='evenodd' clip-rule='evenodd'
+            d='M88.4039 75.1221C96.5911 69.7652 102 60.5143 102 50C102 39.4858 96.5911 30.2348 88.4039 24.878C80.2971 30.2348 74.9412 39.4858 74.9412 50C74.9412 60.5143 80.2971 69.7652 88.4039 75.1221Z'
+            fill='#5D2C02'/>
+    </svg>
+  );
+}
+
 export default CompaniesPage;
 

@@ -1,7 +1,6 @@
 import React, {useContext, useEffect, useState} from "react";
 import {useAlertContext} from "../../../Components/Providers/Alert/Alert.provider";
 import {
-  Badge,
   Box,
   Card,
   CardActionArea,
@@ -16,17 +15,14 @@ import AddDialog, {useAddDialogContext} from "../../../Components/Providers/AddD
 import DeleteIcon from "@mui/icons-material/DeleteOutlined";
 import MainPage from "../../../Components/MainPage/MainPage";
 import {DataGrid, GridColumns} from "@mui/x-data-grid";
-import {DirectionsBoatFilledOutlined} from "@mui/icons-material";
 import OpenInNewOutlinedIcon from "@mui/icons-material/OpenInNewOutlined";
 import DeleteDialog, {useDeleteDialogContext} from "../../../Components/Providers/DeleteDialog/DeleteDialog";
 import {useNavigate, useParams} from "react-router-dom";
 import {useTheme} from "@mui/material/styles";
-import {defaultCompanies, getAllCompanies} from "../../../services/companies.services";
 import {getReasonAlert} from "../../../utils/requestAlertHandler";
 import {defaultLocalUnits, getAllLocalUnits} from "../../../services/localUnits.services";
 import {useCurrentCompany} from "../../../Components/Providers/Company/Company.provider";
-import EventOutlinedIcon from "@mui/icons-material/EventOutlined";
-import {CalendarPickerSkeleton, MobileDatePicker, PickersDay, StaticDatePicker} from "@mui/x-date-pickers";
+import {CalendarPickerSkeleton, MobileDatePicker, StaticDatePicker} from "@mui/x-date-pickers";
 import {getFormattedDate} from "../../../utils/dateHandler";
 import DatagridError from "../../../Components/DatagridComponents/DatagridError";
 import LoadingOverlay from "../../../Components/DatagridComponents/DatagridLoading";
@@ -170,8 +166,8 @@ const TimetablesPage = () => {
     },
     {
       field: 'more',
-      headerName: 'Altro',
-      description: 'Dettagli',
+      headerName: 'More',
+      description: 'Details',
       align: 'center',
       renderCell: RenderMoreButton,
       width: 90,
@@ -181,8 +177,8 @@ const TimetablesPage = () => {
     },
     {
       field: 'edit',
-      headerName: 'Modifica',
-      description: 'Modifica, Elimina',
+      headerName: 'Edit',
+      description: 'Edit, Delete',
       align: 'center',
       renderCell: RenderDeleteButton,
       width: 110,
@@ -203,8 +199,11 @@ const TimetablesPage = () => {
   }
 
   return (
-    <MainPage title="Timetables" icon={<EventOutlinedIcon fontSize="large"/>} onRefresh={handleRefresh}
-              updatedTime={updatedTime}>
+    <MainPage
+      title="Timetables"
+      //icon={<EventOutlinedIcon fontSize="large"/>}
+      onRefresh={handleRefresh}
+      updatedTime={updatedTime}>
       <Grid container spacing={2} direction="column">
         <Grid item xs={12}><Typography variant="h6" mx={2}>Close to due</Typography></Grid>
         <Grid item container spacing={2} xs={12}>
@@ -214,7 +213,7 @@ const TimetablesPage = () => {
                 <AddCard disabled/>
               </Grid>
               {[...Array(5)].map(() => (
-                  <Grid item xs={12} md={3}>
+                <Grid item xs={12} md={3}>
 
                   </Grid>
                 )
@@ -229,12 +228,13 @@ const TimetablesPage = () => {
                     <Card variant="outlined">
                       <CardActionArea sx={{
                         height: '100%',
-                      }} onClick={()=>{}}>
-                      <CardContent>
-                        <Typography variant="h6" color="textSecondary" gutterBottom>
-                          12/12/2020
-                        </Typography>
-                      </CardContent>
+                      }} onClick={() => {
+                      }}>
+                        <CardContent>
+                          <Typography variant="h6" color="textSecondary" gutterBottom>
+                            12/12/2020
+                          </Typography>
+                        </CardContent>
                       </CardActionArea>
                     </Card>
                   </Grid>
@@ -290,10 +290,10 @@ const TimetablesPage = () => {
           <Grid item container xs={12} sm direction="column" spacing={1}>
             {!isMobile
               && <Grid item mx={2}>
-                  <Typography variant="h6">
-                    Of {getFormattedDate(selectedDay.toString())}
-                  </Typography>
-                </Grid>
+                <Typography variant="h6">
+                  Of {getFormattedDate(selectedDay.toString())}
+                </Typography>
+              </Grid>
             }
             <Grid item xs>
               <Card variant="outlined" style={{height: isMobile ? "50vh" : "100%", width: "100%"}}>
