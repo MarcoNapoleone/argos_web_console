@@ -10,9 +10,9 @@ import DeleteDialog, {useDeleteDialogContext} from "../../../Components/Provider
 import {useNavigate, useParams} from "react-router-dom";
 import {useTheme} from "@mui/material/styles";
 import {getReasonAlert} from "../../../utils/requestAlertHandler";
-import {defaultLocalUnits, getAllLocalUnits} from "../../../services/localUnits.services";
 import {useCurrentCompany} from "../../../Components/Providers/Company/Company.provider";
-
+import DatagridTable from "../../../Components/DatagridComponents/DatagridTable";
+import {defaultVehicles, getAllVehicles} from "../../../services/vehicles.services";
 
 type PageParamsType = {
   companyId: string;
@@ -25,7 +25,7 @@ const VehiclesPage = () => {
   const {companyId} = useParams<PageParamsType>();
   const {company} = useCurrentCompany();
 
-  const [localUnits, setLocalUnits] = useState(defaultLocalUnits);
+  const [vehicles, setVehicles] = useState(defaultVehicles);
   const [loading, setLoading] = useState(true);
   const [updatedTime, setUpdatedTime] = useState("00:00");
   const {setOpenAddDialog} = useContext(useAddDialogContext);
@@ -33,8 +33,8 @@ const VehiclesPage = () => {
   const {setAlertEvent} = useContext(useAlertContext);
 
   const fetchData = async () => {
-    const res = await getAllLocalUnits(companyId)
-    setLocalUnits(res);
+    const res = await getAllVehicles(companyId)
+    setVehicles(res);
   }
 
   useEffect(() => {
@@ -82,16 +82,19 @@ const VehiclesPage = () => {
     navigate(`/app/companies/${e.row.companyId}/local-units/${e.row.id}`);
   }
 
-  const rows = localUnits.map((localUnit) => {
+  const rows = vehicles.map((vehicle) => {
     return {
-      id: localUnit.id,
-      companyId: localUnit.companyId,
-      name: localUnit.name,
-      email: localUnit.email,
-      phone: localUnit.phone,
-      address: localUnit.address,
-      postalCode: localUnit.postalCode,
-      municipality: localUnit.municipality
+      id: vehicle.id,
+      hrId: vehicle.hrId,
+      localUnitId: vehicle.localUnitId,
+      name: vehicle.name,
+      brand: vehicle.brand,
+      model: vehicle.model,
+      licensePlate: vehicle.licensePlate,
+      serialNumber: vehicle.serialNumber,
+      registrationDate: vehicle.registrationDate,
+      category: vehicle.category,
+      owner: vehicle.owner,
     }
   })
   const columns: GridColumns = [
@@ -104,44 +107,84 @@ const VehiclesPage = () => {
       headerAlign: 'center',
     },
     {
+      field: 'hrId',
+      headerName: 'HrId',
+      width: 90,
+      align: 'center',
+      editable: false,
+      headerAlign: 'center',
+    },
+    {
+      field: 'localUnitId',
+      headerName: 'Local Unit Id',
+      width: 90,
+      align: 'center',
+      editable: false,
+      headerAlign: 'center',
+    },
+    {
       field: 'name',
-      headerName: 'Nome',
-      minWidth: 150,
+      headerName: 'Name',
+      width: 120,
+      align: 'center',
       editable: false,
-      flex: 1,
+      headerAlign: 'center',
     },
     {
-      field: 'email',
-      headerName: 'Email',
-      minWidth: 150,
+      field: 'brand',
+      headerName: 'Brand',
+      width: 120,
+      align: 'center',
       editable: false,
-      flex: 1,
+      headerAlign: 'center',
     },
     {
-      field: 'address',
-      headerName: 'Address',
-      minWidth: 150,
+      field: 'model',
+      headerName: 'Model',
+      width: 120,
+      align: 'center',
       editable: false,
-      flex: 1,
+      headerAlign: 'center',
     },
     {
-      field: 'municipality',
-      headerName: 'Municipality',
-      minWidth: 150,
+      field: 'licensePlate',
+      headerName: 'License Plate',
+      width: 120,
+      align: 'center',
       editable: false,
-      flex: 1,
+      headerAlign: 'center',
     },
     {
-      field: 'postalCode',
-      headerName: 'Postal code',
-      minWidth: 150,
+      field: 'serialNumber',
+      headerName: 'Serial Number',
+      width: 120,
+      align: 'center',
       editable: false,
+      headerAlign: 'center',
     },
     {
-      field: 'phone',
-      headerName: 'Phone',
-      minWidth: 150,
+      field: 'registrationDate',
+      headerName: 'Registration Date',
+      width: 120,
+      align: 'center',
       editable: false,
+      headerAlign: 'center',
+    },
+    {
+      field: 'category',
+      headerName: 'Category',
+      width: 120,
+      align: 'center',
+      editable: false,
+      headerAlign: 'center',
+    },
+    {
+      field: 'owner',
+      headerName: 'Owner',
+      width: 120,
+      align: 'center',
+      editable: false,
+      headerAlign: 'center',
     },
     {
       field: 'more',
@@ -180,11 +223,16 @@ const VehiclesPage = () => {
   return (
     <MainPage
       title="Vehicles"
-      //icon={<LocalShippingOutlinedIcon fontSize="large"/>}
       onRefresh={handleRefresh}
       updatedTime={updatedTime}>
-      vehicles
-      <AddDialog title={"Add "} handleSubmit={() => {
+      <DatagridTable
+        rows={rows}
+        allowAdd
+        onAdd={() => setOpenAddDialog(true)}
+        columns={columns}
+        loading={loading}
+        onRowDoubleClick={handleDoubleClick}
+      />      <AddDialog title={"Add "} handleSubmit={() => {
       }}>
         <Grid container direction="column" spacing={1}>
 

@@ -68,6 +68,22 @@ const LocalUnitDetailsPage = () => {
     </Typography>,
   ];
 
+  const anchors = [
+    {
+      title: "Details",
+      id: "",
+    },
+    {
+      title: "Departments",
+      id: "departments",
+    },
+    {
+      title: "Vehicles",
+      id: "vehicles",
+    }
+  ];
+
+
   const fetchData = async () => {
     const _localUnit = await getLocalUnit(localUnitId)
     const _departments = await getAllDepartments(localUnitId)
@@ -135,9 +151,10 @@ const LocalUnitDetailsPage = () => {
       allowModify={{edit: true, delete: true}}
       onDelete={handleDelete}
       onSubmit={handleSubmitEdit}
+      anchors={anchors}
       onRefresh={handleRefresh}
       baseChildren={
-        <Grid container direction="column" spacing={1}>
+        <Grid container direction="column" id="details" spacing={1}>
           <Grid item container spacing={1}>
             <Grid item xs={12} sm={6}>
               <DetailsSection sectionTitle="Address:" sectionTextContent={localUnit?.address}/>
@@ -274,7 +291,7 @@ const LocalUnitDetailsPage = () => {
           }
         </Grid>
       </Grid>
-      <Grid container direction="column" spacing={1} pt={1}>
+      <Grid container direction="column" id="vehicles" spacing={1} pt={3}>
         <Grid item mx={2}>
           <Typography variant="h6">
             Vehicles

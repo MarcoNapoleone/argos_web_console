@@ -222,7 +222,6 @@ const LocalUnitsPage = () => {
         allowAdd
         onAdd={() => setOpenAddDialog(true)}
         columns={columns}
-
         loading={loading}
         onRowDoubleClick={handleDoubleClick}
       />

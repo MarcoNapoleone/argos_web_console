@@ -88,8 +88,11 @@ const PropertiesPage = () => {
       id: property.id,
       companyId: property.companyId,
       name: property.name,
-      phone: property.phone,
       address: property.address,
+      municipality: property.municipality,
+      postalCode: property.postalCode,
+      province: property.province,
+      country: property.country,
     }
   })
   const columns: GridColumns = [
@@ -116,10 +119,32 @@ const PropertiesPage = () => {
       flex: 1,
     },
     {
-      field: 'phone',
-      headerName: 'Phone',
+      field: 'municipality',
+      headerName: 'Municipality',
       minWidth: 150,
       editable: false,
+      flex: 1,
+    },
+    {
+      field: 'postalCode',
+      headerName: 'Postal Code',
+      minWidth: 150,
+      editable: false,
+      flex: 1,
+    },
+    {
+      field: 'province',
+      headerName: 'Province',
+      minWidth: 150,
+      editable: false,
+      flex: 1,
+    },
+    {
+      field: 'country',
+      headerName: 'Country',
+      minWidth: 150,
+      editable: false,
+      flex: 1,
     },
     {
       field: 'more',

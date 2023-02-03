@@ -10,8 +10,9 @@ import DeleteDialog, {useDeleteDialogContext} from "../../../Components/Provider
 import {useNavigate, useParams} from "react-router-dom";
 import {useTheme} from "@mui/material/styles";
 import {getReasonAlert} from "../../../utils/requestAlertHandler";
-import {defaultLocalUnits, getAllLocalUnits} from "../../../services/localUnits.services";
 import {useCurrentCompany} from "../../../Components/Providers/Company/Company.provider";
+import {defaultEquipments, getAllEquipments} from "../../../services/equipments.services";
+import DatagridTable from "../../../Components/DatagridComponents/DatagridTable";
 
 
 type PageParamsType = {
@@ -25,7 +26,7 @@ const EquipmentsPage = () => {
   const {companyId} = useParams<PageParamsType>();
   const {company} = useCurrentCompany();
 
-  const [localUnits, setLocalUnits] = useState(defaultLocalUnits);
+  const [equipments, setEquipments] = useState(defaultEquipments);
   const [loading, setLoading] = useState(true);
   const [updatedTime, setUpdatedTime] = useState("00:00");
   const {setOpenAddDialog} = useContext(useAddDialogContext);
@@ -33,8 +34,8 @@ const EquipmentsPage = () => {
   const {setAlertEvent} = useContext(useAlertContext);
 
   const fetchData = async () => {
-    const res = await getAllLocalUnits(companyId)
-    setLocalUnits(res);
+    const res = await getAllEquipments(companyId)
+    setEquipments(res);
   }
 
   useEffect(() => {
@@ -82,16 +83,16 @@ const EquipmentsPage = () => {
     navigate(`/app/companies/${e.row.companyId}/local-units/${e.row.id}`);
   }
 
-  const rows = localUnits.map((localUnit) => {
+  const rows = equipments.map((equipment) => {
     return {
-      id: localUnit.id,
-      companyId: localUnit.companyId,
-      name: localUnit.name,
-      email: localUnit.email,
-      phone: localUnit.phone,
-      address: localUnit.address,
-      postalCode: localUnit.postalCode,
-      municipality: localUnit.municipality
+      id: equipment.id,
+      departmentId: equipment.departmentId,
+      name: equipment.name,
+      type: equipment.type,
+      brand: equipment.brand,
+      serialNumber: equipment.serialNumber,
+      purchaseDate: equipment.purchaseDate,
+      firstTestDate: equipment.firstTestDate,
     }
   })
   const columns: GridColumns = [
@@ -105,43 +106,45 @@ const EquipmentsPage = () => {
     },
     {
       field: 'name',
-      headerName: 'Nome',
-      minWidth: 150,
+      headerName: 'Name',
+      width: 180,
       editable: false,
-      flex: 1,
+      headerAlign: 'center',
     },
     {
-      field: 'email',
-      headerName: 'Email',
-      minWidth: 150,
+      field: 'type',
+      headerName: 'Type',
+      width: 180,
       editable: false,
-      flex: 1,
+      headerAlign: 'center',
     },
     {
-      field: 'address',
-      headerName: 'Address',
-      minWidth: 150,
+      field: 'brand',
+      headerName: 'Brand',
+      width: 180,
       editable: false,
-      flex: 1,
+      headerAlign: 'center',
     },
     {
-      field: 'municipality',
-      headerName: 'Municipality',
-      minWidth: 150,
+      field: 'serialNumber',
+      headerName: 'Serial Number',
+      width: 180,
       editable: false,
-      flex: 1,
+      headerAlign: 'center',
     },
     {
-      field: 'postalCode',
-      headerName: 'Postal code',
-      minWidth: 150,
+      field: 'purchaseDate',
+      headerName: 'Purchase Date',
+      width: 180,
       editable: false,
+      headerAlign: 'center',
     },
     {
-      field: 'phone',
-      headerName: 'Phone',
-      minWidth: 150,
+      field: 'firstTestDate',
+      headerName: 'First Test Date',
+      width: 180,
       editable: false,
+      headerAlign: 'center',
     },
     {
       field: 'more',
@@ -183,7 +186,14 @@ const EquipmentsPage = () => {
       //icon={<ConstructionOutlinedIcon fontSize="large"/>}
       onRefresh={handleRefresh}
       updatedTime={updatedTime}>
-      equips
+      <DatagridTable
+        rows={rows}
+        allowAdd
+        onAdd={() => setOpenAddDialog(true)}
+        columns={columns}
+        loading={loading}
+        onRowDoubleClick={handleDoubleClick}
+      />
       <AddDialog title={"Add "} handleSubmit={() => {
       }}>
         <Grid container direction="column" spacing={1}>

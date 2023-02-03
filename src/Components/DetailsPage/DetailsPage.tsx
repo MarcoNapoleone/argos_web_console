@@ -9,7 +9,7 @@ import {
   Card,
   CardContent,
   Container,
-  DialogActions,
+  DialogActions, Divider,
   Fab,
   Fade,
   Grid,
@@ -19,6 +19,7 @@ import {
   ListItem,
   ListSubheader,
   Skeleton,
+  Slide,
   Stack,
   Tooltip,
   Typography,
@@ -39,6 +40,11 @@ import ListItemText from "@mui/material/ListItemText";
 interface modifyConfig {
   edit: boolean;
   delete: boolean;
+}
+
+interface Anchor {
+  title: string;
+  id: string;
 }
 
 type PageParamsType = {
@@ -63,7 +69,7 @@ interface DetailsPageProps {
   breadcrumbs?: JSX.Element[],
   baseChildrenLoadingRows?: number,
   baseChildrenLoadingColumns?: number,
-  anchors?: string[],
+  anchors?: Anchor[],
   children?: React.ReactNode,
 }
 
@@ -91,9 +97,14 @@ const DetailsPage: FC<DetailsPageProps> = (
 ) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const isLargeScreen = useMediaQuery(theme.breakpoints.up("lg"));
   const [editMode, setEditMode] = useState(false);
   const {pagePath} = useParams<PageParamsType>();
   const {setOpenDeleteDialog} = useContext(useDeleteDialogContext);
+
+  const hasAnchors = !loading
+    && isLargeScreen
+    && anchors?.length > 0;
 
   const usedBreadcrumbs = Boolean(breadcrumbs) ? breadcrumbs : [
     <Link
@@ -130,8 +141,9 @@ const DetailsPage: FC<DetailsPageProps> = (
       }}
     >
       <Container maxWidth="xl" disableGutters={isMobile}>
-        <Grid container spacing={2} pt={10}>
-          <Grid item xs={9} container justifyContent="center" direction="column" spacing={1}>
+        <Grid container spacing={4} pt={8}>
+          <Grid item lg={hasAnchors ? 10 : 12}
+              container direction="column" spacing={1}>
             <Grid item>
               <Breadcrumbs
                 separator={<NavigateNextIcon fontSize="small"/>}
@@ -146,17 +158,17 @@ const DetailsPage: FC<DetailsPageProps> = (
                   <Stack direction="row" spacing={1}>
                     {allowModify.edit && <Tooltip title="Edit" arrow TransitionComponent={Zoom}>
                       <IconButton
-                        id="3"
-                        color="primary"
-                        children={<ModeEditOutlineOutlinedIcon/>}
-                        onClick={handleEditMode}
+                          id="3"
+                          color="primary"
+                          children={<ModeEditOutlineOutlinedIcon/>}
+                          onClick={handleEditMode}
                       />
                     </Tooltip>}
                     {allowModify.delete && <Tooltip title="Delete" arrow TransitionComponent={Zoom}>
                       <IconButton
-                        id="4"
-                        onClick={() => setOpenDeleteDialog(true)}
-                        children={<DeleteIcon/>}
+                          id="4"
+                          onClick={() => setOpenDeleteDialog(true)}
+                          children={<DeleteIcon/>}
                       />
                     </Tooltip>}
                   </Stack>
@@ -244,21 +256,62 @@ const DetailsPage: FC<DetailsPageProps> = (
               }
             </Grid>
           </Grid>
-          <Grid item xs={3}>
-            <List
-              subheader={<ListSubheader component="div">Contents</ListSubheader>}
+          <Slide
+            in={hasAnchors}
+            direction="left"
+          >
+            <Grid
+              item
+              lg={2}
+              container
+              sx={{
+                top: '0px',
+                position: 'sticky',
+                height: '100vh',
+                overflowY: 'auto',
+              }}
             >
-              <ListItem>
-                <ListItemText primary="Details"/>
-              </ListItem>
-              <ListItem>
-                <ListItemText primary="Departments"/>
-              </ListItem>
-              <ListItem>
-                <ListItemText primary="vehicles"/>
-              </ListItem>
-            </List>
-          </Grid>
+              <List
+                dense
+                sx={{
+                  width: '100%',
+                  bgcolor: 'background.default',
+                }}
+                component="nav"
+                subheader={
+                  <ListSubheader
+                    sx={{
+                      width: '100%',
+                      bgcolor: 'background.default',
+                    }}
+                  >
+                    contents
+                  </ListSubheader>
+                }
+              >
+                {anchors?.map((anchor, key) =>
+                  <ListItem
+                    key={key}
+                    sx={{
+                      '&:hover': {
+                        borderLeft: `solid ${theme.palette.primary.main} 1px`,
+                        color: `${theme.palette.primary.main}`,
+                      },
+                      color: `${theme.palette.text.primary}`,
+                      borderLeft: `solid transparent 1px`,
+                  }}
+                  >
+                    <ListItemText primary={
+                        <Link href={`#${anchor?.id}`}
+                              color="inherit" underline="none">
+                        {anchor?.title}
+                      </Link>
+                    }/>
+                  </ListItem>
+                )}
+              </List>
+            </Grid>
+          </Slide>
         </Grid>
         <DeleteDialog handleDelete={onDelete} title={title}/>
       </Container>
