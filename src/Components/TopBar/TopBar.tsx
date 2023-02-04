@@ -211,10 +211,10 @@ const TopBar: React.FC<TopBarProps> = ({onMenuClick, isOpen, title}) => {
                 isMobile
                   ? theme.spacing(0)
                   : isLargeScreen
-                    ? theme.spacing(34)
+                    ? theme.spacing(26)
                     : isOpen
-                      ? theme.spacing(29)
-                      : theme.spacing(6)
+                      ? theme.spacing(26)
+                      : theme.spacing(4)
               }>
               <Typography variant="h6" sx={{fontWeight: 600}}>
                 <Box>

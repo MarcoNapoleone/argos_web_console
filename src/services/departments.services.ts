@@ -2,6 +2,8 @@ import {Id, UUID} from "./entities";
 import {servicePath} from "./connectors/axios";
 import {getCookie} from "./connectors/cookies";
 import {AxiosResponse} from "axios";
+import {HR} from "./hr.services";
+import {Equipment} from "./equipments.services";
 
 export class Department {
   id?: Id;
@@ -54,7 +56,7 @@ export async function getDepartment(departmentId: Id): Promise<Department> {
 export async function createDepartment(companyId: Id, department: Department): Promise<Department> {
   let data = {};
   await servicePath
-    .post(`/departments`, {...department, "companyId": companyId}, {
+    .post(`/departments`, {...department}, {
       headers: {
         Authorization: `Bearer ${getCookie('token')}`
       }
@@ -95,11 +97,45 @@ export async function deleteDepartment(id: Id): Promise<AxiosResponse> {
       }
     })
     .then(res => {
-      if (res.status !== 204) {
+      if (res.status !== 200) {
         return new Error(res.data["message"])
       }
       response = res
     })
   return response;
+}
+
+export async function getAllHR(departmentId: Id): Promise<HR[]> {
+  let data = [];
+  await servicePath
+    .get(`/departments/${departmentId}/hr`, {
+      headers: {
+        Authorization: `Bearer ${getCookie('token')}`
+      }
+    })
+    .then(res => {
+      if (res.status !== 200) {
+        return new Error(res.data["message"])
+      }
+      data = res.data
+    })
+  return data;
+}
+
+export async function getAllEquipments(departmentId: Id): Promise<Equipment[]> {
+  let data = [];
+  await servicePath
+    .get(`/departments/${departmentId}/equipments`, {
+      headers: {
+        Authorization: `Bearer ${getCookie('token')}`
+      }
+    })
+    .then(res => {
+      if (res.status !== 200) {
+        return new Error(res.data["message"])
+      }
+      data = res.data
+    })
+  return data;
 }
 

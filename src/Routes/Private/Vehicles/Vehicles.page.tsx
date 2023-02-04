@@ -62,7 +62,8 @@ const VehiclesPage = () => {
   }
 
   const RenderDeleteButton = (e: any) => {
-    const handleDeleteClick = () => {
+    const handleDeleteClick = async () => {
+      setLoading(true);
 
     };
     return (

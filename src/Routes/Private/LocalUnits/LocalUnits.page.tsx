@@ -60,13 +60,13 @@ const LocalUnitsPage = () => {
       })
   }
 
+  const handleMoreInfoClick = (e: any) => {
+    navigate(`/app/companies/${e.row.companyId}/local-units/${e.row.id}`);
+  };
   const RenderMoreButton = (e: any) => {
-    const handleMoreClick = () => {
-      navigate(`/app/companies/${e.row.companyId}/local-units/${e.row.id}`);
-    };
     return (
       <IconButton
-        onClick={handleMoreClick}
+        onClick={handleMoreInfoClick}
         size="small"
       >
         <OpenInNewOutlinedIcon/>
@@ -76,6 +76,7 @@ const LocalUnitsPage = () => {
 
   const RenderDeleteButton = (e: any) => {
     const handleDeleteClick = async () => {
+      setLoading(true);
       await deleteLocalUnit(e.row.id)
         .then((res) => {
           setAlertEvent(getResponseAlert(res));
@@ -97,10 +98,6 @@ const LocalUnitsPage = () => {
         <DeleteDialog handleDelete={handleDeleteClick} title="Local unit"/>
       </>
     );
-  }
-
-  const handleDoubleClick = (e: any) => {
-    navigate(`/app/companies/${e.row.companyId}/local-units/${e.row.id}`);
   }
 
   const handleSubmitCreate = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -213,7 +210,6 @@ const LocalUnitsPage = () => {
   return (
     <MainPage
       title="Local Units"
-      //icon={<BusinessOutlined fontSize="large"/>}
       onRefresh={handleRefresh}
       updatedTime={updatedTime}
     >
@@ -223,7 +219,7 @@ const LocalUnitsPage = () => {
         onAdd={() => setOpenAddDialog(true)}
         columns={columns}
         loading={loading}
-        onRowDoubleClick={handleDoubleClick}
+        onRowDoubleClick={handleMoreInfoClick}
       />
       <AddDialog
         title={"Add local unit"}

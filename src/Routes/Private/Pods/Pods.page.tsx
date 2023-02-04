@@ -32,7 +32,7 @@ import {podServicePath} from "../../../services/connectors/axios";
 import DetailsSection from "../../../Components/DetailsSection/DetailsSection";
 import {getReasonAlert} from "../../../utils/requestAlertHandler";
 import DataChart from "../../../Components/Chart/DataChart";
-import {getFormattedDate, getFormattedMonth, getFormattedTime} from "../../../utils/dateHandler";
+import {getFormattedDate, getFormattedMonth, getFormattedTime, getUpdatedTime} from "../../../utils/dateHandler";
 import {ArrowForward} from "@mui/icons-material";
 import AccessTimeOutlinedIcon from '@mui/icons-material/AccessTimeOutlined';
 import TodayOutlinedIcon from '@mui/icons-material/TodayOutlined';
@@ -157,11 +157,7 @@ function PodsPage() {
       .then(res => {
         setDevice(res.data)
         let dt = new Date();
-        setUpdatedTime(
-          ("0" + dt.getHours()).slice(-2)
-          + ":"
-          + ("0" + dt.getMinutes()).slice(-2)
-        );
+        setUpdatedTime(getUpdatedTime());
         setLoading(false)
       })
       .catch((err) => {
@@ -228,11 +224,7 @@ function PodsPage() {
       .then(res => {
         setDevice(res.data)
         let dt = new Date();
-        setUpdatedTime(
-          ("0" + dt.getHours()).slice(-2)
-          + ":"
-          + ("0" + dt.getMinutes()).slice(-2)
-        );
+        setUpdatedTime(getUpdatedTime());
         setLoading(false)
       })
       .catch((err) => {

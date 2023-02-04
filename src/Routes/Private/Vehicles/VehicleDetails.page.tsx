@@ -1,12 +1,7 @@
 import React, {useContext, useEffect, useState} from "react";
-import {useAlertContext} from "../../../Components/Providers/Alert/Alert.provider";
-import {Grid, IconButton, useMediaQuery} from "@mui/material";
-import DatagridTable from "../../../Components/DatagridComponents/DatagridTable";
-import AddDialog, {useAddDialogContext} from "../../../Components/Providers/AddDialog/AddDialog";
+import {IconButton, useMediaQuery} from "@mui/material";
+import {useAddDialogContext} from "../../../Components/Providers/AddDialog/AddDialog";
 import DeleteIcon from "@mui/icons-material/DeleteOutlined";
-import MainPage from "../../../Components/MainPage/MainPage";
-import {GridColumns} from "@mui/x-data-grid";
-import {DirectionsBoatFilledOutlined} from "@mui/icons-material";
 import OpenInNewOutlinedIcon from "@mui/icons-material/OpenInNewOutlined";
 import DeleteDialog, {useDeleteDialogContext} from "../../../Components/Providers/DeleteDialog/DeleteDialog";
 import {useNavigate} from "react-router-dom";
@@ -41,7 +36,8 @@ const VehicleDetailsPage = () => {
   }
 
   const RenderDeleteButton = (e: any) => {
-    const handleDeleteClick = () => {
+    const handleDeleteClick = async () => {
+      setLoading(true);
 
     };
     return (

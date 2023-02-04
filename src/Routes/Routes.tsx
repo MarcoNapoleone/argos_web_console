@@ -74,7 +74,7 @@ const Routes = () => {
                     </Route>
                     <Route path="properties">
                       <Route index element={<PropertiesPage/>}/>
-                      <Route path=":proprietyId" element={<PropertyDetailsPage/>}/>
+                      <Route path=":propertyId" element={<PropertyDetailsPage/>}/>
                     </Route>
                     <Route path="vehicles">
                       <Route index element={<VehiclesPage/>}/>

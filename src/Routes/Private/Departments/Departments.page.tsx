@@ -1,6 +1,6 @@
 import React, {useContext, useEffect, useState} from "react";
 import {useAlertContext} from "../../../Components/Providers/Alert/Alert.provider";
-import {Grid, IconButton, useMediaQuery} from "@mui/material";
+import {Autocomplete, Grid, IconButton, TextField, useMediaQuery} from "@mui/material";
 import DatagridTable from "../../../Components/DatagridComponents/DatagridTable";
 import AddDialog, {useAddDialogContext} from "../../../Components/Providers/AddDialog/AddDialog";
 import DeleteIcon from "@mui/icons-material/DeleteOutlined";
@@ -10,9 +10,17 @@ import OpenInNewOutlinedIcon from "@mui/icons-material/OpenInNewOutlined";
 import DeleteDialog, {useDeleteDialogContext} from "../../../Components/Providers/DeleteDialog/DeleteDialog";
 import {useNavigate, useParams} from "react-router-dom";
 import {useTheme} from "@mui/material/styles";
-import {getReasonAlert} from "../../../utils/requestAlertHandler";
+import {getReasonAlert, getResponseAlert} from "../../../utils/requestAlertHandler";
 import {useCurrentCompany} from "../../../Components/Providers/Company/Company.provider";
-import {defaultDepartments, getAllDepartments} from "../../../services/departments.services";
+import {
+  createDepartment,
+  defaultDepartments,
+  deleteDepartment,
+  Department,
+  getAllDepartments
+} from "../../../services/departments.services";
+import {defaultLocalUnits, getAllLocalUnits, LocalUnit} from "../../../services/localUnits.services";
+import {getUpdatedTime} from "../../../utils/dateHandler";
 
 
 type PageParamsType = {
@@ -25,10 +33,12 @@ const DepartmentsPage = () => {
   const navigate = useNavigate();
   const {companyId} = useParams<PageParamsType>();
   const {company} = useCurrentCompany();
-
   const [departments, setDepartments] = useState(defaultDepartments);
   const [loading, setLoading] = useState(true);
-  const [updatedTime, setUpdatedTime] = useState("00:00");
+  const [selectLoading, setSelectLoading] = useState(true);
+  const [localUnits, setLocalUnits]: [LocalUnit[], (posts: LocalUnit[]) => void] = useState(defaultLocalUnits);
+  const [selectedLocalUnit, setSelectedLocalUnit]: [LocalUnit, (posts: LocalUnit) => void] = useState(null);
+  const [updatedTime, setUpdatedTime] = useState(getUpdatedTime());
   const {setOpenAddDialog} = useContext(useAddDialogContext);
   const {setOpenDeleteDialog} = useContext(useDeleteDialogContext);
   const {setAlertEvent} = useContext(useAlertContext);
@@ -48,9 +58,28 @@ const DepartmentsPage = () => {
       })
   }, []);
 
+  const getLocalUnits = async () => {
+    setSelectLoading(true)
+    const res = await getAllLocalUnits(companyId)
+    setLocalUnits(res)
+    setSelectLoading(false)
+  }
+
+  const handleRefresh = () => {
+    setLoading(true)
+    setUpdatedTime(getUpdatedTime())
+    fetchData()
+      .then(() => setLoading(false))
+      .catch((err) => {
+        setAlertEvent(getReasonAlert(err));
+        setLoading(false)
+      })
+  }
+
   const handleMoreInfoClick = (e: any) => {
-    navigate(`/app/companies/${e.row.companyId}/departments/${e.row.id}`);
+    navigate(`/app/companies/${companyId}/departments/${e.row.id}`);
   };
+
   const RenderMoreButton = (e: any) => {
 
     return (
@@ -64,8 +93,17 @@ const DepartmentsPage = () => {
   }
 
   const RenderDeleteButton = (e: any) => {
-    const handleDeleteClick = () => {
-
+    const handleDeleteClick = async () => {
+      setLoading(true);
+      await deleteDepartment(e.row.id)
+        .then((res) => {
+          setAlertEvent(getResponseAlert(res));
+          setOpenDeleteDialog(false);
+          handleRefresh();
+        })
+        .catch((err) => {
+          setAlertEvent(getReasonAlert(err));
+        })
     };
     return (
       <>
@@ -75,10 +113,28 @@ const DepartmentsPage = () => {
         >
           <DeleteIcon/>
         </IconButton>
-        <DeleteDialog handleDelete={handleDeleteClick} title={'gg'}/>
+        <DeleteDialog handleDelete={handleDeleteClick} title="Department"/>
       </>
     );
   }
+
+  const handleSubmitCreate = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const data = new FormData(event.currentTarget);
+    const newDepartment: Department = {
+      name: data.get("name") as string,
+      localUnitId: selectedLocalUnit.id,
+    }
+    await createDepartment(companyId, newDepartment)
+      .then((res) => {
+        setOpenAddDialog(false);
+        handleRefresh();
+      })
+      .catch((err) => {
+        setAlertEvent(getReasonAlert(err));
+      })
+
+  };
 
   const rows = departments.map((department) => {
     return {
@@ -127,20 +183,9 @@ const DepartmentsPage = () => {
     }
   ];
 
-  const handleRefresh = () => {
-    setLoading(true)
-    fetchData()
-      .then(() => setLoading(false))
-      .catch((err) => {
-        setAlertEvent(getReasonAlert(err));
-        setLoading(false)
-      })
-  }
-
   return (
     <MainPage
       title="Departments"
-      //icon={<PersonPinCircleOutlinedIcon fontSize="large"/>}
       onRefresh={handleRefresh}
       updatedTime={updatedTime}>
       <DatagridTable
@@ -152,11 +197,41 @@ const DepartmentsPage = () => {
       />
       <AddDialog
         title={"Add department"}
-        handleSubmit={() => {
-        }}
+        handleSubmit={handleSubmitCreate}
       >
         <Grid container direction="column" spacing={1}>
-
+          <Grid item xs={12}>
+            <TextField
+              id="name"
+              name="name"
+              label="Name"
+              autoFocus
+              autoComplete="name"
+              fullWidth
+              required
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <Autocomplete
+              id="localUnits"
+              loading={selectLoading}
+              multiple={false}
+              value={selectedLocalUnit}
+              onOpen={getLocalUnits}
+              onChange={(event: any, newValue: any) => {
+                setSelectedLocalUnit(newValue);
+              }}
+              options={localUnits}
+              getOptionLabel={(option) => option?.name}
+              filterSelectedOptions
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label="Local unit"
+                />
+              )}
+            />
+          </Grid>
         </Grid>
       </AddDialog>
     </MainPage>

@@ -9,7 +9,7 @@ import {
   Card,
   CardContent,
   Container,
-  DialogActions, Divider,
+  DialogActions,
   Fab,
   Fade,
   Grid,
@@ -103,6 +103,7 @@ const DetailsPage: FC<DetailsPageProps> = (
   const {setOpenDeleteDialog} = useContext(useDeleteDialogContext);
 
   const hasAnchors = !loading
+    && !editMode
     && isLargeScreen
     && anchors?.length > 0;
 
@@ -140,10 +141,9 @@ const DetailsPage: FC<DetailsPageProps> = (
         setEditMode(false);
       }}
     >
-      <Container maxWidth="xl" disableGutters={isMobile}>
-        <Grid container spacing={4} pt={8}>
-          <Grid item lg={hasAnchors ? 10 : 12}
-              container direction="column" spacing={1}>
+      <Box pt={10} sx={{display: 'grid', gridTemplateColumns: `1fr ${hasAnchors ? '242px' : 0}`}}>
+        <Container maxWidth="xl" disableGutters={isMobile}>
+          <Grid item container direction="column" spacing={1}>
             <Grid item>
               <Breadcrumbs
                 separator={<NavigateNextIcon fontSize="small"/>}
@@ -158,17 +158,17 @@ const DetailsPage: FC<DetailsPageProps> = (
                   <Stack direction="row" spacing={1}>
                     {allowModify.edit && <Tooltip title="Edit" arrow TransitionComponent={Zoom}>
                       <IconButton
-                          id="3"
-                          color="primary"
-                          children={<ModeEditOutlineOutlinedIcon/>}
-                          onClick={handleEditMode}
+                        id="3"
+                        color="primary"
+                        children={<ModeEditOutlineOutlinedIcon/>}
+                        onClick={handleEditMode}
                       />
                     </Tooltip>}
                     {allowModify.delete && <Tooltip title="Delete" arrow TransitionComponent={Zoom}>
                       <IconButton
-                          id="4"
-                          onClick={() => setOpenDeleteDialog(true)}
-                          children={<DeleteIcon/>}
+                        id="4"
+                        onClick={() => setOpenDeleteDialog(true)}
+                        children={<DeleteIcon/>}
                       />
                     </Tooltip>}
                   </Stack>
@@ -256,65 +256,57 @@ const DetailsPage: FC<DetailsPageProps> = (
               }
             </Grid>
           </Grid>
-          <Slide
-            in={hasAnchors}
-            direction="left"
-          >
-            <Grid
-              item
-              lg={2}
-              container
+        </Container>
+        <Box sx={{
+          top: '0px',
+          position: 'sticky',
+          height: '100vh',
+          overflowY: 'auto',
+        }}>
+          <Slide in={hasAnchors} direction="left" unmountOnExit mountOnEnter>
+            <List
+              dense
               sx={{
-                top: '0px',
-                position: 'sticky',
-                height: '100vh',
-                overflowY: 'auto',
+                width: '100%',
+                bgcolor: 'background.default',
               }}
-            >
-              <List
-                dense
-                sx={{
-                  width: '100%',
-                  bgcolor: 'background.default',
-                }}
-                component="nav"
-                subheader={
-                  <ListSubheader
-                    sx={{
-                      width: '100%',
-                      bgcolor: 'background.default',
-                    }}
-                  >
-                    contents
-                  </ListSubheader>
-                }
-              >
-                {anchors?.map((anchor, key) =>
-                  <ListItem
-                    key={key}
-                    sx={{
-                      '&:hover': {
-                        borderLeft: `solid ${theme.palette.primary.main} 1px`,
-                        color: `${theme.palette.primary.main}`,
-                      },
-                      color: `${theme.palette.text.primary}`,
-                      borderLeft: `solid transparent 1px`,
+              component="nav"
+              subheader={
+                <ListSubheader
+                  sx={{
+                    width: '100%',
+                    bgcolor: 'background.default',
                   }}
-                  >
-                    <ListItemText primary={
-                        <Link href={`#${anchor?.id}`}
-                              color="inherit" underline="none">
-                        {anchor?.title}
-                      </Link>
-                    }/>
-                  </ListItem>
-                )}
-              </List>
-            </Grid>
+                >
+                  Contents
+                </ListSubheader>
+              }
+            >
+              {[{title: "Details", id: ""}].concat(anchors)?.map((anchor, key) =>
+                <ListItem
+                  key={key}
+                  sx={{
+                    '&:hover': {
+                      borderLeft: `solid ${theme.palette.primary.main} 1px`,
+                      color: `${theme.palette.primary.main}`,
+                    },
+                    color: `${theme.palette.text.primary}`,
+                    borderLeft: `solid transparent 1px`,
+                  }}
+                >
+                  <ListItemText primary={
+                    <Link href={`#${anchor?.id}`}
+                          color="inherit" underline="none">
+                      {anchor?.title}
+                    </Link>
+                  }/>
+                </ListItem>
+              )}
+            </List>
           </Slide>
-        </Grid>
-        <DeleteDialog handleDelete={onDelete} title={title}/>
-      </Container>
+        </Box>
+      </Box>
+      <DeleteDialog handleDelete={onDelete} title={title}/>
       <Zoom in={!loading && isMobile && allowModify && !editMode} style={{transitionDelay: '200ms'}}>
         <Fab
           sx={{

@@ -53,17 +53,17 @@ export async function getAllHR(companyId: Id): Promise<HR[]> {
   return data;
 }
 
-export async function getHR(hrId: Id): Promise<HR> {
-    let data = {};
-    await servicePath
-      .get(`/hr/${hrId}`, {
-        headers: {
-          Authorization: `Bearer ${getCookie('token')}`
-        }
-      })
-      .then(res => {
-        if (res.status !== 200) {
-          return new Error(res.data["message"])
+export async function getHR(id: Id): Promise<HR> {
+  let data = {};
+  await servicePath
+    .get(`/hr/${id}`, {
+      headers: {
+        Authorization: `Bearer ${getCookie('token')}`
+      }
+    })
+    .then(res => {
+      if (res.status !== 200) {
+        return new Error(res.data["message"])
         }
         data = res.data
       })
@@ -87,10 +87,10 @@ export async function createHR(companyId: Id, hr: HR): Promise<HR> {
   return data;
 }
 
-export async function updateHR(hrId: Id, hr: HR): Promise<AxiosResponse> {
-  let data = {} as AxiosResponse;
+export async function updateHR(id: Id, hr: HR): Promise<AxiosResponse> {
+  let response = {} as AxiosResponse;
   await servicePath
-    .put(`/hr/${hrId}`, hr, {
+    .put(`/hr/${id}`, hr, {
       headers: {
         Authorization: `Bearer ${getCookie('token')}`
       }
@@ -99,16 +99,16 @@ export async function updateHR(hrId: Id, hr: HR): Promise<AxiosResponse> {
       if (res.status !== 200) {
         return new Error(res.data["message"])
       }
-      data = res.data
+      response = res
     }
   )
-  return data;
+  return response;
 }
 
-export async function deleteHR(hrId: Id): Promise<AxiosResponse> {
-  let data = {} as AxiosResponse;
+export async function deleteHR(id: Id): Promise<AxiosResponse> {
+  let response = {} as AxiosResponse;
   await servicePath
-    .delete(`/hr/${hrId}`, {
+    .delete(`/hr/${id}`, {
       headers: {
         Authorization: `Bearer ${getCookie('token')}`
       }
@@ -117,8 +117,8 @@ export async function deleteHR(hrId: Id): Promise<AxiosResponse> {
       if (res.status !== 200) {
         return new Error(res.data["message"])
       }
-      data = res.data
+      response = res
     }
   )
-  return data;
+  return response;
 }

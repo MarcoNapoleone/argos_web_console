@@ -10,9 +10,17 @@ import OpenInNewOutlinedIcon from "@mui/icons-material/OpenInNewOutlined";
 import DeleteDialog, {useDeleteDialogContext} from "../../../Components/Providers/DeleteDialog/DeleteDialog";
 import {useNavigate, useParams} from "react-router-dom";
 import {useTheme} from "@mui/material/styles";
-import {getReasonAlert} from "../../../utils/requestAlertHandler";
+import {getReasonAlert, getResponseAlert} from "../../../utils/requestAlertHandler";
 import {useCurrentCompany} from "../../../Components/Providers/Company/Company.provider";
-import {defaultProperties, getAllProperties} from "../../../services/properties.services";
+import {
+  createProperty,
+  defaultProperties,
+  deleteProperty,
+  getAllProperties,
+  Property
+} from "../../../services/properties.services";
+import {getUpdatedTime} from "../../../utils/dateHandler";
+import TextField from "@mui/material/TextField";
 
 
 type PageParamsType = {
@@ -25,10 +33,9 @@ const PropertiesPage = () => {
   const navigate = useNavigate();
   const {companyId} = useParams<PageParamsType>();
   const {company} = useCurrentCompany();
-
   const [properties, setProperties] = useState(defaultProperties);
   const [loading, setLoading] = useState(true);
-  const [updatedTime, setUpdatedTime] = useState("00:00");
+  const [updatedTime, setUpdatedTime] = useState(getUpdatedTime());
   const {setOpenAddDialog} = useContext(useAddDialogContext);
   const {setOpenDeleteDialog} = useContext(useDeleteDialogContext);
   const {setAlertEvent} = useContext(useAlertContext);
@@ -37,6 +44,10 @@ const PropertiesPage = () => {
     const res = await getAllProperties(companyId)
     setProperties(res);
   }
+
+  const handleMoreInfoClick = (e: any) => {
+    navigate(`/app/companies/${e.row.companyId}/properties/${e.row.id}`);
+  };
 
   useEffect(() => {
     setLoading(true)
@@ -48,13 +59,20 @@ const PropertiesPage = () => {
       })
   }, []);
 
+  const handleRefresh = () => {
+    setLoading(true)
+    fetchData()
+      .then(() => setLoading(false))
+      .catch((err) => {
+        setAlertEvent(getReasonAlert(err));
+        setLoading(false)
+      })
+  }
+
   const RenderMoreButton = (e: any) => {
-    const handleMoreClick = () => {
-      navigate(`/app/companies/${e.row.companyId}/local-units/${e.row.id}`);
-    };
     return (
       <IconButton
-        onClick={handleMoreClick}
+        onClick={handleMoreInfoClick}
         size="small"
       >
         <OpenInNewOutlinedIcon/>
@@ -63,8 +81,17 @@ const PropertiesPage = () => {
   }
 
   const RenderDeleteButton = (e: any) => {
-    const handleDeleteClick = () => {
-
+    const handleDeleteClick = async () => {
+      setLoading(true);
+      await deleteProperty(e.row.id)
+        .then((res) => {
+          setAlertEvent(getResponseAlert(res));
+          setOpenDeleteDialog(false);
+          handleRefresh();
+        })
+        .catch((err) => {
+          setAlertEvent(getReasonAlert(err));
+        })
     };
     return (
       <>
@@ -74,14 +101,32 @@ const PropertiesPage = () => {
         >
           <DeleteIcon/>
         </IconButton>
-        <DeleteDialog handleDelete={handleDeleteClick} title={'gg'}/>
+        <DeleteDialog handleDelete={handleDeleteClick} title={'Property'}/>
       </>
     );
   }
 
-  const handleDoubleClick = (e: any) => {
-    navigate(`/app/companies/${e.row.companyId}/local-units/${e.row.id}`);
-  }
+  const handleSubmitCreate = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const data = new FormData(event.currentTarget);
+    const newProperty: Property = {
+      name: data.get("name") as string,
+      address: data.get("address") as string,
+      municipality: data.get("municipality") as string,
+      postalCode: data.get("postalCode") as string,
+      province: data.get("province") as string,
+      country: data.get("country") as string,
+    }
+    await createProperty(companyId, newProperty)
+      .then((res) => {
+        setOpenAddDialog(false);
+        handleRefresh();
+      })
+      .catch((err) => {
+        setAlertEvent(getReasonAlert(err));
+      })
+
+  };
 
   const rows = properties.map((property) => {
     return {
@@ -170,33 +215,85 @@ const PropertiesPage = () => {
     }
   ];
 
-  const handleRefresh = () => {
-    setLoading(true)
-    fetchData()
-      .then(() => setLoading(false))
-      .catch((err) => {
-        setAlertEvent(getReasonAlert(err));
-        setLoading(false)
-      })
-  }
-
   return (
     <MainPage
       title="Properties"
-      //icon={<HomeWorkOutlinedIcon fontSize="large"/>}
       onRefresh={handleRefresh}
       updatedTime={updatedTime}>
       <DatagridTable
-        rows={rows}
         allowAdd
+        rows={rows}
         columns={columns}
         loading={loading}
-        onRowDoubleClick={handleDoubleClick}
+        onRowDoubleClick={handleMoreInfoClick}
       />
-      <AddDialog title={"Add "} handleSubmit={() => {
-      }}>
+      <AddDialog title={"Add property"} handleSubmit={handleSubmitCreate}>
         <Grid container direction="column" spacing={1}>
-
+          <Grid item xs={12}>
+            <TextField
+              id="name"
+              name="name"
+              label="Name"
+              autoFocus
+              autoComplete="name"
+              fullWidth
+              required
+            />
+          </Grid>
+          <Grid item container spacing={1}>
+            <Grid item xs={12} sm={4}>
+              <TextField
+                id="address"
+                name="address"
+                label="Address"
+                autoComplete="address"
+                fullWidth
+                required
+              />
+            </Grid>
+            <Grid item xs={12} sm={4}>
+              <TextField
+                id="municipality"
+                name="municipality"
+                label="Municipality"
+                autoComplete="municipality"
+                fullWidth
+                required
+              />
+            </Grid>
+            <Grid item xs={12} sm={4}>
+              <TextField
+                id="postalCode"
+                name="postalCode"
+                label="Postal code"
+                autoComplete="postalCode"
+                fullWidth
+                required
+              />
+            </Grid>
+          </Grid>
+          <Grid item container spacing={1}>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                id="province"
+                name="province"
+                label="Province"
+                autoComplete="province"
+                fullWidth
+                required
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                id="country"
+                name="country"
+                label="Country"
+                autoComplete="country"
+                fullWidth
+                required
+              />
+            </Grid>
+          </Grid>
         </Grid>
       </AddDialog>
     </MainPage>

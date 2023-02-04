@@ -1,5 +1,5 @@
 import React, {useContext, useEffect, useState} from "react";
-import {Grid, IconButton, useMediaQuery} from "@mui/material";
+import {IconButton, useMediaQuery} from "@mui/material";
 import {useAddDialogContext} from "../../../Components/Providers/AddDialog/AddDialog";
 import DeleteIcon from "@mui/icons-material/DeleteOutlined";
 import OpenInNewOutlinedIcon from "@mui/icons-material/OpenInNewOutlined";
@@ -36,7 +36,8 @@ const DocumentDetailsPage = () => {
   }
 
   const RenderDeleteButton = (e: any) => {
-    const handleDeleteClick = () => {
+    const handleDeleteClick = async () => {
+      setLoading(true);
 
     };
     return (

@@ -29,7 +29,7 @@ export class Property {
 }
 
 export const defaultProperties: Property[] = [];
-export const defaultDepartment: Property = {};
+export const defaultProperty: Property = {};
 
 export async function getAllProperties(companyId: Id): Promise<Property[]> {
   let data = [];

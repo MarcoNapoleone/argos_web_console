@@ -1,80 +1,313 @@
 import React, {useContext, useEffect, useState} from "react";
 import {useAlertContext} from "../../../Components/Providers/Alert/Alert.provider";
-import {Grid, IconButton, useMediaQuery} from "@mui/material";
-import DatagridTable from "../../../Components/DatagridComponents/DatagridTable";
-import AddDialog, {useAddDialogContext} from "../../../Components/Providers/AddDialog/AddDialog";
-import DeleteIcon from "@mui/icons-material/DeleteOutlined";
-import MainPage from "../../../Components/MainPage/MainPage";
-import {GridColumns} from "@mui/x-data-grid";
-import {DirectionsBoatFilledOutlined} from "@mui/icons-material";
-import OpenInNewOutlinedIcon from "@mui/icons-material/OpenInNewOutlined";
-import DeleteDialog, {useDeleteDialogContext} from "../../../Components/Providers/DeleteDialog/DeleteDialog";
-import {useNavigate} from "react-router-dom";
+import {Box, Divider, Grid, Link, Skeleton, TextField, Typography} from "@mui/material";
+import {useDeleteDialogContext} from "../../../Components/Providers/DeleteDialog/DeleteDialog";
+import {useNavigate, useParams} from "react-router-dom";
 import {useTheme} from "@mui/material/styles";
 import DetailsPage from "../../../Components/DetailsPage/DetailsPage";
+import {defaultHR, deleteHR, getHR, HR, updateHR} from "../../../services/hr.services";
+import {getFormattedDate, getUpdatedTime} from "../../../utils/dateHandler";
+import {getReasonAlert, getResponseAlert} from "../../../utils/requestAlertHandler";
+import DetailsSection from "../../../Components/DetailsSection/DetailsSection";
+import DialogFormLabel from "../../../Components/DialogFormLabel/DialoFormLabel";
+import {DatePicker} from "@mui/x-date-pickers";
+
+type PageParamsType = {
+  hrId: string;
+  companyId: string;
+}
 
 const HRDetailsPage = () => {
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const navigate = useNavigate();
+  const {companyId, hrId} = useParams<PageParamsType>();
   const [loading, setLoading] = useState(true);
-  const [updatedTime, setUpdatedTime] = useState("00:00");
-  const {setOpenAddDialog} = useContext(useAddDialogContext);
+  const [hr, setHR] = useState(defaultHR);
+  const [birthDate, setBirthDate] = React.useState<Date | null>(null);
+  const [updatedTime, setUpdatedTime] = useState(getUpdatedTime());
+  const {setAlertEvent} = useContext(useAlertContext);
   const {setOpenDeleteDialog} = useContext(useDeleteDialogContext);
 
+  const breadcrumbs = [
+    <Link
+      underline="hover"
+      key="1"
+      color="inherit"
+      href={`/app/companies/${companyId}`}
+    >
+      App
+    </Link>,
+    <Link
+      underline="hover"
+      key="2"
+      color="inherit"
+      href={`/app/companies/${companyId}/hr`}
+    >
+      HR
+    </Link>,
+    <Typography
+      key="3" color="text.primary"
+    >
+      {loading
+        ? <Skeleton animation="wave" width="30px"/>
+        : hr?.name?.charAt(0).toUpperCase() + hr?.name?.slice(1)
+      }
+    </Typography>,
+  ];
+
+  const fetchData = async () => {
+    const _hr = await getHR(hrId)
+    setHR(_hr);
+  }
+
   useEffect(() => {
-
+    handleRefresh()
   }, []);
-
-  const RenderMoreButton = (e: any) => {
-    const handleMoreClick = () => {
-      navigate(`/app/navi/${e.row.shipId}`);
-    };
-    return (
-      <IconButton
-        onClick={handleMoreClick}
-        size="small"
-      >
-        <OpenInNewOutlinedIcon/>
-      </IconButton>
-    );
-  }
-
-  const RenderDeleteButton = (e: any) => {
-    const handleDeleteClick = () => {
-
-    };
-    return (
-      <>
-        <IconButton
-          onClick={() => setOpenDeleteDialog(true)}
-          size="small"
-        >
-          <DeleteIcon/>
-        </IconButton>
-        <DeleteDialog handleDelete={handleDeleteClick} title={'gg'}/>
-      </>
-    );
-  }
-
-  const handleDoubleClick = (e: any) => {
-    navigate(`/app/navi/${e.row.shipId}`);
-  }
 
   const handleRefresh = () => {
     setLoading(true)
-
+    setUpdatedTime(getUpdatedTime());
+    fetchData()
+      .then(() => setLoading(false))
+      .catch((err) => {
+        setAlertEvent(getReasonAlert(err));
+        setLoading(false)
+      })
   }
+
+  const handleDelete = () => {
+    deleteHR(hrId)
+      .then((res) => {
+        setAlertEvent(getResponseAlert(res));
+        setOpenDeleteDialog(false);
+        navigate(`/app/companies/${companyId}/hr`)
+      })
+      .catch((err) => {
+          setAlertEvent(getReasonAlert(err));
+        }
+      )
+  }
+
+  const handleSubmitEdit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const data = new FormData(event.currentTarget);
+    const newHR: HR = {
+      name: data.get("name") as string,
+      surname: data.get("surname") as string,
+      birthDate: birthDate,
+      birthPlace: data.get("birthPlace") as string,
+      address: data.get("address") as string,
+      municipality: data.get("municipality") as string,
+      province: data.get("province") as string,
+      postalCode: data.get("postalCode") as string,
+      country: data.get("country") as string,
+      fiscalCode: data.get("fiscalCode") as string,
+      email: data.get("email") as string,
+      phone: data.get("phone") as string
+    }
+    await updateHR(hrId, newHR)
+      .then((res) => {
+        setAlertEvent(getResponseAlert(res));
+        handleRefresh();
+      })
+      .catch((err) => {
+        setAlertEvent(getReasonAlert(err));
+      })
+  };
 
   return (
     <DetailsPage
-      title={'Local Units'}
+      title={hr.name + ' ' + hr.surname}
       loading={loading}
       updatedTime={updatedTime}
+      breadcrumbs={breadcrumbs}
+      allowModify={{edit: true, delete: true}}
+      onDelete={handleDelete}
+      onSubmit={handleSubmitEdit}
       onRefresh={handleRefresh}
-      baseChildren={<></>}
-      editChildren={<></>}
-    ></DetailsPage>
+      editChildren={
+        <Grid container direction="column" spacing={1}>
+          <Grid item container spacing={1}>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                id="name"
+                name="name"
+                label="Name"
+                autoFocus
+                autoComplete="name"
+                fullWidth
+                required
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                id="surname"
+                name="surname"
+                label="Surname"
+                autoComplete="surname"
+                fullWidth
+                required
+              />
+            </Grid>
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              id="fiscalCode"
+              name="fiscalCode"
+              label="Fiscal Code"
+              autoComplete="fiscalCode"
+              fullWidth
+              required
+            />
+          </Grid>
+          <Grid item>
+            <DialogFormLabel title="Info"/>
+          </Grid>
+          <Grid item container spacing={1}>
+            <Grid item xs={12} sm={6}>
+              <DatePicker
+                label="Birth Date"
+                views={['year', 'month', 'day']}
+                value={birthDate}
+                onChange={(newValue) => {
+                  setBirthDate(newValue);
+                }}
+                renderInput={(params) => <TextField
+                  fullWidth
+                  id="birthdate" name="birthdate"
+                  {...params} />}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                id="birthPlace"
+                name="birthPlace"
+                label="Birth Place"
+                autoComplete="birthPlace"
+                fullWidth
+                required
+              />
+            </Grid>
+          </Grid>
+          <Grid item container spacing={1}>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                id="address"
+                name="address"
+                label="Address"
+                autoFocus
+                autoComplete="address"
+                fullWidth
+                required
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                id="municipality"
+                name="municipality"
+                label="Municipality"
+                autoComplete="municipality"
+                fullWidth
+                required
+              />
+            </Grid>
+          </Grid>
+          <Grid item container spacing={1}>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                id="postalCode"
+                name="postalCode"
+                label="Postal code"
+                autoComplete="postalCode"
+                fullWidth
+                required
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                id="province"
+                name="province"
+                label="Province"
+                autoComplete="province"
+                fullWidth
+                required
+              />
+            </Grid>
+          </Grid>
+          <Grid item>
+            <DialogFormLabel title="Contacts"/>
+          </Grid>
+          <Grid item container spacing={1}>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                id="phone"
+                name="phone"
+                label="Phone"
+                autoComplete="phone"
+                fullWidth
+                required
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                id="email"
+                name="email"
+                label="Email"
+                autoComplete="email"
+                fullWidth
+                required
+              />
+            </Grid>
+          </Grid>
+        </Grid>
+      }
+      baseChildren={
+        <Grid container direction="column" id="details" spacing={1}>
+          <Grid item xs={12} sm={6}>
+            <DetailsSection fullWidth sectionTitle="Fiscal Code:" sectionTextContent={hr?.fiscalCode}/>
+          </Grid>
+          <Box py={2}>
+            <Divider textAlign="left"><Typography variant="body2" color="text?.secondary">Info</Typography></Divider>
+          </Box>
+          <Grid item container spacing={1}>
+            <Grid item xs={12} sm={6}>
+              <DetailsSection sectionTitle="Birth Date:" sectionTextContent={getFormattedDate(hr?.birthDate)}/>
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <DetailsSection sectionTitle="Birth Place:" sectionTextContent={hr?.birthPlace}/>
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <DetailsSection sectionTitle="Address:" sectionTextContent={hr?.address}/>
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <DetailsSection sectionTitle="Municipality:" sectionTextContent={hr?.municipality}/>
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <DetailsSection sectionTitle="Postal Code:" sectionTextContent={hr?.postalCode}/>
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <DetailsSection sectionTitle="Province:" sectionTextContent={hr?.province}/>
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <DetailsSection sectionTitle="Country:" sectionTextContent={hr?.country}/>
+            </Grid>
+          </Grid>
+          <Box py={2}>
+            <Divider textAlign="left"><Typography variant="body2"
+                                                  color="text?.secondary">Contacts</Typography></Divider>
+          </Box>
+          <Grid item container spacing={1}>
+            <Grid item xs={12} sm={6}>
+              <DetailsSection sectionTitle="Phone:" sectionTextContent={hr?.phone}/>
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <DetailsSection sectionTitle="Email:" sectionTextContent={hr?.email}/>
+            </Grid>
+          </Grid>
+        </Grid>
+      }
+    >
+    </DetailsPage>
   );
 }
 

@@ -52,7 +52,7 @@ const MainPage: FC<MainPageProps> = (
 
   return (
       <Container maxWidth="xl" disableGutters={isMobile}>
-        <Grid container justifyContent="center" direction="column" spacing={1} pt={8}>
+        <Grid container justifyContent="center" direction="column" spacing={1} pt={10}>
           {!disableBreadcrumbs && <Grid item>
             <Breadcrumbs
               separator={<NavigateNextIcon fontSize="small"/>}

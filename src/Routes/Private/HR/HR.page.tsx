@@ -1,6 +1,6 @@
 import React, {useContext, useEffect, useState} from "react";
 import {useAlertContext} from "../../../Components/Providers/Alert/Alert.provider";
-import {Grid, IconButton, useMediaQuery} from "@mui/material";
+import {Grid, IconButton, TextField, useMediaQuery} from "@mui/material";
 import DatagridTable from "../../../Components/DatagridComponents/DatagridTable";
 import AddDialog, {useAddDialogContext} from "../../../Components/Providers/AddDialog/AddDialog";
 import DeleteIcon from "@mui/icons-material/DeleteOutlined";
@@ -10,9 +10,11 @@ import OpenInNewOutlinedIcon from "@mui/icons-material/OpenInNewOutlined";
 import DeleteDialog, {useDeleteDialogContext} from "../../../Components/Providers/DeleteDialog/DeleteDialog";
 import {useNavigate, useParams} from "react-router-dom";
 import {useTheme} from "@mui/material/styles";
-import {getReasonAlert} from "../../../utils/requestAlertHandler";
+import {getReasonAlert, getResponseAlert} from "../../../utils/requestAlertHandler";
 import {useCurrentCompany} from "../../../Components/Providers/Company/Company.provider";
-import {defaultHRs, getAllHR} from "../../../services/hr.services";
+import {createHR, defaultHRs, deleteHR, getAllHR, HR} from "../../../services/hr.services";
+import DialogFormLabel from "../../../Components/DialogFormLabel/DialoFormLabel";
+import {DatePicker} from "@mui/x-date-pickers";
 
 
 type PageParamsType = {
@@ -25,7 +27,7 @@ const HRPage = () => {
   const navigate = useNavigate();
   const {companyId} = useParams<PageParamsType>();
   const {company} = useCurrentCompany();
-
+  const [birthDate, setBirthDate] = React.useState<Date | null>(null);
   const [hr, setHR] = useState(defaultHRs);
   const [loading, setLoading] = useState(true);
   const [updatedTime, setUpdatedTime] = useState("00:00");
@@ -48,14 +50,15 @@ const HRPage = () => {
       })
   }, []);
 
+  const handleMoreInfoClick = (e: any) => {
+    navigate(`/app/companies/${companyId}/hr/${e.row.id}`);
+  };
   const RenderMoreButton = (e: any) => {
-    const handleMoreClick = () => {
-      navigate(`/app/companies/${e.row.companyId}/local-units/${e.row.id}`);
-    };
+
     return (
       <IconButton
-        onClick={handleMoreClick}
-        size="small"
+        onClick={handleMoreInfoClick}
+
       >
         <OpenInNewOutlinedIcon/>
       </IconButton>
@@ -63,25 +66,57 @@ const HRPage = () => {
   }
 
   const RenderDeleteButton = (e: any) => {
-    const handleDeleteClick = () => {
-
+    const handleDeleteClick = async () => {
+      setLoading(true);
+      await deleteHR(e.row.id)
+        .then((res) => {
+          setAlertEvent(getResponseAlert(res));
+          setOpenDeleteDialog(false);
+          handleRefresh();
+        })
+        .catch((err) => {
+          setAlertEvent(getReasonAlert(err));
+        })
     };
     return (
       <>
         <IconButton
           onClick={() => setOpenDeleteDialog(true)}
-          size="small"
+
         >
           <DeleteIcon/>
         </IconButton>
-        <DeleteDialog handleDelete={handleDeleteClick} title={'gg'}/>
+        <DeleteDialog handleDelete={handleDeleteClick} title={'HR'}/>
       </>
     );
   }
 
-  const handleDoubleClick = (e: any) => {
-    navigate(`/app/companies/${e.row.companyId}/local-units/${e.row.id}`);
-  }
+  const handleSubmitCreate = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const data = new FormData(event.currentTarget);
+    const newHR: HR = {
+      name: data.get('name') as string,
+      surname: data.get('surname') as string,
+      fiscalCode: data.get('fiscalCode') as string,
+      phone: data.get('phone') as string,
+      email: data.get('email') as string,
+      birthDate: birthDate,
+      birthPlace: data.get('birthPlace') as string,
+      address: data.get('address') as string,
+      municipality: data.get('municipality') as string,
+      province: data.get('province') as string,
+      postalCode: data.get('postalCode') as string,
+      country: data.get('country') as string
+    };
+    await createHR(companyId, newHR)
+      .then((res) => {
+        setOpenAddDialog(false);
+        handleRefresh();
+      })
+      .catch((err) => {
+        setAlertEvent(getReasonAlert(err));
+      })
+  };
 
   const rows = hr.map((hr) => {
     return {
@@ -230,7 +265,6 @@ const HRPage = () => {
   return (
     <MainPage
       title="HR"
-      //icon={<GroupOutlined fontSize="large"/>}
       onRefresh={handleRefresh}
       updatedTime={updatedTime}>
       <DatagridTable
@@ -238,12 +272,142 @@ const HRPage = () => {
         allowAdd
         columns={columns}
         loading={loading}
-        onRowDoubleClick={handleDoubleClick}
+        onRowDoubleClick={handleMoreInfoClick}
       />
-      <AddDialog title={"Add "} handleSubmit={() => {
-      }}>
+      <AddDialog title={"Add HR"} handleSubmit={handleSubmitCreate}>
         <Grid container direction="column" spacing={1}>
-
+          <Grid item container spacing={1}>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                id="name"
+                name="name"
+                label="Name"
+                autoFocus
+                autoComplete="name"
+                fullWidth
+                required
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                id="surname"
+                name="surname"
+                label="Surname"
+                autoComplete="surname"
+                fullWidth
+                required
+              />
+            </Grid>
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              id="fiscalCode"
+              name="fiscalCode"
+              label="Fiscal Code"
+              autoComplete="fiscalCode"
+              fullWidth
+              required
+            />
+          </Grid>
+          <Grid item>
+            <DialogFormLabel title="Info"/>
+          </Grid>
+          <Grid item container spacing={1}>
+            <Grid item xs={12} sm={6}>
+              <DatePicker
+                label="Birth Date"
+                views={['year', 'month', 'day']}
+                value={birthDate}
+                onChange={(newValue) => {
+                  setBirthDate(newValue);
+                }}
+                renderInput={(params) => <TextField
+                  fullWidth
+                  id="birthdate" name="birthdate"
+                  {...params} />}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                id="birthPlace"
+                name="birthPlace"
+                label="Birth Place"
+                autoComplete="birthPlace"
+                fullWidth
+                required
+              />
+            </Grid>
+          </Grid>
+          <Grid item container spacing={1}>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                id="address"
+                name="address"
+                label="Address"
+                autoFocus
+                autoComplete="address"
+                fullWidth
+                required
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                id="municipality"
+                name="municipality"
+                label="Municipality"
+                autoComplete="municipality"
+                fullWidth
+                required
+              />
+            </Grid>
+          </Grid>
+          <Grid item container spacing={1}>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                id="postalCode"
+                name="postalCode"
+                label="Postal code"
+                autoComplete="postalCode"
+                fullWidth
+                required
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                id="province"
+                name="province"
+                label="Province"
+                autoComplete="province"
+                fullWidth
+                required
+              />
+            </Grid>
+          </Grid>
+          <Grid item>
+            <DialogFormLabel title="Contacts"/>
+          </Grid>
+          <Grid item container spacing={1}>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                id="phone"
+                name="phone"
+                label="Phone"
+                autoComplete="phone"
+                fullWidth
+                required
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                id="email"
+                name="email"
+                label="Email"
+                autoComplete="email"
+                fullWidth
+                required
+              />
+            </Grid>
+          </Grid>
         </Grid>
       </AddDialog>
     </MainPage>

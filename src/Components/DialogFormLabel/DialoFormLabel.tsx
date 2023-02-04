@@ -2,8 +2,8 @@ import {Box, Typography} from "@mui/material";
 import React from "react";
 
 function DialogFormLabel(props: { title: string }) {
-  return <Box py={1} px={1}>
-    <Typography component="span" variant="caption">
+  return <Box pt={2}>
+    <Typography component="span" variant="caption" color="text.secondary">
       {props.title}
     </Typography>
   </Box>;

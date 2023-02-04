@@ -21,6 +21,7 @@ import DialogFormLabel from "../../../Components/DialogFormLabel/DialoFormLabel"
 import {getUpdatedTime} from "../../../utils/dateHandler";
 import {defaultDepartments} from "../../../services/departments.services";
 import DatagridTable from "../../../Components/DatagridComponents/DatagridTable";
+import {GridColumns} from "@mui/x-data-grid";
 
 type PageParamsType = {
   companyId: string;
@@ -70,10 +71,6 @@ const LocalUnitDetailsPage = () => {
 
   const anchors = [
     {
-      title: "Details",
-      id: "",
-    },
-    {
       title: "Departments",
       id: "departments",
     },
@@ -96,6 +93,31 @@ const LocalUnitDetailsPage = () => {
   useEffect(() => {
     handleRefresh()
   }, []);
+
+  const departmentsRows = departments.map((department) => {
+    return {
+      id: department.id,
+      localUnitId: department.localUnitId,
+      name: department.name,
+    }
+  })
+  const departmentsColumns: GridColumns = [
+    {
+      field: 'id',
+      headerName: 'Id',
+      width: 90,
+      align: 'center',
+      editable: false,
+      headerAlign: 'center',
+    },
+    {
+      field: 'name',
+      headerName: 'Name',
+      minWidth: 150,
+      editable: false,
+      flex: 1,
+    },
+  ];
 
   const handleRefresh = () => {
     setLoading(true)
@@ -265,8 +287,8 @@ const LocalUnitDetailsPage = () => {
         </Grid>
       }
     >
-      <Grid container direction="column" spacing={1} pt={1}>
-        <Grid item mx={2} id="departments">
+      <Grid container direction="column" id="departments" spacing={1} pt={1}>
+        <Grid item mx={2}>
           <Typography variant="h6">
             Departments
           </Typography>
@@ -282,11 +304,10 @@ const LocalUnitDetailsPage = () => {
             </Grid>
             : <DatagridTable
               loading={loading}
-              allowAdd
               onAdd={() => {
               }}
-              rows={[]}
-              columns={[]}
+              rows={departmentsRows}
+              columns={departmentsColumns}
             />
           }
         </Grid>
@@ -308,7 +329,6 @@ const LocalUnitDetailsPage = () => {
             </Grid>
             : <DatagridTable
               loading={loading}
-              allowAdd
               onAdd={() => {
               }}
               rows={[]}
