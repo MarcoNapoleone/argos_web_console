@@ -304,7 +304,7 @@ const PageFrame: React.FC<PageFrameProps> = ({children, title}) => {
       }
       <Box component="main" sx={{flexGrow: 1}}>
         <TopBar isOpen={open} title={title} onMenuClick={handleDrawerToggle}/>
-        <Box pt={6}>
+        <Box pt={6} pb={isMobile && 12}>
           {children}
         </Box>
       </Box>

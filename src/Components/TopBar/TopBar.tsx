@@ -4,7 +4,6 @@ import {useTheme} from '@mui/material/styles';
 import SearchIcon from '@mui/icons-material/SearchRounded';
 import NotificationsOutlinedIcon from '@mui/icons-material/NotificationsOutlined';
 import MenuItem from '@mui/material/MenuItem';
-import KeyboardArrowLeftOutlinedIcon from '@mui/icons-material/KeyboardArrowLeftOutlined';
 import MoreVertOutlinedIcon from '@mui/icons-material/MoreVertOutlined';
 import {
   alpha,
@@ -41,6 +40,7 @@ import {defaultCompanies, getAllCompanies} from "../../services/companies.servic
 import {getReasonAlert} from "../../utils/requestAlertHandler";
 import {useAlert} from "../Providers/Alert/Alert.provider";
 import {Id} from "../../services/entities";
+import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
 
 const useStyles = makeStyles((theme) => ({
   inputRoot: {
@@ -180,9 +180,7 @@ const TopBar: React.FC<TopBarProps> = ({onMenuClick, isOpen, title}) => {
             top: 0,
             right: 0,
             width: '100%',
-            borderBottom: theme.palette.mode === 'light' ? '#f0f0f0' : '#303030',
             background: `linear-gradient(180deg, ${theme.palette.background.default}, #00000000)`,
-            //backdropFilter: 'blur(40px)',
             zIndex: theme => theme.zIndex.appBar,
           }}
         >
@@ -195,7 +193,7 @@ const TopBar: React.FC<TopBarProps> = ({onMenuClick, isOpen, title}) => {
                   value="check"
                   onClick={onMenuClick}
                 >
-                  <KeyboardArrowLeftOutlinedIcon sx={{transform: 'rotate(180deg)'}}/>
+                  <MenuOutlinedIcon/>
                 </IconButton>
               </Zoom>
             </Grid>
@@ -217,30 +215,29 @@ const TopBar: React.FC<TopBarProps> = ({onMenuClick, isOpen, title}) => {
                       : theme.spacing(4)
               }>
               <Typography variant="h6" sx={{fontWeight: 600}}>
-                <Box>
-                  {!isMobile && <Button
-                    size="small"
-                    color="inherit"
-                    endIcon={<ExpandMoreIcon/>}
-                    onClick={handleOpenCompanyMenu}
-                    sx={{
-                      textTransform: 'none',
-                      "&:hover": {
-                        backgroundColor: 'transparent',
-                      }
-                    }}
-                  >
-                    <Typography>
-                      Alphabet Inc.
-                    </Typography>
-                  </Button>
+                <Box sx={{color: 'text.secondary'}}>
+                  {
+                    !isMobile &&
+                    <Button
+                      size="small"
+                      endIcon={<ExpandMoreIcon/>}
+                      color="inherit"
+                      onClick={handleOpenCompanyMenu}
+                      sx={{
+                        textTransform: 'none',
+                      }}
+                    >
+                      <Typography>
+                        {company?.name}
+                      </Typography>
+                    </Button>
                   }
                 </Box>
               </Typography>
             </Grid>
           </Grid>
           <Grid item xs={6}>
-            <Grid container justifyContent="flex-end" alignItems="center" spacing={2}>
+            <Grid container justifyContent="flex-end" alignItems="center" spacing={1}>
               <Grid item>
                 {isMobile
                   ? <Tooltip TransitionComponent={Zoom} title="Cerca" arrow>

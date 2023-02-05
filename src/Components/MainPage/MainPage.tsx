@@ -51,18 +51,18 @@ const MainPage: FC<MainPageProps> = (
   ];
 
   return (
-      <Container maxWidth="xl" disableGutters={isMobile}>
-        <Grid container justifyContent="center" direction="column" spacing={1} pt={10}>
-          {!disableBreadcrumbs && <Grid item>
-            <Breadcrumbs
-              separator={<NavigateNextIcon fontSize="small"/>}
-            >
-              {usedBreadcrumbs}
-            </Breadcrumbs>
-          </Grid>}
-          <Grid item>
-            <PageTitle title={title} icon={!isMobile && icon ? icon : null} loading={loading}/>
-          </Grid>
+    <Container maxWidth="xl">
+      <Grid container direction="column" spacing={1} pt={10}>
+        {!disableBreadcrumbs && <Grid item>
+          <Breadcrumbs
+            separator={<NavigateNextIcon fontSize="small"/>}
+          >
+            {usedBreadcrumbs}
+          </Breadcrumbs>
+        </Grid>}
+        <Grid item>
+          <PageTitle title={title} icon={!isMobile && icon ? icon : null} loading={loading}/>
+        </Grid>
           {Boolean(updatedTime)
             ? <Grid item>
               <SyncButton updatedTime={updatedTime} onClick={onRefresh}/>

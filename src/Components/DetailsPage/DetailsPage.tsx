@@ -16,7 +16,7 @@ import {
   Grow,
   IconButton,
   Link,
-  ListItem,
+  ListItemButton,
   ListSubheader,
   Skeleton,
   Slide,
@@ -140,129 +140,138 @@ const DetailsPage: FC<DetailsPageProps> = (
         onSubmit(event);
         setEditMode(false);
       }}
+      sx={{
+        display: 'grid',
+        gridTemplateColumns: `1fr ${hasAnchors ? '242px' : 0}`
+      }}
     >
-      <Box pt={10} sx={{display: 'grid', gridTemplateColumns: `1fr ${hasAnchors ? '242px' : 0}`}}>
-        <Container maxWidth="xl" disableGutters={isMobile}>
-          <Grid item container direction="column" spacing={1}>
+      <Container maxWidth="xl">
+        <Grid item container direction="column" spacing={1} pt={10}>
+          <Grid item>
+            <Breadcrumbs
+              separator={<NavigateNextIcon fontSize="small"/>}
+            >
+              {usedBreadcrumbs}
+            </Breadcrumbs>
+          </Grid>
+          <Grid item>
+            <PageTitle title={title} icon={!isMobile && icon ? icon : null} loading={loading}>
+              {!isMobile
+                ? !editMode && <Grow in key={2}>
+                <Stack direction="row" spacing={1}>
+                  {allowModify.edit && <Tooltip title="Edit" arrow TransitionComponent={Zoom}>
+                    <IconButton
+                      id="3"
+                      color="primary"
+                      children={<ModeEditOutlineOutlinedIcon/>}
+                      onClick={handleEditMode}
+                    />
+                  </Tooltip>}
+                  {allowModify.delete && <Tooltip title="Delete" arrow TransitionComponent={Zoom}>
+                    <IconButton
+                      id="4"
+                      onClick={() => setOpenDeleteDialog(true)}
+                      children={<DeleteIcon/>}
+                    />
+                  </Tooltip>}
+                </Stack>
+              </Grow>
+                : !loading && !allowModify && noEditElement
+                /*<Grow in key={1}>
+                <Stack direction="row" spacing={1}>
+                  <Tooltip title="Salva modifiche" arrow TransitionComponent={Zoom}>
+                    <IconButton
+                      color="primary"
+                      id="1"
+                      form="editForm"
+                      children={<SaveOutlinedIcon/>}
+                      type="submit"
+                    />
+                  </Tooltip>
+                  <Tooltip title="Annulla modifiche" arrow TransitionComponent={Zoom}>
+                    <IconButton
+                      id="2"
+                      children={<CloseIcon/>}
+                      onClick={() => setEditMode(false)}
+                    />
+                  </Tooltip>
+                </Stack>
+              </Grow>*/}
+            </PageTitle>
+          </Grid>
+          <Grid item container spacing={1}>
             <Grid item>
-              <Breadcrumbs
-                separator={<NavigateNextIcon fontSize="small"/>}
-              >
-                {usedBreadcrumbs}
-              </Breadcrumbs>
+              <SyncButton updatedTime={updatedTime} onClick={onRefresh}/>
             </Grid>
             <Grid item>
-              <PageTitle title={title} icon={!isMobile && icon ? icon : null} loading={loading}>
-                {!isMobile
-                  ? !editMode && <Grow in key={2}>
-                  <Stack direction="row" spacing={1}>
-                    {allowModify.edit && <Tooltip title="Edit" arrow TransitionComponent={Zoom}>
-                      <IconButton
-                        id="3"
-                        color="primary"
-                        children={<ModeEditOutlineOutlinedIcon/>}
-                        onClick={handleEditMode}
-                      />
-                    </Tooltip>}
-                    {allowModify.delete && <Tooltip title="Delete" arrow TransitionComponent={Zoom}>
-                      <IconButton
-                        id="4"
-                        onClick={() => setOpenDeleteDialog(true)}
-                        children={<DeleteIcon/>}
-                      />
-                    </Tooltip>}
-                  </Stack>
-                </Grow>
-                  : !loading && !allowModify && noEditElement
-                  /*<Grow in key={1}>
-                  <Stack direction="row" spacing={1}>
-                    <Tooltip title="Salva modifiche" arrow TransitionComponent={Zoom}>
-                      <IconButton
-                        color="primary"
-                        id="1"
-                        form="editForm"
-                        children={<SaveOutlinedIcon/>}
-                        type="submit"
-                      />
-                    </Tooltip>
-                    <Tooltip title="Annulla modifiche" arrow TransitionComponent={Zoom}>
-                      <IconButton
-                        id="2"
-                        children={<CloseIcon/>}
-                        onClick={() => setEditMode(false)}
-                      />
-                    </Tooltip>
-                  </Stack>
-                </Grow>*/}
-              </PageTitle>
-            </Grid>
-            <Grid item container spacing={1}>
-              <Grid item>
-                <SyncButton updatedTime={updatedTime} onClick={onRefresh}/>
-              </Grid>
-              <Grid item>
-                {!loading && chips}
-              </Grid>
-            </Grid>
-            <Grid item mt={3}>
-              {loading
-                ? <Card variant="outlined">
-                  <DetailsLoading rows={baseChildrenLoadingRows} columns={baseChildrenLoadingColumns}/>
-                </Card>
-                : editMode
-                  ? <Fade in key={1}>
-                    <Card variant="outlined">
-                      <CardContent>
-                        <Box py={2}>
-                          {editChildren}
-                        </Box>
-                        <DialogActions>
-                          <Button color="inherit"
-                                  onClick={() => setEditMode(false)}
-                          >
-                            <Box mx={2}>annulla</Box>
-                          </Button>
-                          <Button
-                            color="primary"
-                            id="1"
-                            form="editForm"
-                            type="submit"
-                            sx={{
-                              backgroundColor: alpha(theme.palette.primary.main, 0.2),
-                              "&:hover": {
-                                backgroundColor: alpha(theme.palette.primary.main, 0.25),
-                              },
-                            }}>
-                            <Box mx={2}>
-                              salva
-                            </Box>
-                          </Button>
-                        </DialogActions>
-                      </CardContent>
-                    </Card>
-                  </Fade>
-                  : <Fade in={Boolean(baseChildren)} key={2}>
-                    <div>
-                      <Card variant="outlined">
-                        <CardContent>
-                          {baseChildren}
-                        </CardContent>
-                      </Card>
-                      <Box pt={2}>
-                        {children}
-                      </Box>
-                    </div>
-                  </Fade>
-              }
+              {!loading && chips}
             </Grid>
           </Grid>
-        </Container>
-        <Box sx={{
-          top: '0px',
-          position: 'sticky',
-          height: '100vh',
-          overflowY: 'auto',
-        }}>
+          <Grid item mt={3}>
+            {loading
+              ? <Card variant="outlined">
+                <DetailsLoading rows={baseChildrenLoadingRows} columns={baseChildrenLoadingColumns}/>
+              </Card>
+              : editMode
+                ? <Fade in key={1}>
+                  <Card variant="outlined">
+                    <CardContent>
+                      <Box py={2}>
+                        {editChildren}
+                      </Box>
+                      <DialogActions>
+                        <Button color="inherit"
+                                onClick={() => setEditMode(false)}
+                        >
+                          <Box mx={2}>annulla</Box>
+                        </Button>
+                        <Button
+                          color="primary"
+                          id="1"
+                          form="editForm"
+                          type="submit"
+                          sx={{
+                            backgroundColor: alpha(theme.palette.primary.main, 0.2),
+                            "&:hover": {
+                              backgroundColor: alpha(theme.palette.primary.main, 0.25),
+                            },
+                          }}>
+                          <Box mx={2}>
+                            salva
+                          </Box>
+                        </Button>
+                      </DialogActions>
+                    </CardContent>
+                  </Card>
+                </Fade>
+                : <Fade in={Boolean(baseChildren)} key={2}>
+                  <div>
+                    <Card variant="outlined">
+                      <CardContent>
+                        {baseChildren}
+                      </CardContent>
+                    </Card>
+                    <Box pt={2}>
+                      {children}
+                    </Box>
+                  </div>
+                </Fade>
+            }
+          </Grid>
+        </Grid>
+      </Container>
+      {
+        anchors?.length > 0
+        && <Box
+          pt={23}
+          pr={2}
+          sx={{
+            top: '0px',
+            position: 'sticky',
+            height: '100vh',
+            overflowY: 'auto',
+          }}
+        >
           <Slide in={hasAnchors} direction="left" unmountOnExit mountOnEnter>
             <List
               dense
@@ -283,31 +292,31 @@ const DetailsPage: FC<DetailsPageProps> = (
               }
             >
               {[{title: "Details", id: ""}].concat(anchors)?.map((anchor, key) =>
-                <ListItem
+                <ListItemButton
                   key={key}
                   sx={{
+                    transition: 'all 0.5s ease',
                     '&:hover': {
-                      borderLeft: `solid ${theme.palette.primary.main} 1px`,
-                      color: `${theme.palette.primary.main}`,
-                    },
-                    color: `${theme.palette.text.primary}`,
-                    borderLeft: `solid transparent 1px`,
+                      backgroundColor: alpha(theme.palette.primary.main, 0.15),
+                      color: theme.palette.primary.main
+                    }
                   }}
+                  href={`#${anchor?.id}`}
                 >
-                  <ListItemText primary={
-                    <Link href={`#${anchor?.id}`}
-                          color="inherit" underline="none">
-                      {anchor?.title}
-                    </Link>
-                  }/>
-                </ListItem>
+                  <ListItemText primary={anchor?.title}/>
+                </ListItemButton>
               )}
             </List>
           </Slide>
         </Box>
-      </Box>
+      }
       <DeleteDialog handleDelete={onDelete} title={title}/>
-      <Zoom in={!loading && isMobile && allowModify && !editMode} style={{transitionDelay: '200ms'}}>
+      <Zoom
+        in={!loading && isMobile && allowModify && !editMode}
+        style={{transitionDelay: '200ms'}}
+        unmountOnExit
+        mountOnEnter
+      >
         <Fab
           sx={{
             margin: 0,
