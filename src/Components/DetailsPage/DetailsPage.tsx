@@ -260,8 +260,7 @@ const DetailsPage: FC<DetailsPageProps> = (
           </Grid>
         </Grid>
       </Container>
-      {
-        anchors?.length > 0
+      {anchors?.length > 0 && !isMobile
         && <Box
           pt={23}
           pr={2}
