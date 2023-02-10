@@ -93,3 +93,20 @@ export async function updateVehicle(vehicleId: Id, vehicle: Vehicle): Promise<Ax
     })
   return response;
 }
+
+export async function deleteVehicle(vehicleId: Id): Promise<AxiosResponse> {
+  let response = {} as AxiosResponse;
+  await servicePath
+    .delete(`/vehicles/${vehicleId}`, {
+      headers: {
+        Authorization: `Bearer ${getCookie('token')}`
+      }
+    })
+    .then(res => {
+      if (res.status !== 200) {
+        return new Error(res.data["message"])
+      }
+      response = res
+    })
+  return response;
+}

@@ -84,18 +84,22 @@ const PageFrame: React.FC<PageFrameProps> = ({children, title}) => {
   const [nestedListToggle, setNestedListToggle] = useState(true)
 
   const handlePageSelection = (pagePath: string) => {
-    navigate(`${pagePath}`)
+    navigate(`/app/companies/${company.id}/${pagePath}`)
     handleDrawerClose();
   }
+
   const handleDrawerToggle = () => {
     setOpen(!open)
   };
+
   const handleDrawerOpen = () => {
     setOpen(true);
   };
+
   const handleDrawerClose = () => {
     setOpen(false);
   };
+
   const handleThemeSwitch = () => {
     if (mode === 'light') {
       setMode('dark');
@@ -223,14 +227,20 @@ const PageFrame: React.FC<PageFrameProps> = ({children, title}) => {
             component="nav"
           >
             <ListItemButton
-              onClick={() => navigate('/settings')}
+              onClick={() => navigate('/app/settings')}
               key={2}
-              selected={location.pathname === 'app/settings'}
+              selected={location.pathname === '/app/settings'}
             >
               <ListItemIcon>
-                <SettingsOutlinedIcon sx={{color: location.pathname === '/settings' ? 'primary.main' : ''}}/>
+                <SettingsOutlinedIcon sx={{color: location.pathname === '/app/settings' ? 'primary.main' : ''}}/>
               </ListItemIcon>
-              <ListItemText primary="Settings"/>
+              <ListItemText
+                primary="Settings"
+                primaryTypographyProps={{
+                  color: location.pathname === '/app/settings' ? 'primary' : '',
+                  fontWeight: location.pathname === '/app/settings' ? 'bold' : '',
+                }}
+              />
             </ListItemButton>
             <ListItemButton
               onClick={handleThemeSwitch}

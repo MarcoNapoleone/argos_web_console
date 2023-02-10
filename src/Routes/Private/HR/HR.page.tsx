@@ -15,6 +15,7 @@ import {useCurrentCompany} from "../../../Components/Providers/Company/Company.p
 import {createHR, defaultHRs, deleteHR, getAllHR, HR} from "../../../services/hr.services";
 import DialogFormLabel from "../../../Components/DialogFormLabel/DialoFormLabel";
 import {DatePicker} from "@mui/x-date-pickers";
+import {getUpdatedTime} from "../../../utils/dateHandler";
 
 
 type PageParamsType = {
@@ -30,7 +31,7 @@ const HRPage = () => {
   const [birthDate, setBirthDate] = React.useState<Date | null>(null);
   const [hr, setHR] = useState(defaultHRs);
   const [loading, setLoading] = useState(true);
-  const [updatedTime, setUpdatedTime] = useState("00:00");
+  const [updatedTime, setUpdatedTime] = useState(getUpdatedTime());
   const {setOpenAddDialog} = useContext(useAddDialogContext);
   const {setOpenDeleteDialog} = useContext(useDeleteDialogContext);
   const {setAlertEvent} = useContext(useAlertContext);
@@ -41,14 +42,19 @@ const HRPage = () => {
   }
 
   useEffect(() => {
+    handleRefresh();
+  }, []);
+
+  const handleRefresh = () => {
     setLoading(true)
+    setUpdatedTime(getUpdatedTime());
     fetchData()
       .then(() => setLoading(false))
       .catch((err) => {
         setAlertEvent(getReasonAlert(err));
         setLoading(false)
       })
-  }, []);
+  }
 
   const handleMoreInfoClick = (e: any) => {
     navigate(`/app/companies/${companyId}/hr/${e.row.id}`);
@@ -57,7 +63,7 @@ const HRPage = () => {
 
     return (
       <IconButton
-        onClick={handleMoreInfoClick}
+        onClick={()=>handleMoreInfoClick(e)}
 
       >
         <OpenInNewOutlinedIcon/>
@@ -252,16 +258,6 @@ const HRPage = () => {
     }
   ];
 
-  const handleRefresh = () => {
-    setLoading(true)
-    fetchData()
-      .then(() => setLoading(false))
-      .catch((err) => {
-        setAlertEvent(getReasonAlert(err));
-        setLoading(false)
-      })
-  }
-
   return (
     <MainPage
       title="HR"
@@ -344,7 +340,6 @@ const HRPage = () => {
                 id="address"
                 name="address"
                 label="Address"
-                autoFocus
                 autoComplete="address"
                 fullWidth
                 required

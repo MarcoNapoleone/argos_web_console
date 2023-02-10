@@ -1,8 +1,7 @@
 import {servicePath} from "./connectors/axios";
-import {deleteCookie, setCookie} from "./connectors/cookies";
-import {useNavigate} from "react-router-dom";
-import {useAuth} from "../Components/Providers/Authorization/Authorization.provider";
+import {setCookie} from "./connectors/cookies";
 import {User} from "./users.services";
+import {UUID} from "./entities";
 
 export const login = async (email: string, pwd: string) => {
   let user = {} as User;
@@ -26,6 +25,20 @@ export const login = async (email: string, pwd: string) => {
         return new Error("Missing user")
       }
     })
+}
+
+export const getUser = async (uuid: UUID): Promise<User> => {
+  let user = {} as User
+  await servicePath
+    .get(`/users/${uuid}`)
+    .then(async res => {
+        if (res.status !== 200) {
+          return new Error(res.data["message"])
+        }
+        user = res.data
+      }
+    )
+  return user;
 }
 
 

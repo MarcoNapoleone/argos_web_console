@@ -17,7 +17,7 @@ import {useTheme} from "@mui/material/styles";
 import {useAlert} from "../../../Components/Providers/Alert/Alert.provider";
 import {getReasonAlert} from "../../../utils/requestAlertHandler";
 import AddCard from "../../../Components/AddCard/AddCard";
-import CompanyCard from "./CompanyCard";
+import CompanyCard from "../../../Components/CompanyCard/CompanyCard";
 import {defaultCompanies, getAllCompanies} from "../../../services/companies.services";
 import IconButton from "@mui/material/IconButton";
 import MenuItem from "@mui/material/MenuItem";
@@ -43,6 +43,25 @@ function CompaniesPage() {
   const navigate = useNavigate();
   const {loggedUser, setLoggedUser} = useAuth();
 
+  const fetchData = async () => {
+    const res = await getAllCompanies()
+    setCompanies(res);
+  }
+
+  const handleRefresh = async () => {
+    setLoading(true)
+    fetchData()
+      .then(() => setLoading(false))
+      .catch((err) => {
+        setAlertEvent(getReasonAlert(err));
+        setLoading(false)
+      })
+  }
+
+  useEffect(() => {
+    handleRefresh()
+  }, []);
+
   const handleClick = async (id: Id) => {
     const company = companies.find(c => c.id === id);
     setCompany(company);
@@ -63,21 +82,6 @@ function CompaniesPage() {
     navigate("/login")
     setLoggedUser(null)
   }
-
-  useEffect(() => {
-    setLoading(true)
-    const fetchData = async () => {
-      const res = await getAllCompanies()
-      setCompanies(res);
-    }
-
-    fetchData()
-      .then(() => setLoading(false))
-      .catch((err) => {
-        setAlertEvent(getReasonAlert(err));
-        setLoading(false)
-      })
-  }, []);
 
   return (
     <>
@@ -115,8 +119,8 @@ function CompaniesPage() {
         </Grid>
       </Grid>
       <Box sx={{
-        py: 16,
-        px: 2,
+        py: 10,
+        px: 1,
       }}>
         <MainPage
           title="Your companies"

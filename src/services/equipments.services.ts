@@ -11,8 +11,8 @@ export class Equipment {
   type?: string;
   brand?: string;
   serialNumber?: string;
-  purchaseDate?: string;
-  firstTestDate?: string;
+  purchaseDate?: Date;
+  firstTestDate?: Date;
   createdAt?: Date;
   deletedAt?: Date;
   version?: number;

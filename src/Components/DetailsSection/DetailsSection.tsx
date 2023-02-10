@@ -1,5 +1,5 @@
 import React, {FC} from "react";
-import {Box, Grid, Link, Typography, useMediaQuery} from "@mui/material";
+import {Box, Chip, Grid, Link, Typography, useMediaQuery} from "@mui/material";
 import {useTheme} from "@mui/material/styles";
 
 type DetailsSectionProps = {
@@ -8,6 +8,7 @@ type DetailsSectionProps = {
   contentRedirect?: string,
   adornment?: string,
   fullWidth?: boolean,
+  chip?: boolean,
   children?: React.ReactNode,
 }
 
@@ -18,6 +19,7 @@ const DetailsSection: FC<DetailsSectionProps> = (
     children,
     contentRedirect,
     fullWidth,
+    chip,
     adornment,
   }
 ) => {
@@ -47,25 +49,48 @@ const DetailsSection: FC<DetailsSectionProps> = (
         <Grid item xs={fullWidth ? 2 : 4}>
           <Typography variant="caption" color="text.secondary"><em>{sectionTitle}</em></Typography>
         </Grid>
-        {children
-          ? <Grid item xs container={isMobile} justifyContent="flex-end">
-            <Typography variant="caption">{children}</Typography>
-          </Grid>
-          : <Grid item xs container={isMobile} justifyContent="flex-end">
-            {Boolean(contentRedirect)
-              ? <Link
-                underline="always"
-                key="1"
-                color="inherit"
-                href={contentRedirect}
-              >
-                {sectionTextContent}
-              </Link>
-              : Boolean(adornment)
-                ? <Typography>{sectionTextContent + ' ' + adornment}</Typography>
-                : <Typography>{sectionTextContent}</Typography>
-            }
-          </Grid>
+        {chip
+            ? children
+              ? <Grid item xs container={isMobile} justifyContent="flex-end">
+              <Chip variant="filled" size="small" label={
+                <Typography variant="caption">{children}</Typography>
+              }/>
+              </Grid>
+              : <Grid item xs container={isMobile} justifyContent="flex-end">
+              <Chip variant="filled" size="small" label={
+                Boolean(contentRedirect)
+                  ? <Link
+                    underline="always"
+                    key="1"
+                    color="inherit"
+                    href={contentRedirect}
+                  >
+                    {sectionTextContent}
+                  </Link>
+                  : Boolean(adornment)
+                    ? <Typography>{sectionTextContent + ' ' + adornment}</Typography>
+                    : <Typography>{sectionTextContent}</Typography>
+              }/>
+              </Grid>
+            : children
+              ? <Grid item xs container={isMobile} justifyContent="flex-end">
+                <Typography variant="caption">{children}</Typography>
+              </Grid>
+              : <Grid item xs container={isMobile} justifyContent="flex-end">
+                {Boolean(contentRedirect)
+                  ? <Link
+                    underline="always"
+                    key="1"
+                    color="inherit"
+                    href={contentRedirect}
+                  >
+                    {sectionTextContent}
+                  </Link>
+                  : Boolean(adornment)
+                    ? <Typography>{sectionTextContent + ' ' + adornment}</Typography>
+                    : <Typography>{sectionTextContent}</Typography>
+                }
+              </Grid>
         }
       </Grid>
     </Box>

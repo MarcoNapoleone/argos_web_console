@@ -1,6 +1,6 @@
 import React, {useContext, useEffect, useState} from "react";
 import {useAlertContext} from "../../../Components/Providers/Alert/Alert.provider";
-import {Box, Divider, Grid, Link, Skeleton, TextField, Typography, useMediaQuery} from "@mui/material";
+import {Box, Divider, Grid, IconButton, Link, Skeleton, TextField, Typography, useMediaQuery} from "@mui/material";
 import {useAddDialogContext} from "../../../Components/Providers/AddDialog/AddDialog";
 import {useDeleteDialogContext} from "../../../Components/Providers/DeleteDialog/DeleteDialog";
 import {useNavigate, useParams} from "react-router-dom";
@@ -22,6 +22,7 @@ import {getUpdatedTime} from "../../../utils/dateHandler";
 import {defaultDepartments} from "../../../services/departments.services";
 import DatagridTable from "../../../Components/DatagridComponents/DatagridTable";
 import {GridColumns} from "@mui/x-data-grid";
+import OpenInNewOutlinedIcon from "@mui/icons-material/OpenInNewOutlined";
 
 type PageParamsType = {
   companyId: string;
@@ -80,7 +81,6 @@ const LocalUnitDetailsPage = () => {
     }
   ];
 
-
   const fetchData = async () => {
     const _localUnit = await getLocalUnit(localUnitId)
     const _departments = await getAllDepartments(localUnitId)
@@ -93,31 +93,6 @@ const LocalUnitDetailsPage = () => {
   useEffect(() => {
     handleRefresh()
   }, []);
-
-  const departmentsRows = departments.map((department) => {
-    return {
-      id: department.id,
-      localUnitId: department.localUnitId,
-      name: department.name,
-    }
-  })
-  const departmentsColumns: GridColumns = [
-    {
-      field: 'id',
-      headerName: 'Id',
-      width: 90,
-      align: 'center',
-      editable: false,
-      headerAlign: 'center',
-    },
-    {
-      field: 'name',
-      headerName: 'Name',
-      minWidth: 150,
-      editable: false,
-      flex: 1,
-    },
-  ];
 
   const handleRefresh = () => {
     setLoading(true)
@@ -163,6 +138,108 @@ const LocalUnitDetailsPage = () => {
         setAlertEvent(getReasonAlert(err));
       })
   };
+
+  const handleMoreInfoClickDepartments = (e: any) => {
+    navigate(`/app/companies/${companyId}/departments/${e.row.id}`);
+  };
+
+  const RenderMoreButtonDepartments = (e: any) => {
+    return (
+      <IconButton
+        onClick={() => handleMoreInfoClickDepartments(e)}
+        size="small"
+      >
+        <OpenInNewOutlinedIcon/>
+      </IconButton>
+    );
+  }
+
+  const handleMoreInfoClickVehicles = (e: any) => {
+    navigate(`/app/companies/${companyId}/vehicles/${e.row.id}`);
+  };
+
+  const RenderMoreButtonVehicles = (e: any) => {
+    return (
+      <IconButton
+        onClick={()=>handleMoreInfoClickVehicles(e)}
+        size="small"
+      >
+        <OpenInNewOutlinedIcon/>
+      </IconButton>
+    );
+  }
+
+  const departmentsRows = departments.map((department) => {
+    return {
+      id: department.id,
+      localUnitId: department.localUnitId,
+      name: department.name,
+    }
+  })
+  const departmentsColumns: GridColumns = [
+    {
+      field: 'id',
+      headerName: 'Id',
+      width: 90,
+      align: 'center',
+      editable: false,
+      headerAlign: 'center',
+    },
+    {
+      field: 'name',
+      headerName: 'Name',
+      minWidth: 150,
+      editable: false,
+      flex: 1,
+    },
+    {
+      field: 'more',
+      headerName: 'More',
+      description: 'Details',
+      align: 'center',
+      renderCell: RenderMoreButtonDepartments,
+      width: 90,
+      editable: false,
+      sortable: false,
+      headerAlign: 'center',
+    },
+  ];
+
+  const vehiclesRows = vehicles.map((vehicle) => {
+    return {
+      id: vehicle.id,
+      localUnitId: vehicle.localUnitId,
+      name: vehicle.name,
+    }
+  })
+  const vehiclesColumns: GridColumns = [
+    {
+      field: 'id',
+      headerName: 'Id',
+      width: 90,
+      align: 'center',
+      editable: false,
+      headerAlign: 'center',
+    },
+    {
+      field: 'name',
+      headerName: 'Name',
+      minWidth: 150,
+      editable: false,
+      flex: 1,
+    },
+    {
+      field: 'more',
+      headerName: 'More',
+      description: 'Details',
+      align: 'center',
+      renderCell: RenderMoreButtonVehicles,
+      width: 90,
+      editable: false,
+      sortable: false,
+      headerAlign: 'center',
+    },
+  ];
 
   return (
     <DetailsPage
@@ -213,7 +290,6 @@ const LocalUnitDetailsPage = () => {
               id="name"
               name="name"
               label="Name"
-              autoFocus
               defaultValue={localUnit?.name}
               autoComplete="name"
               fullWidth
@@ -226,7 +302,6 @@ const LocalUnitDetailsPage = () => {
                 id="address"
                 name="address"
                 label="Address"
-                autoFocus
                 defaultValue={localUnit?.address}
                 autoComplete="address"
                 fullWidth
@@ -304,10 +379,9 @@ const LocalUnitDetailsPage = () => {
             </Grid>
             : <DatagridTable
               loading={loading}
-              onAdd={() => {
-              }}
               rows={departmentsRows}
               columns={departmentsColumns}
+              onRowDoubleClick={handleMoreInfoClickDepartments}
             />
           }
         </Grid>
@@ -329,10 +403,9 @@ const LocalUnitDetailsPage = () => {
             </Grid>
             : <DatagridTable
               loading={loading}
-              onAdd={() => {
-              }}
-              rows={[]}
-              columns={[]}
+              onRowDoubleClick={handleMoreInfoClickVehicles}
+              rows={vehiclesRows}
+              columns={vehiclesColumns}
             />
           }
         </Grid>

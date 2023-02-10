@@ -1,6 +1,6 @@
 import React, {useContext, useEffect, useState} from "react";
 import {useAlertContext} from "../../../Components/Providers/Alert/Alert.provider";
-import {Grid, Link, Skeleton, TextField, Typography} from "@mui/material";
+import {Box, Divider, Grid, Link, Skeleton, TextField, Typography} from "@mui/material";
 import {useDeleteDialogContext} from "../../../Components/Providers/DeleteDialog/DeleteDialog";
 import {useNavigate, useParams} from "react-router-dom";
 import {useTheme} from "@mui/material/styles";
@@ -276,8 +276,16 @@ const DepartmentDetailsPage = () => {
       baseChildren={
         <Grid container direction="column" id="details" spacing={1}>
           <Grid item xs={12} sm={6}>
+            <Box py={2}>
+              <Divider textAlign="left">
+                <Typography variant="body2" color="text.secondary">
+                  Local unit
+                </Typography>
+              </Divider>
+            </Box>
             <DetailsSection
-              sectionTitle="Local unit:"
+              sectionTitle="Name:"
+              chip
               sectionTextContent={localUnit?.name}
               contentRedirect={`/app/companies/${companyId}/local-units/${localUnit?.id}`}
             />

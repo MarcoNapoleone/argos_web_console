@@ -131,6 +131,7 @@ const PropertyDetailsPage = () => {
               name="name"
               label="Name"
               autoFocus
+              defaultValue={property?.name}
               autoComplete="name"
               fullWidth
               required
@@ -142,6 +143,7 @@ const PropertyDetailsPage = () => {
                 id="address"
                 name="address"
                 label="Address"
+                defaultValue={property?.address}
                 autoComplete="address"
                 fullWidth
                 required
@@ -151,6 +153,7 @@ const PropertyDetailsPage = () => {
               <TextField
                 id="municipality"
                 name="municipality"
+                defaultValue={property?.municipality}
                 label="Municipality"
                 autoComplete="municipality"
                 fullWidth
@@ -160,6 +163,7 @@ const PropertyDetailsPage = () => {
             <Grid item xs={12} sm={4}>
               <TextField
                 id="postalCode"
+                defaultValue={property?.postalCode}
                 name="postalCode"
                 label="Postal code"
                 autoComplete="postalCode"
@@ -174,6 +178,7 @@ const PropertyDetailsPage = () => {
                 id="province"
                 name="province"
                 label="Province"
+                defaultValue={property?.province}
                 autoComplete="province"
                 fullWidth
                 required
@@ -183,6 +188,7 @@ const PropertyDetailsPage = () => {
               <TextField
                 id="country"
                 name="country"
+                defaultValue={property?.country}
                 label="Country"
                 autoComplete="country"
                 fullWidth

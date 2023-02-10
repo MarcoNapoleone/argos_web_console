@@ -1,6 +1,6 @@
 import React, {useContext, useEffect, useState} from "react";
 import {useAlertContext} from "../../../Components/Providers/Alert/Alert.provider";
-import {Grid, IconButton, useMediaQuery} from "@mui/material";
+import {Autocomplete, Grid, IconButton, TextField, useMediaQuery} from "@mui/material";
 import AddDialog, {useAddDialogContext} from "../../../Components/Providers/AddDialog/AddDialog";
 import DeleteIcon from "@mui/icons-material/DeleteOutlined";
 import MainPage from "../../../Components/MainPage/MainPage";
@@ -9,10 +9,19 @@ import OpenInNewOutlinedIcon from "@mui/icons-material/OpenInNewOutlined";
 import DeleteDialog, {useDeleteDialogContext} from "../../../Components/Providers/DeleteDialog/DeleteDialog";
 import {useNavigate, useParams} from "react-router-dom";
 import {useTheme} from "@mui/material/styles";
-import {getReasonAlert} from "../../../utils/requestAlertHandler";
+import {getReasonAlert, getResponseAlert} from "../../../utils/requestAlertHandler";
 import {useCurrentCompany} from "../../../Components/Providers/Company/Company.provider";
-import {defaultEquipments, getAllEquipments} from "../../../services/equipments.services";
+import {
+  createEquipment,
+  defaultEquipments,
+  deleteEquipment,
+  Equipment,
+  getAllEquipments
+} from "../../../services/equipments.services";
 import DatagridTable from "../../../Components/DatagridComponents/DatagridTable";
+import {getFormattedDate, getUpdatedTime} from "../../../utils/dateHandler";
+import {DatePicker} from "@mui/x-date-pickers";
+import {defaultDepartments, Department, getAllDepartments} from "../../../services/departments.services";
 
 
 type PageParamsType = {
@@ -25,36 +34,43 @@ const EquipmentsPage = () => {
   const navigate = useNavigate();
   const {companyId} = useParams<PageParamsType>();
   const {company} = useCurrentCompany();
-
   const [equipments, setEquipments] = useState(defaultEquipments);
+  const [departments, setDepartments]: [Department[], (posts: Department[]) => void] = useState(defaultDepartments);
+  const [selectedDepartment, setSelectedDepartment]: [Department, (posts: Department) => void] = useState(null);
+  const [purchaseDate, setPurchaseDate] = React.useState<Date | null>(null);
+  const [firstTestDate, setFirstTestDate] = React.useState<Date | null>(null);
   const [loading, setLoading] = useState(true);
-  const [updatedTime, setUpdatedTime] = useState("00:00");
+  const [selectLoading, setSelectLoading] = useState(true);
+  const [updatedTime, setUpdatedTime] = useState(getUpdatedTime());
   const {setOpenAddDialog} = useContext(useAddDialogContext);
   const {setOpenDeleteDialog} = useContext(useDeleteDialogContext);
   const {setAlertEvent} = useContext(useAlertContext);
 
   const fetchData = async () => {
-    const res = await getAllEquipments(companyId)
-    setEquipments(res);
+    const _equipments = await getAllEquipments(companyId)
+    setEquipments(_equipments);
   }
 
   useEffect(() => {
-    setLoading(true)
-    fetchData()
-      .then(() => setLoading(false))
-      .catch((err) => {
-        setAlertEvent(getReasonAlert(err));
-        setLoading(false)
-      })
+    handleRefresh();
   }, []);
 
+  const getDepartments = async () => {
+    setSelectLoading(true)
+    const _departments = await getAllDepartments(companyId)
+    setDepartments(_departments);
+    setSelectLoading(false)
+  }
+
+  const handleMoreInfoClick = (e: any) => {
+    navigate(`/app/companies/${companyId}/equipments/${e.row.id}`);
+  };
+
   const RenderMoreButton = (e: any) => {
-    const handleMoreClick = () => {
-      navigate(`/app/companies/${e.row.companyId}/local-units/${e.row.id}`);
-    };
+
     return (
       <IconButton
-        onClick={handleMoreClick}
+        onClick={() => handleMoreInfoClick(e)}
         size="small"
       >
         <OpenInNewOutlinedIcon/>
@@ -65,7 +81,15 @@ const EquipmentsPage = () => {
   const RenderDeleteButton = (e: any) => {
     const handleDeleteClick = async () => {
       setLoading(true);
-
+      await deleteEquipment(e.row.id)
+        .then((res) => {
+          setAlertEvent(getResponseAlert(res));
+          setOpenDeleteDialog(false);
+          handleRefresh();
+        })
+        .catch((err) => {
+          setAlertEvent(getReasonAlert(err));
+        })
     };
     return (
       <>
@@ -75,13 +99,9 @@ const EquipmentsPage = () => {
         >
           <DeleteIcon/>
         </IconButton>
-        <DeleteDialog handleDelete={handleDeleteClick} title={'gg'}/>
+        <DeleteDialog handleDelete={handleDeleteClick} title={'Equipment'}/>
       </>
     );
-  }
-
-  const handleDoubleClick = (e: any) => {
-    navigate(`/app/companies/${e.row.companyId}/local-units/${e.row.id}`);
   }
 
   const rows = equipments.map((equipment) => {
@@ -110,42 +130,43 @@ const EquipmentsPage = () => {
       headerName: 'Name',
       width: 180,
       editable: false,
-      headerAlign: 'center',
     },
     {
       field: 'type',
       headerName: 'Type',
       width: 180,
       editable: false,
-      headerAlign: 'center',
     },
     {
       field: 'brand',
       headerName: 'Brand',
       width: 180,
       editable: false,
-      headerAlign: 'center',
-    },
-    {
-      field: 'serialNumber',
-      headerName: 'Serial Number',
-      width: 180,
-      editable: false,
-      headerAlign: 'center',
     },
     {
       field: 'purchaseDate',
       headerName: 'Purchase Date',
       width: 180,
       editable: false,
-      headerAlign: 'center',
+      renderCell: (e)=>{
+        return getFormattedDate(e.row.purchaseDate)
+      },
     },
     {
       field: 'firstTestDate',
       headerName: 'First Test Date',
       width: 180,
       editable: false,
-      headerAlign: 'center',
+      renderCell: (e)=>{
+        return getFormattedDate(e.row.firstTestDate)
+      },
+    },
+    {
+      field: 'serialNumber',
+      headerName: 'Serial Number',
+      flex: 1,
+      editable: false,
+      
     },
     {
       field: 'more',
@@ -173,6 +194,7 @@ const EquipmentsPage = () => {
 
   const handleRefresh = () => {
     setLoading(true)
+    setUpdatedTime(getUpdatedTime());
     fetchData()
       .then(() => setLoading(false))
       .catch((err) => {
@@ -181,24 +203,139 @@ const EquipmentsPage = () => {
       })
   }
 
+  const handleSubmitCreate = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const data = new FormData(event.currentTarget);
+    const newEquipment: Equipment = {
+      name: data.get("name") as string,
+      departmentId: selectedDepartment?.id,
+      type: data.get("type") as string,
+      brand: data.get("brand") as string,
+      purchaseDate: purchaseDate,
+      firstTestDate: firstTestDate,
+      serialNumber: data.get("serialNumber") as string,
+    }
+    await createEquipment(companyId, newEquipment)
+      .then((res) => {
+        setOpenAddDialog(false);
+        handleRefresh();
+      })
+      .catch((err) => {
+        setAlertEvent(getReasonAlert(err));
+      })
+  };
+
   return (
     <MainPage
       title="Equipments"
-      //icon={<ConstructionOutlinedIcon fontSize="large"/>}
       onRefresh={handleRefresh}
-      updatedTime={updatedTime}>
+      updatedTime={updatedTime}
+    >
       <DatagridTable
         rows={rows}
         allowAdd
         onAdd={() => setOpenAddDialog(true)}
         columns={columns}
         loading={loading}
-        onRowDoubleClick={handleDoubleClick}
+        onRowDoubleClick={handleMoreInfoClick}
       />
-      <AddDialog title={"Add "} handleSubmit={() => {
-      }}>
+      <AddDialog title={"Add Equipment"} handleSubmit={handleSubmitCreate}>
         <Grid container direction="column" spacing={1}>
-
+          <Grid container direction="column" spacing={1}>
+            <Grid item xs={12}>
+              <TextField
+                id="name"
+                name="name"
+                label="Name"
+                autoFocus
+                autoComplete="name"
+                fullWidth
+                required
+              />
+            </Grid>
+            <Grid item container spacing={1}>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  id="type"
+                  name="type"
+                  label="Type"
+                  autoComplete="type"
+                  fullWidth
+                  required
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  id="brand"
+                  name="brand"
+                  label="Brand"
+                  autoComplete="brand"
+                  fullWidth
+                  required
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <DatePicker
+                  label="PurchaseDate"
+                  views={['year', 'month', 'day']}
+                  value={purchaseDate}
+                  onChange={(newValue) => {
+                    setPurchaseDate(newValue);
+                  }}
+                  renderInput={(params) => <TextField
+                    fullWidth
+                    id="purchaseDate" name="purchaseDate"
+                    {...params} />}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <DatePicker
+                  label="firstTestDate"
+                  views={['year', 'month', 'day']}
+                  value={firstTestDate}
+                  onChange={(newValue) => {
+                    setFirstTestDate(newValue);
+                  }}
+                  renderInput={(params) => <TextField
+                    fullWidth
+                    id="firstTestDate" name="firstTestDate"
+                    {...params} />}
+                />
+              </Grid>
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                id="serialNumber"
+                name="serialNumber"
+                label="Serial Number"
+                autoFocus
+                autoComplete="serialNumber"
+                fullWidth
+                required
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <Autocomplete
+                id="department"
+                loading={selectLoading}
+                multiple={false}
+                value={selectedDepartment}
+                onOpen={getDepartments}
+                onChange={(event: any, newValue: any) => {
+                  setSelectedDepartment(newValue);
+                }}
+                options={departments}
+                getOptionLabel={(option) => option?.name}
+                filterSelectedOptions
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label="Department"
+                  />
+                )}
+              />
+            </Grid>
+          </Grid>
         </Grid>
       </AddDialog>
     </MainPage>

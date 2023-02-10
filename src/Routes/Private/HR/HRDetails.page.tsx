@@ -51,6 +51,7 @@ const HRDetailsPage = () => {
       {loading
         ? <Skeleton animation="wave" width="30px"/>
         : hr?.name?.charAt(0).toUpperCase() + hr?.name?.slice(1)
+        + ' ' + hr?.surname?.charAt(0).toUpperCase() + hr?.surname?.slice(1)
       }
     </Typography>,
   ];
@@ -58,6 +59,7 @@ const HRDetailsPage = () => {
   const fetchData = async () => {
     const _hr = await getHR(hrId)
     setHR(_hr);
+    setBirthDate(new Date(_hr.birthDate));
   }
 
   useEffect(() => {
@@ -133,6 +135,7 @@ const HRDetailsPage = () => {
                 id="name"
                 name="name"
                 label="Name"
+                defaultValue={hr?.name}
                 autoFocus
                 autoComplete="name"
                 fullWidth
@@ -144,6 +147,7 @@ const HRDetailsPage = () => {
                 id="surname"
                 name="surname"
                 label="Surname"
+                defaultValue={hr?.surname}
                 autoComplete="surname"
                 fullWidth
                 required
@@ -156,6 +160,7 @@ const HRDetailsPage = () => {
               name="fiscalCode"
               label="Fiscal Code"
               autoComplete="fiscalCode"
+              defaultValue={hr?.fiscalCode}
               fullWidth
               required
             />
@@ -183,6 +188,7 @@ const HRDetailsPage = () => {
                 id="birthPlace"
                 name="birthPlace"
                 label="Birth Place"
+                defaultValue={hr?.birthPlace}
                 autoComplete="birthPlace"
                 fullWidth
                 required
@@ -195,7 +201,7 @@ const HRDetailsPage = () => {
                 id="address"
                 name="address"
                 label="Address"
-                autoFocus
+                defaultValue={hr?.address}
                 autoComplete="address"
                 fullWidth
                 required
@@ -205,6 +211,7 @@ const HRDetailsPage = () => {
               <TextField
                 id="municipality"
                 name="municipality"
+                defaultValue={hr?.municipality}
                 label="Municipality"
                 autoComplete="municipality"
                 fullWidth
@@ -217,6 +224,7 @@ const HRDetailsPage = () => {
               <TextField
                 id="postalCode"
                 name="postalCode"
+                defaultValue={hr?.postalCode}
                 label="Postal code"
                 autoComplete="postalCode"
                 fullWidth
@@ -228,6 +236,7 @@ const HRDetailsPage = () => {
                 id="province"
                 name="province"
                 label="Province"
+                defaultValue={hr?.province}
                 autoComplete="province"
                 fullWidth
                 required
@@ -243,6 +252,7 @@ const HRDetailsPage = () => {
                 id="phone"
                 name="phone"
                 label="Phone"
+                defaultValue={hr?.phone}
                 autoComplete="phone"
                 fullWidth
                 required
@@ -254,6 +264,7 @@ const HRDetailsPage = () => {
                 name="email"
                 label="Email"
                 autoComplete="email"
+                defaultValue={hr?.email}
                 fullWidth
                 required
               />
@@ -263,7 +274,7 @@ const HRDetailsPage = () => {
       }
       baseChildren={
         <Grid container direction="column" id="details" spacing={1}>
-          <Grid item xs={12} sm={6}>
+          <Grid item xs={12}>
             <DetailsSection fullWidth sectionTitle="Fiscal Code:" sectionTextContent={hr?.fiscalCode}/>
           </Grid>
           <Box py={2}>

@@ -2,8 +2,8 @@ import React from "react";
 import {useTheme} from "@mui/material/styles";
 import {alpha, Box, Card, CardActionArea, CardContent, Chip, Grid, Skeleton, Typography} from "@mui/material";
 import AccessTimeOutlinedIcon from "@mui/icons-material/AccessTimeOutlined";
-import {getFormattedDate} from "../../../utils/dateHandler";
-import {Company} from "../../../services/companies.services";
+import {getFormattedDate} from "../../utils/dateHandler";
+import {Company} from "../../services/companies.services";
 
 type CompanyCardProps = {
   company?: Company,

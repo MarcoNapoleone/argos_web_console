@@ -72,7 +72,7 @@ const PropertiesPage = () => {
   const RenderMoreButton = (e: any) => {
     return (
       <IconButton
-        onClick={handleMoreInfoClick}
+        onClick={()=>handleMoreInfoClick(e)}
         size="small"
       >
         <OpenInNewOutlinedIcon/>

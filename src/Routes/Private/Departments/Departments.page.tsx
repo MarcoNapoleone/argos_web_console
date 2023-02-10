@@ -49,13 +49,7 @@ const DepartmentsPage = () => {
   }
 
   useEffect(() => {
-    setLoading(true)
-    fetchData()
-      .then(() => setLoading(false))
-      .catch((err) => {
-        setAlertEvent(getReasonAlert(err));
-        setLoading(false)
-      })
+    handleRefresh()
   }, []);
 
   const getLocalUnits = async () => {
@@ -84,7 +78,7 @@ const DepartmentsPage = () => {
 
     return (
       <IconButton
-        onClick={handleMoreInfoClick}
+        onClick={() => handleMoreInfoClick(e)}
         size="small"
       >
         <OpenInNewOutlinedIcon/>

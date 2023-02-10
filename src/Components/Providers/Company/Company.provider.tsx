@@ -1,6 +1,6 @@
 import React, {createContext, useContext, useEffect, useState} from "react";
 import {Company, defaultCompany} from "../../../services/companies.services";
-import {getCookie, setCookie} from "../../../services/connectors/cookies";
+import {getCookie} from "../../../services/connectors/cookies";
 import {useNavigate} from "react-router-dom";
 
 type CompanyContextType = {
@@ -20,16 +20,11 @@ export function CompanyProvider(props: { children: React.ReactNode }) {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!company) {
-      navigate('/app/companies')
-      setCookie('company', JSON.stringify({}), 1)
-    }
-
     try {
       const currentCompany: Company = JSON.parse(getCookie('company'))
       setCompany(currentCompany)
-    } catch (err) {
-      console.log(err)
+    } catch (e) {
+      navigate('/app/companies')
     }
 
   }, [])

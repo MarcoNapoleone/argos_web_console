@@ -45,10 +45,6 @@ const LocalUnitsPage = () => {
     setLocalUnits(res);
   }
 
-  useEffect(() => {
-    handleRefresh();
-  }, []);
-
   const handleRefresh = () => {
     setLoading(true)
     setUpdatedTime(getUpdatedTime());
@@ -60,13 +56,18 @@ const LocalUnitsPage = () => {
       })
   }
 
+  useEffect(() => {
+    handleRefresh();
+  }, []);
+
   const handleMoreInfoClick = (e: any) => {
     navigate(`/app/companies/${e.row.companyId}/local-units/${e.row.id}`);
   };
+
   const RenderMoreButton = (e: any) => {
     return (
       <IconButton
-        onClick={handleMoreInfoClick}
+        onClick={() => handleMoreInfoClick(e)}
         size="small"
       >
         <OpenInNewOutlinedIcon/>
@@ -245,7 +246,6 @@ const LocalUnitsPage = () => {
                 id="address"
                 name="address"
                 label="Address"
-                autoFocus
                 autoComplete="address"
                 fullWidth
                 required
@@ -281,7 +281,6 @@ const LocalUnitsPage = () => {
                 id="email"
                 name="email"
                 label="Email"
-                autoFocus
                 autoComplete="email"
                 fullWidth
                 required

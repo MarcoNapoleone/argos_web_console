@@ -25,6 +25,7 @@ import DocumentsPage from "./Private/Documents/Documents.page";
 import DocumentDetailsPage from "./Private/Documents/DocumentDetails.page";
 import {AddDialogProvider} from "../Components/Providers/AddDialog/AddDialog";
 import {DeleteDialogProvider} from "../Components/Providers/DeleteDialog/DeleteDialog";
+import SettingsPage from "./Private/Settings/Settings.page";
 
 const Login = lazy(() => import("./Public/login/login.page"));
 const NoMatch = lazy(() => import("./NoMatch/NoMatch"));
@@ -56,10 +57,22 @@ const Routes = () => {
                 <Router>
                   <Route path="/" element={<Login/>}/>
                   <Route path="login" element={<Login/>}/>
-                  <Route path="settings" element={<>set</>}/>
-                  <Route path="/app/companies" element={<RequireAuth><CompaniesPage/></RequireAuth>}/>
-                  <Route path="/app/companies/:companyId" element={<CompanyDetailsPage/>}/>
-                  <Route path="/app/companies/:companyId" element={<PageFrame><Outlet/></PageFrame>}>
+                  <Route path="/app/settings" element={<SettingsPage/>}/>
+                  <Route path="/app/companies" element={
+                    <RequireAuth>
+                      <CompaniesPage/>
+                    </RequireAuth>
+                  }/>
+                  <Route path="/app/companies/:companyId" element={
+                    <CompanyDetailsPage/>
+                  }/>
+                  <Route path="/app/companies/:companyId" element={
+                    <RequireAuth>
+                      <PageFrame>
+                        <Outlet/>
+                      </PageFrame>
+                    </RequireAuth>
+                  }>
                     <Route path="local-units">
                       <Route index element={<LocalUnitsPage/>}/>
                       <Route path=":localUnitId" element={<LocalUnitDetailsPage/>}/>

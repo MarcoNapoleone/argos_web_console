@@ -116,7 +116,6 @@ function CompanyDetailsPage() {
                 <TextField
                   id="vatCode"
                   name="vatCode"
-                  autoFocus
                   label="Vat code"
                   defaultValue={company?.vatCode}
                   fullWidth
@@ -140,7 +139,6 @@ function CompanyDetailsPage() {
                   id="registeredMunicipality"
                   name="registeredMunicipality"
                   label="Municipality"
-                  autoFocus
                   defaultValue={company?.registeredMunicipality}
                   fullWidth
                   required
@@ -151,7 +149,6 @@ function CompanyDetailsPage() {
                   id="address"
                   name="address"
                   label="Address"
-                  autoFocus
                   defaultValue={company?.address}
                   autoComplete="address"
                   fullWidth
@@ -165,7 +162,6 @@ function CompanyDetailsPage() {
                   id="province"
                   name="province"
                   label="Province"
-                  autoFocus
                   defaultValue={company?.province}
                   autoComplete="province"
                   fullWidth
@@ -177,7 +173,6 @@ function CompanyDetailsPage() {
                   id="postalCode"
                   name="postalCode"
                   label="Postal code"
-                  autoFocus
                   defaultValue={company?.postalCode}
                   autoComplete="postalCode"
                   fullWidth
@@ -194,7 +189,6 @@ function CompanyDetailsPage() {
                   id="email"
                   name="email"
                   label="Email"
-                  autoFocus
                   defaultValue={company?.email}
                   autoComplete="email"
                   fullWidth
