@@ -1,9 +1,9 @@
-import React, {useContext, useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {IconButton, useMediaQuery} from "@mui/material";
-import {useAddDialogContext} from "../../../Components/Providers/AddDialog/AddDialog";
 import DeleteIcon from "@mui/icons-material/DeleteOutlined";
 import OpenInNewOutlinedIcon from "@mui/icons-material/OpenInNewOutlined";
-import DeleteDialog, {useDeleteDialogContext} from "../../../Components/Providers/DeleteDialog/DeleteDialog";
+import DeleteDialog from "../../../Components/DeleteDialog/DeleteDialog";
+
 import {useNavigate} from "react-router-dom";
 import {useTheme} from "@mui/material/styles";
 import DetailsPage from "../../../Components/DetailsPage/DetailsPage";
@@ -14,9 +14,7 @@ const DocumentDetailsPage = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [updatedTime, setUpdatedTime] = useState("00:00");
-  const {setOpenAddDialog} = useContext(useAddDialogContext);
-  const {setOpenDeleteDialog} = useContext(useDeleteDialogContext);
-
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   useEffect(() => {
 
   }, []);
@@ -48,8 +46,12 @@ const DocumentDetailsPage = () => {
         >
           <DeleteIcon/>
         </IconButton>
-        <DeleteDialog handleDelete={handleDeleteClick} title={'gg'}/>
-      </>
+        <DeleteDialog
+          open={openDeleteDialog}
+          setOpen={setOpenDeleteDialog}
+          handleDelete={handleDeleteClick}
+          title="Department"
+        />      </>
     );
   }
 

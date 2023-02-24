@@ -11,12 +11,12 @@ import {
   Typography,
   useMediaQuery
 } from "@mui/material";
-import AddDialog, {useAddDialogContext} from "../../../Components/Providers/AddDialog/AddDialog";
 import DeleteIcon from "@mui/icons-material/DeleteOutlined";
 import MainPage from "../../../Components/MainPage/MainPage";
 import {DataGrid, GridColumns} from "@mui/x-data-grid";
 import OpenInNewOutlinedIcon from "@mui/icons-material/OpenInNewOutlined";
-import DeleteDialog, {useDeleteDialogContext} from "../../../Components/Providers/DeleteDialog/DeleteDialog";
+import DeleteDialog from "../../../Components/DeleteDialog/DeleteDialog";
+
 import {useNavigate, useParams} from "react-router-dom";
 import {useTheme} from "@mui/material/styles";
 import {getReasonAlert} from "../../../utils/requestAlertHandler";
@@ -45,9 +45,7 @@ const TimetablesPage = () => {
   const [localUnits, setLocalUnits] = useState(defaultLocalUnits);
   const [loading, setLoading] = useState(true);
   const [updatedTime, setUpdatedTime] = useState("00:00");
-  const {setOpenAddDialog} = useContext(useAddDialogContext);
-  const {setOpenDeleteDialog} = useContext(useDeleteDialogContext);
-  const {setAlertEvent} = useContext(useAlertContext);
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);  const {setAlertEvent} = useContext(useAlertContext);
 
   const fetchData = async () => {
     const res = await getAllLocalUnits(companyId)
@@ -95,7 +93,12 @@ const TimetablesPage = () => {
         >
           <DeleteIcon/>
         </IconButton>
-        <DeleteDialog handleDelete={handleDeleteClick} title={'gg'}/>
+        <DeleteDialog
+          open={openDeleteDialog}
+          setOpen={setOpenDeleteDialog}
+          handleDelete={handleDeleteClick}
+          title="Department"
+        />
       </>
     );
   }
@@ -319,12 +322,6 @@ const TimetablesPage = () => {
           </Grid>
         </Grid>
       </Grid>
-      <AddDialog title={"Add "} handleSubmit={() => {
-      }}>
-        <Grid container direction="column" spacing={1}>
-
-        </Grid>
-      </AddDialog>
     </MainPage>
   );
 }

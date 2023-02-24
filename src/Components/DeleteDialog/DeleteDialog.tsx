@@ -1,4 +1,4 @@
-import React, {createContext, useContext, useState} from "react";
+import React from "react";
 import {
   alpha,
   Box,
@@ -12,44 +12,26 @@ import {
 } from "@mui/material";
 import {useTheme} from "@mui/material/styles";
 
-export const useDeleteDialogContext = createContext({
-  openDeleteDialog: false,
-  setOpenDeleteDialog: (open: boolean) => {
-  },
-});
-
-export function DeleteDialogProvider(props: { children?: React.ReactNode }) {
-  const [openDeleteDialog, setOpenDeleteDialog] = useState(false)
-  const deleteDialogValue = {openDeleteDialog, setOpenDeleteDialog}
-  return (
-    <useDeleteDialogContext.Provider value={deleteDialogValue}>
-      {props.children}
-    </useDeleteDialogContext.Provider>
-  );
-}
-
 type DeleteDialogProps = {
-  handleDelete: (e: any) => void,
   title: string,
+  open: boolean,
+  setOpen: (state: boolean) => void;
+  handleDelete: (e: any) => void,
 }
 const DeleteDialog: React.FC<DeleteDialogProps> = (
   {
-    handleDelete,
-    title
+    title,
+    open,
+    setOpen,
+    handleDelete
   }
 ) => {
-  const {openDeleteDialog, setOpenDeleteDialog} = useContext(useDeleteDialogContext);
   const theme = useTheme();
 
   return (
     <Dialog
-      open={openDeleteDialog}
-      onClose={() => setOpenDeleteDialog(false)}
-      BackdropProps={{
-        sx: {
-          backgroundColor: 'rgba(0,0,0,0.2)',
-        }
-      }}
+      open={open}
+      onClose={() => setOpen(false)}
       PaperProps={{
         sx: {
           boxShadow: 0,
@@ -62,12 +44,12 @@ const DeleteDialog: React.FC<DeleteDialogProps> = (
       <DialogTitle>{"Delete " + title}</DialogTitle>
       <DialogContent>
         <DialogContentText id="delete-dialog-slide-description">
-          You are about to delete this {title}. Are you sure you want to continue?
+          You are about to delete "{title}". Are you sure you want to continue?
         </DialogContentText>
       </DialogContent>
       <Box pr={2} pb={2}>
         <DialogActions>
-          <Button color="inherit" onClick={() => setOpenDeleteDialog(false)}>
+          <Button color="inherit" onClick={() => setOpen(false)}>
             <Box mx={2}>
               cancel
             </Box>

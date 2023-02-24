@@ -1,4 +1,4 @@
-import React, {createContext, FC, useContext, useEffect, useState} from "react";
+import React, {FC, useEffect} from "react";
 import {useTheme} from "@mui/material/styles";
 import {
   Box,
@@ -14,25 +14,11 @@ import {
   useMediaQuery
 } from "@mui/material";
 
-export const useAddDialogContext = createContext({
-  openAddDialog: false,
-  setOpenAddDialog: (open: boolean) => {
-  },
-});
-
-export function AddDialogProvider(props: { children?: React.ReactNode }) {
-  const [openAddDialog, setOpenAddDialog] = useState(false)
-  const addDialogValue = {openAddDialog, setOpenAddDialog}
-  return (
-    <useAddDialogContext.Provider value={addDialogValue}>
-      {props.children}
-    </useAddDialogContext.Provider>
-  );
-}
-
 type AddDialogProps = {
   title: string,
   handleSubmit: (event: React.FormEvent<HTMLFormElement>) => void,
+  open: boolean,
+  setOpen: (state: boolean) => void;
   loading?: boolean,
   onClose?: () => void,
   onDialogRender?: () => void,
@@ -44,6 +30,8 @@ const AddDialog: FC<AddDialogProps> = (
   {
     title,
     handleSubmit,
+    open,
+    setOpen,
     loading,
     children,
     onClose,
@@ -52,11 +40,10 @@ const AddDialog: FC<AddDialogProps> = (
   }) => {
 
   const theme = useTheme();
-  const {openAddDialog, setOpenAddDialog} = useContext(useAddDialogContext);
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   const handleClose = () => {
-    setOpenAddDialog(false)
+    setOpen(false)
     if (onClose) onClose();
   }
 
@@ -66,7 +53,7 @@ const AddDialog: FC<AddDialogProps> = (
 
   return (
     <Dialog
-      open={openAddDialog}
+      open={open}
       onClose={handleClose}
       fullWidth
       disableEscapeKeyDown
@@ -86,7 +73,7 @@ const AddDialog: FC<AddDialogProps> = (
       </DialogTitle>
       <DialogContent>
         <DialogContentText>
-          <Box component="form" id="dialogForm" noValidate onSubmit={handleSubmit}>
+          <Box component="form" id={title} noValidate onSubmit={handleSubmit}>
             {children}
           </Box>
         </DialogContentText>
@@ -94,15 +81,15 @@ const AddDialog: FC<AddDialogProps> = (
       <Box pr={2} pb={2}>
         <DialogActions>
           <Button color="inherit" onClick={handleClose}>
-            <Box mx={2}>annulla</Box>
+            <Box mx={2}>cancel</Box>
           </Button>
           <Button
             color="primary"
             type="submit"
-            form="dialogForm"
+            form={title}
           >
             <Box mx={2}>
-              {Boolean(submitButtonText) ? submitButtonText : 'Crea'}
+              {Boolean(submitButtonText) ? submitButtonText : 'Add'}
             </Box>
           </Button>
         </DialogActions>

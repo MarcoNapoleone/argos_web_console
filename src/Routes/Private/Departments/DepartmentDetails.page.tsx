@@ -1,28 +1,45 @@
 import React, {useContext, useEffect, useState} from "react";
 import {useAlertContext} from "../../../Components/Providers/Alert/Alert.provider";
-import {Box, Divider, Grid, Link, Skeleton, TextField, Typography} from "@mui/material";
-import {useDeleteDialogContext} from "../../../Components/Providers/DeleteDialog/DeleteDialog";
+import {
+  Autocomplete,
+  Box,
+  Divider,
+  Grid,
+  IconButton,
+  Link,
+  Skeleton,
+  TextField,
+  Typography,
+  useMediaQuery
+} from "@mui/material";
+
 import {useNavigate, useParams} from "react-router-dom";
 import {useTheme} from "@mui/material/styles";
 import DetailsPage from "../../../Components/DetailsPage/DetailsPage";
 import {
+  addHR,
   defaultDepartment,
   deleteDepartment,
   Department,
   getAllEquipments,
-  getAllHR,
+  getAllHR as departmentGetAllHR,
   getDepartment,
+  removeHR,
   updateDepartment
 } from "../../../services/departments.services";
-import {getUpdatedTime} from "../../../utils/dateHandler";
+import {getFormattedDate, getUpdatedTime} from "../../../utils/dateHandler";
 import {getReasonAlert, getResponseAlert} from "../../../utils/requestAlertHandler";
-import {useAddDialogContext} from "../../../Components/Providers/AddDialog/AddDialog";
 import {GridColumns} from "@mui/x-data-grid";
 import DatagridTable from "../../../Components/DatagridComponents/DatagridTable";
-import {defaultHRs} from "../../../services/hr.services";
+import {defaultHRs, getAllHR} from "../../../services/hr.services";
 import {defaultEquipments} from "../../../services/equipments.services";
 import {defaultLocalUnit, getLocalUnit} from "../../../services/localUnits.services";
 import DetailsSection from "../../../Components/DetailsSection/DetailsSection";
+import {DatePicker} from "@mui/x-date-pickers";
+import OpenInNewOutlinedIcon from "@mui/icons-material/OpenInNewOutlined";
+import DeleteIcon from "@mui/icons-material/DeleteOutlined";
+import AddDialog from "../../../Components/AddDialog/AddDialog";
+import {ConfirmationContext} from "../../../Components/Providers/ConfirmDialog/ConfirmDialog.provider";
 
 type PageParamsType = {
   departmentId: string;
@@ -31,16 +48,24 @@ type PageParamsType = {
 const DepartmentDetailsPage = () => {
   const theme = useTheme();
   const navigate = useNavigate();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const {companyId, departmentId} = useParams<PageParamsType>();
   const [loading, setLoading] = useState(true);
+  const [selectLoading, setSelectLoading] = useState(true);
   const [department, setDepartment] = useState(defaultDepartment);
   const [localUnit, setLocalUnit] = useState(defaultLocalUnit);
-  const [hr, setHR] = useState(defaultHRs);
+  const [hrd, setHrd] = useState([]);
+  const [hr, setHr] = useState(defaultHRs);
+  const [openEquipmentAddDialog, setOpenEquipmentAddDialog] = useState(false);
+  const [openHRAddDialog, setOpenHRAddDialog] = useState(false);
+  const [openHRDeleteDialog, setOpenHRDeleteDialog] = useState(false);
+  const [startDate, setStartDate] = useState<Date | null>(new Date());
+  const [endDate, setEndDate] = useState<Date | null>(null);
+  const [selectedHR, setSelectedHR] = useState(null);
   const [equipments, setEquipments] = useState(defaultEquipments);
   const [updatedTime, setUpdatedTime] = useState(getUpdatedTime());
-  const {setOpenAddDialog} = useContext(useAddDialogContext);
   const {setAlertEvent} = useContext(useAlertContext);
-  const {setOpenDeleteDialog} = useContext(useDeleteDialogContext);
+  const {confirm} = useContext(ConfirmationContext);
 
   const breadcrumbs = [
     <Link
@@ -82,13 +107,18 @@ const DepartmentDetailsPage = () => {
 
   const fetchData = async () => {
     const _departments = await getDepartment(departmentId)
-    const _hr = await getAllHR(departmentId);
+    const _hrd = await departmentGetAllHR(departmentId);
     const _equipments = await getAllEquipments(departmentId);
     const _localUnit = await getLocalUnit(_departments.localUnitId);
     setDepartment(_departments);
-    setHR(_hr);
+    setHrd(_hrd);
     setEquipments(_equipments);
     setLocalUnit(_localUnit);
+  }
+
+  const getHRs = async () => {
+    const _hr = await getAllHR(companyId);
+    setHr(_hr);
   }
 
   useEffect(() => {
@@ -98,6 +128,7 @@ const DepartmentDetailsPage = () => {
   const handleRefresh = () => {
     setLoading(true)
     setUpdatedTime(getUpdatedTime());
+    setSelectedHR(null);
     fetchData()
       .then(() => setLoading(false))
       .catch((err) => {
@@ -110,7 +141,7 @@ const DepartmentDetailsPage = () => {
     deleteDepartment(departmentId)
       .then((res) => {
         setAlertEvent(getResponseAlert(res));
-        setOpenDeleteDialog(false);
+        setOpenHRDeleteDialog(false);
         navigate(`/app/companies/${companyId}/departments`)
       })
       .catch((err) => {
@@ -135,21 +166,83 @@ const DepartmentDetailsPage = () => {
       })
   };
 
-  const HRsRows = hr.map((hr) => {
+  const handleAddHR = async () => {
+    await addHR(departmentId, selectedHR.id,
+      {
+        startDate: startDate,
+        endDate: endDate
+      }
+    )
+      .then((res) => {
+        setAlertEvent(getResponseAlert(res));
+        setOpenHRAddDialog(false);
+        handleRefresh();
+      })
+      .catch((err) => {
+        setAlertEvent(getReasonAlert(err));
+      })
+  }
+
+  const handleHRMoreInfoClick = (e: any) => {
+    navigate(`/app/companies/${companyId}/hr/${e.row.id}`);
+  };
+
+  const RenderMoreButton = (e: any) => {
+    return (
+      <IconButton
+        onClick={() => handleHRMoreInfoClick(e)}
+        size="small"
+      >
+        <OpenInNewOutlinedIcon/>
+      </IconButton>
+    );
+  }
+
+  const RenderDeleteButton = (e: any) => {
+    const handleHRDeleteClick = async () => {
+      confirm('Are you sure you want to perform this action?', async () => {
+        await removeHR(departmentId, e.row.id)
+          .then((res) => {
+            setAlertEvent(getResponseAlert(res));
+            setOpenHRDeleteDialog(false);
+            handleRefresh();
+          })
+          .catch((err) => {
+            setAlertEvent(getReasonAlert(err));
+          })
+      });
+    };
+    return (
+      <>
+        <IconButton
+          onClick={handleHRDeleteClick}
+          size="small"
+          disabled={e.row.endDate !== null}
+        >
+          <DeleteIcon/>
+        </IconButton>
+
+      </>
+    );
+  }
+
+  const HRsRows = hrd.map((hrd) => {
     return {
-      id: hr.id,
-      name: hr.name,
-      surname: hr.surname,
-      fiscalCode: hr.fiscalCode,
-      phone: hr.phone,
-      email: hr.email,
-      birthDate: hr.birthDate,
-      birthPlace: hr.birthPlace,
-      address: hr.address,
-      municipality: hr.municipality,
-      province: hr.province,
-      postalCode: hr.postalCode,
-      country: hr.country,
+      id: hrd.id,
+      name: hrd.name,
+      surname: hrd.surname,
+      startDate: hrd?.startDate,
+      endDate: hrd?.endDate,
+      fiscalCode: hrd.fiscalCode,
+      phone: hrd.phone,
+      email: hrd.email,
+      birthDate: hrd.birthDate,
+      birthPlace: hrd.birthPlace,
+      address: hrd.address,
+      municipality: hrd.municipality,
+      province: hrd.province,
+      postalCode: hrd.postalCode,
+      country: hrd.country,
     }
   })
   const HRsColumns: GridColumns = [
@@ -176,6 +269,24 @@ const DepartmentDetailsPage = () => {
       flex: 1,
     },
     {
+      field: 'startDate',
+      headerName: 'Start Date',
+      minWidth: 150,
+      editable: false,
+      renderCell: (e) => {
+        return getFormattedDate(e.row.startDate)
+      }
+    },
+    {
+      field: 'endDate',
+      headerName: 'End Date',
+      minWidth: 150,
+      editable: false,
+      renderCell: (e) => {
+        return getFormattedDate(e.row.endDate)
+      }
+    },
+    {
       field: 'fiscalCode',
       headerName: 'Fiscal Code',
       minWidth: 150,
@@ -196,59 +307,81 @@ const DepartmentDetailsPage = () => {
       editable: false,
       flex: 1,
     },
+    /* {
+   field: 'birthDate',
+   headerName: 'Birth Date',
+   minWidth: 150,
+   editable: false,
+   flex: 1,
+ },
+ {
+   field: 'birthPlace',
+   headerName: 'Birth Place',
+   minWidth: 150,
+   editable: false,
+   flex: 1,
+ },
+ {
+   field: 'address',
+   headerName: 'Address',
+   minWidth: 150,
+   editable: false,
+   flex: 1,
+ },
+ {
+   field: 'municipality',
+   headerName: 'Municipality',
+   minWidth: 150,
+   editable: false,
+   flex: 1,
+ },
+ {
+   field: 'province',
+   headerName: 'Province',
+   minWidth: 150,
+   editable: false,
+   flex: 1,
+ },
+ {
+   field: 'postalCode',
+   headerName: 'Postal Code',
+   minWidth: 150,
+   editable: false,
+   flex: 1,
+ },
+ {
+   field: 'country',
+   headerName: 'Country',
+   minWidth: 150,
+   editable: false,
+   flex: 1,
+ }*/
     {
-      field: 'birthDate',
-      headerName: 'Birth Date',
-      minWidth: 150,
+      field: 'more',
+      headerName: 'More',
+      description: 'Details',
+      align: 'center',
+      renderCell: RenderMoreButton,
+      width: 90,
       editable: false,
-      flex: 1,
+      sortable: false,
+      headerAlign: 'center',
     },
     {
-      field: 'birthPlace',
-      headerName: 'Birth Place',
-      minWidth: 150,
+      field: 'edit',
+      headerName: 'Edit',
+      description: 'Edit, Delete',
+      align: 'center',
+      renderCell: RenderDeleteButton,
+      width: 110,
       editable: false,
-      flex: 1,
-    },
-    {
-      field: 'address',
-      headerName: 'Address',
-      minWidth: 150,
-      editable: false,
-      flex: 1,
-    },
-    {
-      field: 'municipality',
-      headerName: 'Municipality',
-      minWidth: 150,
-      editable: false,
-      flex: 1,
-    },
-    {
-      field: 'province',
-      headerName: 'Province',
-      minWidth: 150,
-      editable: false,
-      flex: 1,
-    },
-    {
-      field: 'postalCode',
-      headerName: 'Postal Code',
-      minWidth: 150,
-      editable: false,
-      flex: 1,
-    },
-    {
-      field: 'country',
-      headerName: 'Country',
-      minWidth: 150,
-      editable: false,
-      flex: 1,
+      sortable: false,
+      headerAlign: 'center',
     }
   ];
 
   return (
-    <DetailsPage
+    <><DetailsPage
       title={department.name}
       loading={loading}
       updatedTime={updatedTime}
@@ -257,6 +390,7 @@ const DepartmentDetailsPage = () => {
       onDelete={handleDelete}
       onSubmit={handleSubmitEdit}
       onRefresh={handleRefresh}
+      anchors={anchors}
       editChildren={
         <Grid container direction="column" spacing={1}>
           <Grid item xs={12}>
@@ -292,12 +426,11 @@ const DepartmentDetailsPage = () => {
           </Grid>
         </Grid>
       }
-      anchors={anchors}
     >
       <Grid container direction="column" id="hr" spacing={1} pt={1}>
         <Grid item mx={2}>
           <Typography variant="h6">
-            HR
+            HR currently in the department
           </Typography>
         </Grid>
         <Grid item>
@@ -311,8 +444,9 @@ const DepartmentDetailsPage = () => {
             </Grid>
             : <DatagridTable
               loading={loading}
-              onAdd={() => {
-              }}
+              onAdd={() => setOpenHRAddDialog(true)}
+              allowAdd
+              onRowDoubleClick={handleHRMoreInfoClick}
               rows={HRsRows}
               columns={HRsColumns}
             />
@@ -345,7 +479,72 @@ const DepartmentDetailsPage = () => {
         </Grid>
       </Grid>
     </DetailsPage>
+      <AddDialog
+        title={"Add HR to department"}
+        handleSubmit={handleAddHR}
+        open={openHRAddDialog}
+        setOpen={setOpenHRAddDialog}
+      >
+        <Grid container direction="column" spacing={1}>
+          <Grid item xs={12}>
+            <Grid item xs={12}>
+              <Autocomplete
+                id="hr"
+                loading={selectLoading}
+                multiple={false}
+                value={selectedHR}
+                onOpen={getHRs}
+                onChange={(event: any, newValue: any) => {
+                  setSelectedHR(newValue);
+                }}
+                options={hr.filter((hr) => !hrd.some((hrInDepartment) => hrInDepartment.id === hr.id))}
+                getOptionLabel={(option) => option?.name + " " + option?.surname + " (" + option?.fiscalCode + ")"}
+                filterSelectedOptions
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label="HR"
+                  />
+                )}
+              />
+            </Grid>
+          </Grid>
+          <Grid item container spacing={1}>
+            <Grid item xs={12} sm={6}>
+              <DatePicker
+                label="Start Date"
+                views={['year', 'month', 'day']}
+                value={startDate}
+                onChange={(newValue) => {
+                  setStartDate(newValue);
+                }}
+                renderInput={(params) => <TextField
+                  fullWidth
+                  id="startDate" name="startDate"
+                  {...params} />}
+              />
+            </Grid>
+            {/*<Grid item xs={12} sm={6}>
+              <DatePicker
+                label="End Date"
+                views={['year', 'month', 'day']}
+                value={endDate}
+                onChange={(newValue) => {
+                  setEndDate(newValue);
+                }}
+                renderInput={(params) => <TextField
+                  fullWidth
+                  id="endDate" name="endDate"
+                  {...params} />}
+              />
+            </Grid>*/}
+          </Grid>
+        </Grid>
+      </AddDialog>
+    </>
   );
 }
 
 export default DepartmentDetailsPage;
+
+

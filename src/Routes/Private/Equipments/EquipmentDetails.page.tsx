@@ -3,7 +3,7 @@ import {useTheme} from "@mui/material/styles";
 import {useNavigate, useParams} from "react-router-dom";
 import {getFormattedDate, getUpdatedTime} from "../../../utils/dateHandler";
 import {useAlertContext} from "../../../Components/Providers/Alert/Alert.provider";
-import {useDeleteDialogContext} from "../../../Components/Providers/DeleteDialog/DeleteDialog";
+
 import {Box, Divider, Grid, Link, Skeleton, TextField, Typography} from "@mui/material";
 import {getReasonAlert, getResponseAlert} from "../../../utils/requestAlertHandler";
 import DetailsPage from "../../../Components/DetailsPage/DetailsPage";
@@ -34,8 +34,7 @@ const EquipmentDetailsPage = () => {
   const [firstTestDate, setFirstTestDate] = React.useState<Date | null>(null);
   const [updatedTime, setUpdatedTime] = useState(getUpdatedTime());
   const {setAlertEvent} = useContext(useAlertContext);
-  const {setOpenDeleteDialog} = useContext(useDeleteDialogContext);
-
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const breadcrumbs = [
     <Link
       underline="hover"

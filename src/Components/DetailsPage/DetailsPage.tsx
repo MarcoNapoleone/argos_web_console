@@ -33,9 +33,9 @@ import PageTitle from "../PageTitle/PageTitle";
 import SyncButton from "../SyncButton/SyncButton";
 import DetailsLoading from "../DetailsLoading/DetailsLoading";
 import DeleteIcon from "@mui/icons-material/DeleteOutlined";
-import DeleteDialog, {useDeleteDialogContext} from "../Providers/DeleteDialog/DeleteDialog";
 import List from "@mui/material/List";
 import ListItemText from "@mui/material/ListItemText";
+import DeleteDialog from "../DeleteDialog/DeleteDialog";
 
 interface modifyConfig {
   edit: boolean;
@@ -100,8 +100,7 @@ const DetailsPage: FC<DetailsPageProps> = (
   const isLargeScreen = useMediaQuery(theme.breakpoints.up("lg"));
   const [editMode, setEditMode] = useState(false);
   const {pagePath} = useParams<PageParamsType>();
-  const {setOpenDeleteDialog} = useContext(useDeleteDialogContext);
-
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const hasAnchors = !loading
     && !editMode
     && isLargeScreen
@@ -309,7 +308,12 @@ const DetailsPage: FC<DetailsPageProps> = (
           </Slide>
         </Box>
       }
-      <DeleteDialog handleDelete={onDelete} title={title}/>
+      <DeleteDialog
+        open={openDeleteDialog}
+        setOpen={setOpenDeleteDialog}
+        handleDelete={onDelete}
+        title={title}
+      />
       <Zoom
         in={!loading && isMobile && allowModify && !editMode}
         style={{transitionDelay: '200ms'}}

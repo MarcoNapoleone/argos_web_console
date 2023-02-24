@@ -2,6 +2,7 @@ export const getFormattedDate = (date: Date | string | number) => {
   const monthNames = ["Gen", "Feb", "Mar", "Apr", "Mag", "Giu",
     "Lug", "Ago", "Set", "Ott", "Nov", "Dic"
   ];
+  if (date === null) return null;
   let dt = new Date(date)
   return (`${("0" + dt.getDate()).slice(-2)} ${monthNames[dt.getMonth()]} ${("000" + dt.getFullYear()).slice(-4)}`)
 };

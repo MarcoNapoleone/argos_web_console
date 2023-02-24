@@ -1,12 +1,12 @@
 import React, {useContext, useEffect, useState} from "react";
 import {useAlertContext} from "../../../Components/Providers/Alert/Alert.provider";
-import {Grid, IconButton, useMediaQuery} from "@mui/material";
-import AddDialog, {useAddDialogContext} from "../../../Components/Providers/AddDialog/AddDialog";
+import {IconButton, useMediaQuery} from "@mui/material";
 import DeleteIcon from "@mui/icons-material/DeleteOutlined";
 import MainPage from "../../../Components/MainPage/MainPage";
 import {GridColumns} from "@mui/x-data-grid";
 import OpenInNewOutlinedIcon from "@mui/icons-material/OpenInNewOutlined";
-import DeleteDialog, {useDeleteDialogContext} from "../../../Components/Providers/DeleteDialog/DeleteDialog";
+import DeleteDialog from "../../../Components/DeleteDialog/DeleteDialog";
+
 import {useNavigate, useParams} from "react-router-dom";
 import {useTheme} from "@mui/material/styles";
 import {getReasonAlert} from "../../../utils/requestAlertHandler";
@@ -27,9 +27,7 @@ const DocumentsPage = () => {
   const {company} = useCurrentCompany();
   const [loading, setLoading] = useState(true);
   const [updatedTime, setUpdatedTime] = useState("00:00");
-  const {setOpenAddDialog} = useContext(useAddDialogContext);
-  const {setOpenDeleteDialog} = useContext(useDeleteDialogContext);
-  const {setAlertEvent} = useContext(useAlertContext);
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);  const {setAlertEvent} = useContext(useAlertContext);
   const [documents, setDocuments] = useState<Document[]>([
     {
       "id": 1,
@@ -102,7 +100,12 @@ const DocumentsPage = () => {
         >
           <DeleteIcon/>
         </IconButton>
-        <DeleteDialog handleDelete={handleDeleteClick} title={'gg'}/>
+        <DeleteDialog
+          open={openDeleteDialog}
+          setOpen={setOpenDeleteDialog}
+          handleDelete={handleDeleteClick}
+          title="Department"
+        />
       </>
     );
   }
@@ -179,12 +182,7 @@ const DocumentsPage = () => {
       onRefresh={handleRefresh}
       updatedTime={updatedTime}>
       <FileContainer files={documents} setFiles={setDocuments} loading={loading}/>
-      <AddDialog title={"Add "} handleSubmit={() => {
-      }}>
-        <Grid container direction="column" spacing={1}>
 
-        </Grid>
-      </AddDialog>
     </MainPage>
   );
 }

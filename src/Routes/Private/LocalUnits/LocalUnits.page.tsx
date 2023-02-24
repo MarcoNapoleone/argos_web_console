@@ -2,12 +2,13 @@ import React, {useContext, useEffect, useState} from "react";
 import {useAlertContext} from "../../../Components/Providers/Alert/Alert.provider";
 import {Grid, IconButton, TextField, useMediaQuery} from "@mui/material";
 import DatagridTable from "../../../Components/DatagridComponents/DatagridTable";
-import AddDialog, {useAddDialogContext} from "../../../Components/Providers/AddDialog/AddDialog";
+import AddDialog from "../../../Components/AddDialog/AddDialog";
 import DeleteIcon from "@mui/icons-material/DeleteOutlined";
 import MainPage from "../../../Components/MainPage/MainPage";
 import {GridColumns} from "@mui/x-data-grid";
 import OpenInNewOutlinedIcon from "@mui/icons-material/OpenInNewOutlined";
-import DeleteDialog, {useDeleteDialogContext} from "../../../Components/Providers/DeleteDialog/DeleteDialog";
+import DeleteDialog from "../../../Components/DeleteDialog/DeleteDialog";
+
 import {useNavigate, useParams} from "react-router-dom";
 import {useTheme} from "@mui/material/styles";
 import {getReasonAlert, getResponseAlert} from "../../../utils/requestAlertHandler";
@@ -33,12 +34,11 @@ const LocalUnitsPage = () => {
   const navigate = useNavigate();
   const {companyId} = useParams<PageParamsType>();
   const {company} = useCurrentCompany();
+  const [openAddDialog, setOpenAddDialog] = useState(false);
   const [localUnits, setLocalUnits] = useState(defaultLocalUnits);
   const [loading, setLoading] = useState(true);
   const [updatedTime, setUpdatedTime] = useState(getUpdatedTime());
-  const {setOpenAddDialog} = useContext(useAddDialogContext);
-  const {setOpenDeleteDialog} = useContext(useDeleteDialogContext);
-  const {setAlertEvent} = useContext(useAlertContext);
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);  const {setAlertEvent} = useContext(useAlertContext);
 
   const fetchData = async () => {
     const res = await getAllLocalUnits(companyId)
@@ -96,7 +96,12 @@ const LocalUnitsPage = () => {
         >
           <DeleteIcon/>
         </IconButton>
-        <DeleteDialog handleDelete={handleDeleteClick} title="Local unit"/>
+        <DeleteDialog
+          open={openDeleteDialog}
+          setOpen={setOpenDeleteDialog}
+          handleDelete={handleDeleteClick}
+          title="Local unit"
+        />
       </>
     );
   }
@@ -226,7 +231,8 @@ const LocalUnitsPage = () => {
         title={"Add local unit"}
         handleSubmit={handleSubmitCreate}
         loading={loading}
-        onClose={() => setOpenAddDialog(false)}
+        open={openAddDialog}
+        setOpen={setOpenAddDialog}
       >
         <Grid container direction="column" spacing={1}>
           <Grid item xs={12}>

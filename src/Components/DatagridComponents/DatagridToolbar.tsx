@@ -1,4 +1,4 @@
-import React, {useContext} from "react";
+import React from "react";
 import {Box, Button, Grid, useMediaQuery} from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import {
@@ -8,13 +8,10 @@ import {
   GridToolbarFilterButton
 } from "@mui/x-data-grid";
 import {useTheme} from "@mui/material/styles";
-import {useAddDialogContext} from "../Providers/AddDialog/AddDialog";
-
 
 function CustomGridToolbar(props: GridColumnMenuProps & { allowAdd?: boolean, onAdd?: () => void }) {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-  const {openAddDialog, setOpenAddDialog} = useContext(useAddDialogContext);
   return (
     <Box p={1} sx={{display: 'flex'}}>
       <Grid container spacing={2}>
@@ -24,7 +21,7 @@ function CustomGridToolbar(props: GridColumnMenuProps & { allowAdd?: boolean, on
               size="small"
               sx={{borderRadius: '8px'}}
               startIcon={<AddIcon/>}
-              onClick={Boolean(props.onAdd) ? props.onAdd : () => setOpenAddDialog(true)}
+              onClick={props.onAdd}
             >
               Add
             </Button>

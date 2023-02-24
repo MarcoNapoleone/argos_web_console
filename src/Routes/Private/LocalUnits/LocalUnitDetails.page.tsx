@@ -1,8 +1,7 @@
 import React, {useContext, useEffect, useState} from "react";
 import {useAlertContext} from "../../../Components/Providers/Alert/Alert.provider";
 import {Box, Divider, Grid, IconButton, Link, Skeleton, TextField, Typography, useMediaQuery} from "@mui/material";
-import {useAddDialogContext} from "../../../Components/Providers/AddDialog/AddDialog";
-import {useDeleteDialogContext} from "../../../Components/Providers/DeleteDialog/DeleteDialog";
+
 import {useNavigate, useParams} from "react-router-dom";
 import {useTheme} from "@mui/material/styles";
 import DetailsPage from "../../../Components/DetailsPage/DetailsPage";
@@ -39,10 +38,8 @@ const LocalUnitDetailsPage = () => {
   const [departments, setDepartments] = useState(defaultDepartments);
   const [vehicles, setVehicles] = useState(defaultDepartments);
   const [updatedTime, setUpdatedTime] = useState("00:00");
-  const {setOpenAddDialog} = useContext(useAddDialogContext);
   const {setAlertEvent} = useContext(useAlertContext);
-  const {setOpenDeleteDialog} = useContext(useDeleteDialogContext);
-
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const breadcrumbs = [
     <Link
       underline="hover"

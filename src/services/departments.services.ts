@@ -2,7 +2,7 @@ import {Id, UUID} from "./entities";
 import {servicePath} from "./connectors/axios";
 import {getCookie} from "./connectors/cookies";
 import {AxiosResponse} from "axios";
-import {HR} from "./hr.services";
+import {getHR, HR} from "./hr.services";
 import {Equipment} from "./equipments.services";
 
 export class Department {
@@ -10,6 +10,18 @@ export class Department {
   uuid?: UUID;
   name?: string;
   localUnitId?: Id;
+  createdAt?: Date;
+  deletedAt?: Date;
+  version?: number;
+  updatedAt?: Date;
+}
+
+export interface HRDepartment {
+  hrDepartmentId?: Id;
+  hrId?: Id;
+  departmentId?: Id;
+  startDate?: Date;
+  endDate?: Date;
   createdAt?: Date;
   deletedAt?: Date;
   version?: number;
@@ -37,19 +49,19 @@ export async function getAllDepartments(companyId: Id): Promise<Department[]> {
 }
 
 export async function getDepartment(departmentId: Id): Promise<Department> {
-    let data = {};
-    await servicePath
-      .get(`/departments/${departmentId}`, {
-        headers: {
-          Authorization: `Bearer ${getCookie('token')}`
-        }
-      })
-      .then(res => {
-        if (res.status !== 200) {
-          return new Error(res.data["message"])
-        }
-        data = res.data
-      })
+  let data = {};
+  await servicePath
+    .get(`/departments/${departmentId}`, {
+      headers: {
+        Authorization: `Bearer ${getCookie('token')}`
+      }
+    })
+    .then(res => {
+      if (res.status !== 200) {
+        return new Error(res.data["message"])
+      }
+      data = res.data
+    })
   return data;
 }
 
@@ -105,8 +117,8 @@ export async function deleteDepartment(id: Id): Promise<AxiosResponse> {
   return response;
 }
 
-export async function getAllHR(departmentId: Id): Promise<HR[]> {
-  let data = [];
+export async function getAllHR(departmentId: Id): Promise<(HR & HRDepartment)[]> {
+  let data: HRDepartment[] = [];
   await servicePath
     .get(`/departments/${departmentId}/hr`, {
       headers: {
@@ -119,7 +131,51 @@ export async function getAllHR(departmentId: Id): Promise<HR[]> {
       }
       data = res.data
     })
+
+  for (const hrd of data) {
+    const hr = await getHR(hrd.hrId);
+    data[data.indexOf(hrd)] = {
+      ...hr,
+      hrDepartmentId: hrd.hrDepartmentId,
+      startDate: hrd.startDate,
+      endDate: hrd.endDate
+    }
+  }
   return data;
+}
+
+export async function addHR(departmentId: Id, hrId: Id, dates:{startDate: Date, endDate: Date}): Promise<AxiosResponse> {
+  let response = {} as AxiosResponse;
+  await servicePath
+    .put(`/departments/${departmentId}/hr/${hrId}`, dates, {
+      headers: {
+        Authorization: `Bearer ${getCookie('token')}`
+      }
+    })
+    .then(res => {
+      if (res.status !== 200) {
+        return new Error(res.data["message"])
+      }
+      response = res
+    })
+  return response;
+}
+
+export async function removeHR(departmentId: Id, hrId: Id): Promise<AxiosResponse> {
+  let response = {} as AxiosResponse;
+  await servicePath
+    .delete(`/departments/${departmentId}/hr/${hrId}`, {
+      headers: {
+        Authorization: `Bearer ${getCookie('token')}`
+      }
+    })
+    .then(res => {
+      if (res.status !== 200) {
+        return new Error(res.data["message"])
+      }
+      response = res
+    })
+  return response;
 }
 
 export async function getAllEquipments(departmentId: Id): Promise<Equipment[]> {
