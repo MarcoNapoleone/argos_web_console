@@ -38,7 +38,8 @@ const LocalUnitsPage = () => {
   const [localUnits, setLocalUnits] = useState(defaultLocalUnits);
   const [loading, setLoading] = useState(true);
   const [updatedTime, setUpdatedTime] = useState(getUpdatedTime());
-  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);  const {setAlertEvent} = useContext(useAlertContext);
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+  const {setAlertEvent} = useContext(useAlertContext);
 
   const fetchData = async () => {
     const res = await getAllLocalUnits(companyId)

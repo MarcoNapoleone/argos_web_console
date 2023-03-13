@@ -1,6 +1,6 @@
 // @ts-ignore
 import {BrowserRouter, Outlet, Route, Routes as Router, useParams,} from "react-router-dom";
-import React, {lazy, useEffect, useRef} from 'react';
+import React, {lazy} from 'react';
 import {AuthProvider, RequireAuth, useAuth} from "../Components/Providers/Authorization/Authorization.provider";
 import {AlertProvider} from "../Components/Providers/Alert/Alert.provider";
 import PodsPage from "./Private/Pods/Pods.page";
@@ -28,21 +28,6 @@ import {ConfirmationProvider} from "../Components/Providers/ConfirmDialog/Confir
 
 const Login = lazy(() => import("./Public/login/login.page"));
 const NoMatch = lazy(() => import("./NoMatch/NoMatch"));
-
-export function useFirstRender() {
-  const firstRender = useRef(true);
-
-  useEffect(() => {
-    firstRender.current = false;
-  }, []);
-
-  return firstRender.current;
-}
-
-type PageParamsType = {
-  companyId: string;
-};
-
 
 const Routes = () => {
   const {loggedUser} = useAuth();

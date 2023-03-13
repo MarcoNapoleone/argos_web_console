@@ -1,6 +1,5 @@
 import React, {FC, useState} from "react";
 import {
-  Alert,
   Box,
   Card,
   Collapse,
@@ -24,41 +23,56 @@ import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import AddIcon from "@mui/icons-material/Add";
 import DateRangeOutlinedIcon from '@mui/icons-material/DateRangeOutlined';
 import FileDownloadOutlinedIcon from '@mui/icons-material/FileDownloadOutlined';
-import {Document} from "../../../services/documents.services";
+import {createDocument, Document} from "../../../services/documents.services";
 import FileCard from "../FileCard/FileCard";
 import FileRow from "../FileRow/FileRow";
 import {styled} from "@mui/material/styles";
 import EmptyGridContent from "../../NoContentIcon/EmptyGridContent";
+import {useParams} from "react-router-dom";
+import {Id} from "../../../services/entities";
 
 type SortType = 'name' | 'date' | 'size';
 type ViewType = 'row' | 'grid';
 
-type FileContainerProps = {
-  files?: Document[]
-  setFiles?: (files: any) => void
-  loading?: boolean,
+type PageParamsType = {
+  companyId: string;
 }
 
 const Input = styled('input')({
   display: 'none',
 });
 
+
+type FileContainerProps = {
+  files?: Document[]
+  setFiles?: (files: any) => void
+  loading?: boolean,
+  refId?: Id,
+  moduleName?: string,
+}
 const FileContainer: FC<FileContainerProps> = (
   {
     files,
     setFiles,
-    loading
+    loading,
+    refId,
+    moduleName
   }
 ) => {
 
   const [view, setView] = React.useState<ViewType>('grid');
   const [sort, setSort] = React.useState<SortType>('name');
+  const {companyId} = useParams<PageParamsType>();
   const [selectedFiles, setSelectedFiles] = useState<Number[]>([])
   const [fileToUpload, setFileToUpload] = useState([]);
   const [renderedFiles, setRenderedFiles] = useState(files);
 
   const handleUploadFile = (event: any) => {
-
+    setFileToUpload([...event.target.files])
+    createDocument(companyId, refId, moduleName, event.target.files[0])
+      .then((res) => {
+        setFiles([...files, res]);
+      })
   };
 
   const handleView = (event: any, newView: any) => {
@@ -69,7 +83,7 @@ const FileContainer: FC<FileContainerProps> = (
 
   const handleSort = (event: any, newSort: any) => {
     if (newSort !== null) {
-      for (let i = renderedFiles.length - 1; i > 0; i--) {
+      for (let i = renderedFiles?.length - 1; i > 0; i--) {
         let j = Math.floor(Math.random() * (i + 1));
         let temp = files[i];
         files[i] = files[j];
@@ -192,7 +206,7 @@ const FileContainer: FC<FileContainerProps> = (
               </Grid>
             </Grid>
           }
-          <Grid item container spacing={view === 'grid' ? 2 : 1}>
+          <Grid item container xs={12} spacing={view === 'grid' ? 2 : 1}>
             {loading
               ? [...Array(5)].map(() => (<Grid item><FileCard loadingMode/></Grid>))
               : renderedFiles?.length
@@ -209,6 +223,8 @@ const FileContainer: FC<FileContainerProps> = (
                       <Grow in style={{transitionDelay: `${index * 50}ms`}}>
                         <Grid item>
                           <FileCard
+                            title={file?.name}
+                            file={file}
                             selected={selectedFiles.some(el => el === index)}
                             onClick={() => handleSelection(index)}
                           />
@@ -221,6 +237,8 @@ const FileContainer: FC<FileContainerProps> = (
                       <Grow in style={{transitionDelay: `${index * 50}ms`}}>
                         <Grid item xs={12}>
                           <FileRow
+                            title={file?.name}
+                            file={file}
                             selected={selectedFiles.some(el => el === index)}
                             onClick={() => handleSelection(index)}
                           />
@@ -230,6 +248,9 @@ const FileContainer: FC<FileContainerProps> = (
                   </>
                 : <Stack
                   p={2}
+                  sx={{
+                    width: '100%',
+                  }}
                   justifyContent="center"
                   alignItems="center">
                   <EmptyGridContent/>
@@ -238,12 +259,8 @@ const FileContainer: FC<FileContainerProps> = (
           </Grid>
           <Grid item>
             <Typography variant="body2" color="text.secondary">
-              Documenti selezionati: {selectedFiles.length}
+              Selected documents: {selectedFiles.length}
             </Typography>
-          </Grid>
-          <Grid item>
-            <Alert sx={{borderRadius: '8px'}} severity="warning">Questa sezione è disponibile solamente sul server di
-              produzione</Alert>
           </Grid>
         </Grid>
       </Box>

@@ -6,7 +6,6 @@ import DeleteIcon from "@mui/icons-material/DeleteOutlined";
 import MainPage from "../../../Components/MainPage/MainPage";
 import {GridColumns} from "@mui/x-data-grid";
 import OpenInNewOutlinedIcon from "@mui/icons-material/OpenInNewOutlined";
-import DeleteDialog from "../../../Components/DeleteDialog/DeleteDialog";
 
 import {useNavigate, useParams} from "react-router-dom";
 import {useTheme} from "@mui/material/styles";
@@ -23,6 +22,7 @@ import DatagridTable from "../../../Components/DatagridComponents/DatagridTable"
 import {getFormattedDate, getUpdatedTime} from "../../../utils/dateHandler";
 import {DatePicker} from "@mui/x-date-pickers";
 import {defaultDepartments, Department, getAllDepartments} from "../../../services/departments.services";
+import {useConfirmation} from "../../../Components/Providers/ConfirmDialog/ConfirmDialog.provider";
 
 
 type PageParamsType = {
@@ -44,7 +44,8 @@ const EquipmentsPage = () => {
   const [openAddDialog, setOpenAddDialog] = useState(false);
   const [selectLoading, setSelectLoading] = useState(true);
   const [updatedTime, setUpdatedTime] = useState(getUpdatedTime());
-  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);  const {setAlertEvent} = useContext(useAlertContext);
+  const {setAlertEvent} = useContext(useAlertContext);
+  const {confirm} = useConfirmation();
 
   const fetchData = async () => {
     const _equipments = await getAllEquipments(companyId)
@@ -81,31 +82,29 @@ const EquipmentsPage = () => {
   const RenderDeleteButton = (e: any) => {
     const handleDeleteClick = async () => {
       setLoading(true);
-      await deleteEquipment(e.row.id)
-        .then((res) => {
-          setAlertEvent(getResponseAlert(res));
-          setOpenDeleteDialog(false);
-          handleRefresh();
-        })
-        .catch((err) => {
-          setAlertEvent(getReasonAlert(err));
-        })
+      confirm({
+          title: "Are you sure you want to delete this equipment?",
+          onConfirm: async () => {
+            await deleteEquipment(e.row.id)
+              .then((res) => {
+                setAlertEvent(getResponseAlert(res));
+                handleRefresh();
+              })
+              .catch((err) => {
+                setAlertEvent(getReasonAlert(err));
+              })
+          }
+        }
+      )
     };
     return (
-      <>
-        <IconButton
-          onClick={() => setOpenDeleteDialog(true)}
-          size="small"
-        >
-          <DeleteIcon/>
-        </IconButton>
-        <DeleteDialog
-          open={openDeleteDialog}
-          setOpen={setOpenDeleteDialog}
-          handleDelete={handleDeleteClick}
-          title="Equipment"
-        />
-      </>
+
+      <IconButton
+        onClick={handleDeleteClick}
+        size="small"
+      >
+        <DeleteIcon/>
+      </IconButton>
     );
   }
 
@@ -153,7 +152,7 @@ const EquipmentsPage = () => {
       headerName: 'Purchase Date',
       width: 180,
       editable: false,
-      renderCell: (e)=>{
+      renderCell: (e) => {
         return getFormattedDate(e.row.purchaseDate)
       },
     },
@@ -162,7 +161,7 @@ const EquipmentsPage = () => {
       headerName: 'First Test Date',
       width: 180,
       editable: false,
-      renderCell: (e)=>{
+      renderCell: (e) => {
         return getFormattedDate(e.row.firstTestDate)
       },
     },
@@ -171,7 +170,7 @@ const EquipmentsPage = () => {
       headerName: 'Serial Number',
       flex: 1,
       editable: false,
-      
+
     },
     {
       field: 'more',

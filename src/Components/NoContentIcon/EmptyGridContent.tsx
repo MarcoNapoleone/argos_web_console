@@ -75,7 +75,7 @@ const EmptyGridContent = (props: { caption?: string }) => {
     <Stack alignItems="center" justifyContent="center">
       <DataObjectOutlinedIcon sx={{color: theme.palette.text.secondary}}/>
       <Typography color="text.secondary" align="center">
-        {Boolean(props.caption) ? props.caption : 'Nessun dato'}
+        {Boolean(props.caption) ? props.caption : 'No data'}
       </Typography>
     </Stack>
   )

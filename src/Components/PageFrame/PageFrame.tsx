@@ -73,7 +73,7 @@ const ResponsiveDrawer = styled(MuiDrawer, {shouldForwardProp: (prop) => prop !=
 
 const PageFrame: React.FC<PageFrameProps> = ({children, title}) => {
   const theme = useTheme();
-  const {mode, setMode} = useContext(ThemeModeContext);
+  const {mode, setMode, palette} = useContext(ThemeModeContext);
   const navigate = useNavigate();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const isLargeScreen = useMediaQuery(theme.breakpoints.up("xl"))
@@ -103,10 +103,10 @@ const PageFrame: React.FC<PageFrameProps> = ({children, title}) => {
   const handleThemeSwitch = () => {
     if (mode === 'light') {
       setMode('dark');
-      localStorage.setItem("theme", JSON.stringify('dark'))
+      localStorage.setItem("theme", JSON.stringify({mode: 'dark', palette: palette}))
     } else {
       setMode('light');
-      localStorage.setItem("theme", JSON.stringify('light'))
+      localStorage.setItem("theme", JSON.stringify({mode: 'light', palette: palette}))
     }
   };
   const handleNestedListToggle = (event: any) => {
@@ -131,7 +131,7 @@ const PageFrame: React.FC<PageFrameProps> = ({children, title}) => {
               <Box py={1}>
                 <ListItemButton
                   key={0}
-                  sx={{height: '57px', width: '57px'}}
+                  sx={{height: '48px', width: '48px'}}
                   onClick={handleDrawerToggle}
                   disabled={isLargeScreen}
                 >

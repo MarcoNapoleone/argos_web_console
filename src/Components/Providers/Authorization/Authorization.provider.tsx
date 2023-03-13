@@ -20,11 +20,9 @@ export function AuthProvider(props: { children?: React.ReactNode }) {
   );
 }
 
-
 export const useAuth = () => {
   return React.useContext(useAuthContext);
 }
-
 
 export const RequireAuth = ({children}: { children: JSX.Element }) => {
   const navigate = useNavigate();

@@ -13,6 +13,7 @@ import {getReasonAlert} from "../../../utils/requestAlertHandler";
 import {useCurrentCompany} from "../../../Components/Providers/Company/Company.provider";
 import {Document, getAllDocuments} from "../../../services/documents.services";
 import FileContainer from "../../../Components/files/FileContainer/FileContainer";
+import {getUpdatedTime} from "../../../utils/dateHandler";
 
 
 type PageParamsType = {
@@ -26,51 +27,18 @@ const DocumentsPage = () => {
   const {companyId} = useParams<PageParamsType>();
   const {company} = useCurrentCompany();
   const [loading, setLoading] = useState(true);
-  const [updatedTime, setUpdatedTime] = useState("00:00");
-  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);  const {setAlertEvent} = useContext(useAlertContext);
-  const [documents, setDocuments] = useState<Document[]>([
-    {
-      "id": 1,
-      "name": "file1.jpg",
-      "description": "file 1",
-      "refId": 0,
-      "moduleId": "string",
-      "fileType": "string",
-      "path": "string",
-    },
-    {
-      "id": 2,
-      "name": "Scadenze_maggio23.pdf",
-      "description": "Un pdf",
-      "refId": 0,
-      "moduleId": "string",
-      "fileType": "string",
-      "path": "string",
-    },
-    {
-      "id": 3,
-      "name": "file3.jpg",
-      "description": "A photo",
-      "refId": 0,
-      "moduleId": "string",
-      "fileType": "string",
-      "path": "string",
-    },
-  ])
+  const [updatedTime, setUpdatedTime] = useState(getUpdatedTime());
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+  const {setAlertEvent} = useContext(useAlertContext);
+  const [documents, setDocuments] = useState<Document[]>([])
 
   const fetchData = async () => {
-    const res = await getAllDocuments(companyId)
-    setDocuments(res);
+    const _documents = await getAllDocuments(companyId)
+    setDocuments(_documents);
   }
 
   useEffect(() => {
-    setLoading(true)
-    fetchData()
-      .then(() => setLoading(false))
-      .catch((err) => {
-        setAlertEvent(getReasonAlert(err));
-        setLoading(false)
-      })
+    handleRefresh()
   }, []);
 
   const RenderMoreButton = (e: any) => {
@@ -108,10 +76,6 @@ const DocumentsPage = () => {
         />
       </>
     );
-  }
-
-  const handleDoubleClick = (e: any) => {
-    navigate(`/app/companies/${e.row.companyId}/local-units/${e.row.id}`);
   }
 
   const rows = documents.map((document) => {
@@ -167,6 +131,7 @@ const DocumentsPage = () => {
 
   const handleRefresh = () => {
     setLoading(true)
+    setUpdatedTime(getUpdatedTime());
     fetchData()
       .then(() => setLoading(false))
       .catch((err) => {
@@ -182,7 +147,6 @@ const DocumentsPage = () => {
       onRefresh={handleRefresh}
       updatedTime={updatedTime}>
       <FileContainer files={documents} setFiles={setDocuments} loading={loading}/>
-
     </MainPage>
   );
 }

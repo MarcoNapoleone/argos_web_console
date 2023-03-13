@@ -1,5 +1,5 @@
-import React, {useContext, useEffect, useState} from "react";
-import {useAlertContext} from "../../../Components/Providers/Alert/Alert.provider";
+import React, {useEffect, useState} from "react";
+import {useAlert} from "../../../Components/Providers/Alert/Alert.provider";
 import {Autocomplete, Grid, IconButton, TextField, useMediaQuery} from "@mui/material";
 import DatagridTable from "../../../Components/DatagridComponents/DatagridTable";
 import AddDialog from "../../../Components/AddDialog/AddDialog";
@@ -7,8 +7,6 @@ import DeleteIcon from "@mui/icons-material/DeleteOutlined";
 import MainPage from "../../../Components/MainPage/MainPage";
 import {GridColumns} from "@mui/x-data-grid";
 import OpenInNewOutlinedIcon from "@mui/icons-material/OpenInNewOutlined";
-import DeleteDialog from "../../../Components/DeleteDialog/DeleteDialog";
-
 import {useNavigate, useParams} from "react-router-dom";
 import {useTheme} from "@mui/material/styles";
 import {getReasonAlert, getResponseAlert} from "../../../utils/requestAlertHandler";
@@ -22,6 +20,7 @@ import {
 } from "../../../services/departments.services";
 import {defaultLocalUnits, getAllLocalUnits, LocalUnit} from "../../../services/localUnits.services";
 import {getUpdatedTime} from "../../../utils/dateHandler";
+import {useConfirmation} from "../../../Components/Providers/ConfirmDialog/ConfirmDialog.provider";
 
 
 type PageParamsType = {
@@ -41,7 +40,8 @@ const DepartmentsPage = () => {
   const [localUnits, setLocalUnits]: [LocalUnit[], (posts: LocalUnit[]) => void] = useState(defaultLocalUnits);
   const [selectedLocalUnit, setSelectedLocalUnit]: [LocalUnit, (posts: LocalUnit) => void] = useState(null);
   const [updatedTime, setUpdatedTime] = useState(getUpdatedTime());
-  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);  const {setAlertEvent} = useContext(useAlertContext);
+  const {setAlertEvent} = useAlert();
+  const {confirm} = useConfirmation();
 
   const fetchData = async () => {
     const res = await getAllDepartments(companyId)
@@ -75,7 +75,6 @@ const DepartmentsPage = () => {
   };
 
   const RenderMoreButton = (e: any) => {
-
     return (
       <IconButton
         onClick={() => handleMoreInfoClick(e)}
@@ -89,31 +88,27 @@ const DepartmentsPage = () => {
   const RenderDeleteButton = (e: any) => {
     const handleDeleteClick = async () => {
       setLoading(true);
-      await deleteDepartment(e.row.id)
-        .then((res) => {
-          setAlertEvent(getResponseAlert(res));
-          setOpenDeleteDialog(false);
-          handleRefresh();
-        })
-        .catch((err) => {
-          setAlertEvent(getReasonAlert(err));
-        })
+      confirm({
+        title: "Are you sure you want to delete this department?",
+        onConfirm: async () => {
+          await deleteDepartment(e.row.id)
+            .then((res) => {
+              setAlertEvent(getResponseAlert(res));
+              handleRefresh();
+            })
+            .catch((err) => {
+              setAlertEvent(getReasonAlert(err));
+            })
+        }
+      });
     };
     return (
-      <>
         <IconButton
-          onClick={() => setOpenDeleteDialog(true)}
+          onClick={handleDeleteClick}
           size="small"
         >
           <DeleteIcon/>
         </IconButton>
-        <DeleteDialog
-          open={openDeleteDialog}
-          setOpen={setOpenDeleteDialog}
-          handleDelete={handleDeleteClick}
-          title="Department"
-        />
-      </>
     );
   }
 

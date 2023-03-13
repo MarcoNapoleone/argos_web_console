@@ -156,3 +156,20 @@ export async function getAllVehicles(localUnitId: Id): Promise<Vehicle[]> {
     })
   return data;
 }
+
+export async function getAllDocuments(localUnitId: Id): Promise<Document[]> {
+  let data = [];
+  await servicePath
+    .get(`/local-units/${localUnitId}/documents`, {
+      headers: {
+        Authorization: `Bearer ${getCookie('token')}`
+      }
+    })
+    .then(res => {
+      if (res.status !== 200) {
+        return new Error(res.data["message"])
+      }
+      data = res.data
+    })
+  return data;
+}

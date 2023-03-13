@@ -1,31 +1,55 @@
-import {Button, Dialog, DialogActions, DialogContent, DialogTitle} from '@mui/material';
+import {
+  alpha,
+  Box,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  Fade
+} from '@mui/material';
 import React, {createContext, useCallback, useState} from 'react';
+import {useTheme} from "@mui/material/styles";
 
 interface ConfirmationProviderProps {
   children: React.ReactNode;
 }
 
 interface ConfirmationContextType {
-  confirm: (message: string, onConfirm: () => void, onCancel?: () => void) => void;
+  confirm: (params: {
+    onConfirm: () => void,
+    onCancel?: () => void,
+    title?: string,
+    message?: string
+  }) => void;
 }
 
 export const ConfirmationContext = createContext<ConfirmationContextType>({
-  confirm: () => {},
+  confirm: (params: {}) => {
+  },
 });
 
-export const ConfirmationProvider: React.FC<ConfirmationProviderProps> = ({ children }) => {
+export const ConfirmationProvider: React.FC<ConfirmationProviderProps> = ({children}) => {
+
+  const theme = useTheme();
   const [confirmation, setConfirmation] = useState<{
-    message: string;
     onConfirm: () => void;
     onCancel?: () => void;
+    title?: string;
+    message?: string;
   } | null>(null);
 
+
   const confirm = useCallback(
-    (message: string, onConfirm: () => void, onCancel?: () => void) => {
-      setConfirmation({ message, onConfirm, onCancel });
-    },
-    [],
-  );
+    (params: {
+      onConfirm: () => void,
+      onCancel?: () => void,
+      title?: string,
+      message?: string
+    }) => {
+      setConfirmation(params);
+    }, []);
 
   const handleConfirm = useCallback(() => {
     if (confirmation) {
@@ -42,18 +66,57 @@ export const ConfirmationProvider: React.FC<ConfirmationProviderProps> = ({ chil
   }, [confirmation]);
 
   return (
-    <ConfirmationContext.Provider value={{ confirm }}>
+    <ConfirmationContext.Provider value={{confirm}}>
       {children}
       {confirmation && (
-        <Dialog open={true} onClose={handleCancel}>
-          <DialogTitle>Confirmation</DialogTitle>
-          <DialogContent>{confirmation.message}</DialogContent>
-          <DialogActions>
-            <Button onClick={handleCancel}>Cancel</Button>
-            <Button onClick={handleConfirm}>Confirm</Button>
-          </DialogActions>
+        <Dialog
+          open={true}
+          onClose={handleCancel}
+          PaperProps={{
+            sx: {
+              boxShadow: 0,
+              borderRadius: '32px',
+            }
+          }}
+          TransitionComponent={Fade}
+          maxWidth="xl"
+        >
+          <DialogTitle>{!!confirmation.title ? confirmation.title : "Delete confirmation"}</DialogTitle>
+          <DialogContent>
+            <DialogContentText id="delete-dialog-slide-description">
+              {"You are about to delete this item. Are you sure you want to continue?"}
+            </DialogContentText>
+          </DialogContent>
+          <Box pr={2} pb={2}>
+            <DialogActions>
+              <Button color="inherit" onClick={handleCancel}>
+                <Box mx={2}>
+                  cancel
+                </Box>
+              </Button>
+              <Button
+                color="error"
+                sx={{
+                  backgroundColor: alpha(theme.palette.error.main, 0.2),
+                  "&:hover": {
+                    backgroundColor: alpha(theme.palette.error.main, 0.25),
+                  },
+                }}
+                onClick={handleConfirm}
+              >
+                <Box mx={2}>
+                  delete
+                </Box>
+              </Button>
+            </DialogActions>
+          </Box>
         </Dialog>
       )}
     </ConfirmationContext.Provider>
   );
 };
+
+
+export const useConfirmation = () => {
+  return React.useContext(ConfirmationContext);
+}

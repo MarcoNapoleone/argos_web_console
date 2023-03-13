@@ -1,10 +1,9 @@
 import React, {useEffect, useState} from 'react';
 import {createTheme, ThemeProvider as MuiThemeProvider} from '@mui/material/styles';
 import {deepOrange, indigo, red, teal} from "@mui/material/colors";
-import {CssBaseline, NoSsr} from '@mui/material';
+import {CssBaseline, darken, lighten, NoSsr} from '@mui/material';
 import {ThemeProvider} from "@emotion/react";
 import {itIT} from "@mui/x-data-grid";
-import {darken, lighten} from "@mui/system/colorManipulator";
 
 interface Palette {
   primaryLight: string,
@@ -48,10 +47,10 @@ const Theme: React.FC<ThemeProps> = ({children}) => {
   const [palette, setPalette] = useState(defaultPalette)
   const themeValue = {mode, setMode, setPalette, palette}
   const palletType = mode === 'dark' ? 'dark' : 'light';
-  const primaryColor = mode === 'light' ? indigo["900"] : teal["300"];
-  const secondaryColor = mode === 'light' ? red["800"] : deepOrange["300"];
-  const backgroundPaper = mode === 'light' ? '#ffffff' : '#323232';
-  const backgroundDefault = mode === 'light' ? '#eeeef4' : '#202020';
+  const primaryColor = mode === 'light' ? palette?.primaryLight : palette?.primaryDark;
+  const secondaryColor = mode === 'light' ? palette?.secondaryLight : palette?.secondaryDark;
+  const backgroundPaper = mode === 'light' ? lighten(defaultPalette?.primaryLight, 0.93) : darken(defaultPalette?.primaryDark, 0.82);
+  const backgroundDefault = mode === 'light' ? lighten(defaultPalette?.primaryLight, 0.87) : darken(defaultPalette?.primaryDark, 0.95);
 
   let theme = createTheme({
     typography: {

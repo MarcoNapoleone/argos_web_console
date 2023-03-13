@@ -7,7 +7,6 @@ import DeleteIcon from "@mui/icons-material/DeleteOutlined";
 import MainPage from "../../../Components/MainPage/MainPage";
 import {GridColumns} from "@mui/x-data-grid";
 import OpenInNewOutlinedIcon from "@mui/icons-material/OpenInNewOutlined";
-import DeleteDialog from "../../../Components/DeleteDialog/DeleteDialog";
 import {useNavigate, useParams} from "react-router-dom";
 import {useTheme} from "@mui/material/styles";
 import {getReasonAlert, getResponseAlert} from "../../../utils/requestAlertHandler";
@@ -16,6 +15,7 @@ import {createHR, defaultHRs, deleteHR, getAllHR, HR} from "../../../services/hr
 import DialogFormLabel from "../../../Components/DialogFormLabel/DialoFormLabel";
 import {DatePicker} from "@mui/x-date-pickers";
 import {getUpdatedTime} from "../../../utils/dateHandler";
+import {useConfirmation} from "../../../Components/Providers/ConfirmDialog/ConfirmDialog.provider";
 
 
 type PageParamsType = {
@@ -33,7 +33,8 @@ const HRPage = () => {
   const [openAddDialog, setOpenAddDialog] = useState(false);
   const [loading, setLoading] = useState(true);
   const [updatedTime, setUpdatedTime] = useState(getUpdatedTime());
-  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);  const {setAlertEvent} = useContext(useAlertContext);
+  const {confirm} = useConfirmation();
+  const {setAlertEvent} = useContext(useAlertContext);
 
   const fetchData = async () => {
     const res = await getAllHR(companyId)
@@ -62,7 +63,7 @@ const HRPage = () => {
 
     return (
       <IconButton
-        onClick={()=>handleMoreInfoClick(e)}
+        onClick={() => handleMoreInfoClick(e)}
 
       >
         <OpenInNewOutlinedIcon/>
@@ -73,31 +74,29 @@ const HRPage = () => {
   const RenderDeleteButton = (e: any) => {
     const handleDeleteClick = async () => {
       setLoading(true);
-      await deleteHR(e.row.id)
-        .then((res) => {
-          setAlertEvent(getResponseAlert(res));
-          setOpenDeleteDialog(false);
-          handleRefresh();
-        })
-        .catch((err) => {
-          setAlertEvent(getReasonAlert(err));
-        })
+      confirm(
+        {
+          title: "Delete HR",
+          onConfirm: async () => {
+            await deleteHR(e.row.id)
+              .then((res) => {
+                setAlertEvent(getResponseAlert(res));
+                handleRefresh();
+              })
+              .catch((err) => {
+                setAlertEvent(getReasonAlert(err));
+              })
+          }
+        }
+      )
     };
     return (
-      <>
-        <IconButton
-          onClick={() => setOpenDeleteDialog(true)}
 
-        >
-          <DeleteIcon/>
-        </IconButton>
-        <DeleteDialog
-          open={openDeleteDialog}
-          setOpen={setOpenDeleteDialog}
-          handleDelete={handleDeleteClick}
-          title="HR"
-        />
-      </>
+      <IconButton
+        onClick={handleDeleteClick}
+      >
+        <DeleteIcon/>
+      </IconButton>
     );
   }
 

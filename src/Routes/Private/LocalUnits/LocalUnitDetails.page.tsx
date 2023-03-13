@@ -22,6 +22,8 @@ import {defaultDepartments} from "../../../services/departments.services";
 import DatagridTable from "../../../Components/DatagridComponents/DatagridTable";
 import {GridColumns} from "@mui/x-data-grid";
 import OpenInNewOutlinedIcon from "@mui/icons-material/OpenInNewOutlined";
+import FileContainer from "../../../Components/files/FileContainer/FileContainer";
+import {defaultDocuments, getDocumentsByRefId} from "../../../services/documents.services";
 
 type PageParamsType = {
   companyId: string;
@@ -37,9 +39,11 @@ const LocalUnitDetailsPage = () => {
   const [localUnit, setLocalUnit] = useState(defaultLocalUnit);
   const [departments, setDepartments] = useState(defaultDepartments);
   const [vehicles, setVehicles] = useState(defaultDepartments);
-  const [updatedTime, setUpdatedTime] = useState("00:00");
+  const [documents, setDocuments] = useState(defaultDocuments);
+  const [updatedTime, setUpdatedTime] = useState(getUpdatedTime());
   const {setAlertEvent} = useContext(useAlertContext);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+
   const breadcrumbs = [
     <Link
       underline="hover"
@@ -66,7 +70,6 @@ const LocalUnitDetailsPage = () => {
       }
     </Typography>,
   ];
-
   const anchors = [
     {
       title: "Departments",
@@ -75,16 +78,22 @@ const LocalUnitDetailsPage = () => {
     {
       title: "Vehicles",
       id: "vehicles",
-    }
+    },
+    {
+      id: "documents",
+      title: "Documents"
+    },
   ];
 
   const fetchData = async () => {
     const _localUnit = await getLocalUnit(localUnitId)
     const _departments = await getAllDepartments(localUnitId)
     const _vehicles = await getAllVehicles(localUnitId)
+    const _documents = await getDocumentsByRefId(localUnitId, "local-units")
     setLocalUnit(_localUnit);
     setDepartments(_departments);
     setVehicles(_vehicles);
+    setDocuments(_documents);
   }
 
   useEffect(() => {
@@ -158,7 +167,7 @@ const LocalUnitDetailsPage = () => {
   const RenderMoreButtonVehicles = (e: any) => {
     return (
       <IconButton
-        onClick={()=>handleMoreInfoClickVehicles(e)}
+        onClick={() => handleMoreInfoClickVehicles(e)}
         size="small"
       >
         <OpenInNewOutlinedIcon/>
@@ -405,6 +414,21 @@ const LocalUnitDetailsPage = () => {
               columns={vehiclesColumns}
             />
           }
+        </Grid>
+      </Grid>
+      <Grid container direction="column" id="documents" spacing={1} pt={3}>
+        <Grid item mx={2}>
+          <Typography variant="h6">
+            Documents
+          </Typography>
+        </Grid>
+        <Grid item>
+          <FileContainer
+            loading={loading}
+            files={documents}
+            refId={localUnitId}
+            moduleName="local-units"
+          />
         </Grid>
       </Grid>
     </DetailsPage>

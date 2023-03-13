@@ -38,7 +38,8 @@ const PropertiesPage = () => {
   const [loading, setLoading] = useState(true);
   const [updatedTime, setUpdatedTime] = useState(getUpdatedTime());
   const [openAddDialog, setOpenAddDialog] = useState(false);
-  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);  const {setAlertEvent} = useContext(useAlertContext);
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+  const {setAlertEvent} = useContext(useAlertContext);
 
   const fetchData = async () => {
     const res = await getAllProperties(companyId)

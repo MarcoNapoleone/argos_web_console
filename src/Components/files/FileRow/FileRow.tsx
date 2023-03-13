@@ -17,6 +17,7 @@ type FileRowProps = {
   disabled?: boolean,
   loadingMode?: boolean,
   title?: string,
+  file?: Document,
 }
 
 const FileRow: FC<FileRowProps> = (
@@ -26,6 +27,7 @@ const FileRow: FC<FileRowProps> = (
     selected,
     loadingMode,
     title,
+    file
   }
 ) => {
 
@@ -56,7 +58,10 @@ const FileRow: FC<FileRowProps> = (
               </Grid>
               <Grid item>
                 <Typography>
-                  {title}
+                  {Boolean(title)
+                    ? title
+                    : file?.name
+                  }
                 </Typography>
               </Grid>
             </Grid>

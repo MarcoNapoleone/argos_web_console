@@ -200,18 +200,23 @@ const DepartmentDetailsPage = () => {
 
   const RenderDeleteButton = (e: any) => {
     const handleHRDeleteClick = async () => {
-      confirm('Are you sure you want to perform this action?', async () => {
-        await removeHR(departmentId, e.row.id)
-          .then((res) => {
-            setAlertEvent(getResponseAlert(res));
-            setOpenHRDeleteDialog(false);
-            handleRefresh();
-          })
-          .catch((err) => {
-            setAlertEvent(getReasonAlert(err));
-          })
-      });
+      confirm({
+          title: "Are you sure?",
+          onConfirm: async () => {
+            await removeHR(departmentId, e.row.id)
+              .then((res) => {
+                setAlertEvent(getResponseAlert(res));
+                setOpenHRDeleteDialog(false);
+                handleRefresh();
+              })
+              .catch((err) => {
+                setAlertEvent(getReasonAlert(err));
+              })
+          },
+        }
+      );
     };
+
     return (
       <>
         <IconButton
@@ -221,7 +226,6 @@ const DepartmentDetailsPage = () => {
         >
           <DeleteIcon/>
         </IconButton>
-
       </>
     );
   }
@@ -313,49 +317,49 @@ const DepartmentDetailsPage = () => {
    minWidth: 150,
    editable: false,
    flex: 1,
- },
- {
+  },
+  {
    field: 'birthPlace',
    headerName: 'Birth Place',
    minWidth: 150,
    editable: false,
    flex: 1,
- },
- {
+  },
+  {
    field: 'address',
    headerName: 'Address',
    minWidth: 150,
    editable: false,
    flex: 1,
- },
- {
+  },
+  {
    field: 'municipality',
    headerName: 'Municipality',
    minWidth: 150,
    editable: false,
    flex: 1,
- },
- {
+  },
+  {
    field: 'province',
    headerName: 'Province',
    minWidth: 150,
    editable: false,
    flex: 1,
- },
- {
+  },
+  {
    field: 'postalCode',
    headerName: 'Postal Code',
    minWidth: 150,
    editable: false,
    flex: 1,
- },
- {
+  },
+  {
    field: 'country',
    headerName: 'Country',
    minWidth: 150,
    editable: false,
    flex: 1,
- }*/
+  }*/
     {
       field: 'more',
       headerName: 'More',

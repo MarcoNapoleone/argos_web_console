@@ -6,8 +6,7 @@ import Routes from "./Routes/Routes";
 import {createRoot} from 'react-dom/client';
 import {LocalizationProvider} from "@mui/x-date-pickers";
 import {AdapterDateFns} from "@mui/x-date-pickers/AdapterDateFns";
-import {I18nextProvider} from "react-i18next";
-import i18n from './i18n/config';
+import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 
 const container = document.getElementById('root');
 const root = createRoot(container!); // createRoot(container!) if you use TypeScript
@@ -24,3 +23,6 @@ root.render(
     {/*</I18nextProvider>*/}
 </React.StrictMode>
 );
+
+
+serviceWorkerRegistration.register();

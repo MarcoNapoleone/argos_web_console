@@ -51,7 +51,8 @@ const VehiclesPage = () => {
   const [loading, setLoading] = useState(true);
   const [selectLoading, setSelectLoading] = useState(true);
   const [updatedTime, setUpdatedTime] = useState(getUpdatedTime());
-  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);  const {setAlertEvent} = useContext(useAlertContext);
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+  const {setAlertEvent} = useContext(useAlertContext);
 
   const fetchData = async () => {
     const res = await getAllVehicles(companyId)
