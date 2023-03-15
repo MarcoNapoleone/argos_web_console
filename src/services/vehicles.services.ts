@@ -1,4 +1,4 @@
-import {Id, UUID} from "./entities";
+import {Id, UUID} from "../entities/entities";
 import {getCookie} from "./connectors/cookies";
 import {servicePath} from "./connectors/axios";
 import {AxiosResponse} from "axios";

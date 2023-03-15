@@ -34,13 +34,15 @@ import {useNavigate} from "react-router-dom";
 import {makeStyles} from "@mui/styles";
 import {useAuth} from "../Providers/Authorization/Authorization.provider";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import {deleteCookie, setCookie} from "../../services/connectors/cookies";
+import {deleteCookie, getCookie, setCookie} from "../../services/connectors/cookies";
 import {useCurrentCompany} from "../Providers/Company/Company.provider";
 import {defaultCompanies, getAllCompanies} from "../../services/companies.services";
 import {getReasonAlert} from "../../utils/requestAlertHandler";
 import {useAlert} from "../Providers/Alert/Alert.provider";
-import {Id} from "../../services/entities";
+import {Id} from "../../entities/entities";
 import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
+import {getUser} from "../../services/auth.services";
+import jwt_decode from "jwt-decode";
 
 const useStyles = makeStyles((theme) => ({
   inputRoot: {
@@ -113,13 +115,28 @@ const TopBar: React.FC<TopBarProps> = ({onMenuClick, isOpen, title}) => {
   const {setAlertEvent} = useAlert();
   const openCompanyMenu = Boolean(anchorElCompany);
 
+  const fetchUser = async () => {
+    const token = getCookie("token")
+    if (!token) {
+      navigate("/login")
+      new Promise((resolve, reject) => reject("No token"))
+    }
+    const decoded: any = jwt_decode(token)
+    const _user = await getUser(decoded?.sub)
+    setLoggedUser(_user)
+  }
+
+  const fetchCompanies = async () => {
+    const _companies = await getAllCompanies()
+    setCompanies(_companies);
+  }
   const logout = async () => {
     deleteCookie("token")
     navigate("/login")
     setLoggedUser(null)
   }
 
-  const handleClick = async (id: Id) => {
+  const handleClickCompanyMenu = async (id: Id) => {
     setLoading(true)
     const company = companies.find(c => c.id === id);
     setCompany(company);
@@ -130,17 +147,19 @@ const TopBar: React.FC<TopBarProps> = ({onMenuClick, isOpen, title}) => {
 
   const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElUser(event.currentTarget);
+    setLoading(true)
+    fetchUser()
+      .then(r => setLoading(false))
+      .catch(err => {
+        setLoading(false)
+        setAlertEvent(getReasonAlert(err));
+      })
   };
 
   const handleOpenCompanyMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElCompany(event.currentTarget);
     setLoading(true)
-    const fetchData = async () => {
-      const res = await getAllCompanies()
-      setCompanies(res);
-    }
-
-    fetchData()
+    fetchCompanies()
       .then(() => setLoading(false))
       .catch((err) => {
         setAlertEvent(getReasonAlert(err));
@@ -278,27 +297,34 @@ const TopBar: React.FC<TopBarProps> = ({onMenuClick, isOpen, title}) => {
         TransitionComponent={Zoom}
         transformOrigin={{horizontal: 'right', vertical: 'top'}}
         anchorOrigin={{horizontal: 'right', vertical: 'bottom'}}
-      >
-        <MenuItem key={1} onClick={() => navigate('/Account')}>
-          <ListItemIcon>
-            <AccountCircleOutlined
-              fontSize="small"/>
-          </ListItemIcon>
-          <ListItemText>{loggedUser?.name + ' ' + loggedUser?.surname}</ListItemText>
-        </MenuItem>
-        <MenuItem>
-          <ListItemIcon>
-            <NotificationsOutlinedIcon/>
-          </ListItemIcon>
-          <ListItemText>Notifications</ListItemText>
-        </MenuItem>
-        <Divider/>
-        <MenuItem key={3} onClick={logout}>
-          <ListItemIcon>
-            <Logout fontSize="small"/>
-          </ListItemIcon>
-          Logout
-        </MenuItem>
+      >{
+        loading
+          ? <Stack sx={{width: '194px', height: '164px'}} justifyContent="center" alignItems="center" px={2}>
+            <CircularProgress size={32}/>
+          </Stack>
+          : <Box>
+            <MenuItem key={1} onClick={() => navigate('/Account')}>
+              <ListItemIcon>
+                <AccountCircleOutlined
+                  fontSize="small"/>
+              </ListItemIcon>
+              <ListItemText>{loggedUser?.name + ' ' + loggedUser?.surname}</ListItemText>
+            </MenuItem>
+            <MenuItem>
+              <ListItemIcon>
+                <NotificationsOutlinedIcon/>
+              </ListItemIcon>
+              <ListItemText>Notifications</ListItemText>
+            </MenuItem>
+            <Divider/>
+            <MenuItem key={3} onClick={logout}>
+              <ListItemIcon>
+                <Logout fontSize="small"/>
+              </ListItemIcon>
+              Logout
+            </MenuItem>
+          </Box>
+      }
       </Menu>
       <Menu
         anchorEl={anchorElCompany}
@@ -320,7 +346,7 @@ const TopBar: React.FC<TopBarProps> = ({onMenuClick, isOpen, title}) => {
                   key={index}
                   selected={c.id === company.id}
                   onClick={() => {
-                    handleClick(c.id)
+                    handleClickCompanyMenu(c.id)
                   }}
                 >
                   <ListItemIcon/>

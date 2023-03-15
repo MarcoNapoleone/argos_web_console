@@ -1,4 +1,4 @@
-import {Id, Role, Status, UUID} from "./entities";
+import {Id, Role, Status, UUID} from "../entities/entities";
 
 export class User {
     id?: Id;

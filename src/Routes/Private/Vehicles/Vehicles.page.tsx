@@ -24,10 +24,16 @@ import {useTheme} from "@mui/material/styles";
 import {getReasonAlert, getResponseAlert} from "../../../utils/requestAlertHandler";
 import {useCurrentCompany} from "../../../Components/Providers/Company/Company.provider";
 import DatagridTable from "../../../Components/DatagridComponents/DatagridTable";
-import {defaultVehicles, deleteVehicle, getAllVehicles, Vehicle} from "../../../services/vehicles.services";
+import {
+  createVehicle,
+  defaultVehicles,
+  deleteVehicle,
+  getAllVehicles,
+  Vehicle
+} from "../../../services/vehicles.services";
 import {DatePicker} from "@mui/x-date-pickers";
 import {getUpdatedTime} from "../../../utils/dateHandler";
-import {createLocalUnit, defaultLocalUnits, getAllLocalUnits, LocalUnit} from "../../../services/localUnits.services";
+import {defaultLocalUnits, getAllLocalUnits, LocalUnit} from "../../../services/localUnits.services";
 import LoadingPlaceholder from "../../../Components/LoadingPlaceholder/LoadingPlaceholder";
 
 type PageParamsType = {
@@ -150,7 +156,7 @@ const VehiclesPage = () => {
       category: data.get("category") as string,
       owner: data.get("owner") as string,
     }
-    await createLocalUnit(companyId, newVehicle)
+    await createVehicle(companyId, newVehicle)
       .then((res) => {
         setOpenAddDialog(false);
         handleRefresh();

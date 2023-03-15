@@ -16,15 +16,22 @@ export const getResponseAlert = (response: AxiosResponse): AlertEvent => {
 };
 
 export const getReasonAlert = (reason: AxiosError): AlertEvent => {
-  if ([400, 401, 403, 404, 409].includes(reason.response?.status)) {
+  if (reason.response?.status === 401) {
+    window.location.href = '/login';
     return {
-      message: `${reason?.response?.data['message']}`,
-      severity: "error"
+      message: "You're not logged in",
+      severity: "warning"
     }
-  } else if ([500, 502, 503, 504].includes(reason.response?.status)){
+  }
+  if ([400, 403, 404, 409].includes(reason.response?.status)) {
     return {
       message: `${reason?.response?.data['message']}`,
       severity: "warning"
+    }
+  } else if ([500, 502, 503, 504].includes(reason.response?.status)) {
+    return {
+      message: `${reason?.response?.data['message']}`,
+      severity: "error"
     }
   }
 };

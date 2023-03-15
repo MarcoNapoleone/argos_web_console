@@ -7,35 +7,54 @@ import {useCurrentCompany} from "../../../Components/Providers/Company/Company.p
 import DetailsSection from '../../../Components/DetailsSection/DetailsSection';
 import DialogFormLabel from "../../../Components/DialogFormLabel/DialoFormLabel";
 import {getUpdatedTime} from "../../../utils/dateHandler";
-import {Company, updateCompany} from "../../../services/companies.services";
+import {Company, getCompany, updateCompany} from "../../../services/companies.services";
 import {getReasonAlert, getResponseAlert} from "../../../utils/requestAlertHandler";
 import {useAlertContext} from "../../../Components/Providers/Alert/Alert.provider";
+import {useParams} from "react-router-dom";
+
+
+type PageParamsType = {
+  companyId: string;
+}
 
 function CompanyDetailsPage() {
 
   const theme = useTheme();
   const [loading, setLoading] = useState(true);
-  const {company} = useCurrentCompany();
+  const {company, setCompany} = useCurrentCompany();
+  const {companyId} = useParams<PageParamsType>();
   const {setAlertEvent} = useContext(useAlertContext);
   const [updatedTime, setUpdatedTime] = useState(getUpdatedTime());
+  const [statefulCompany, setStatefulCompany] = useState(company);
+
+  const fetchData = async () => {
+    const _company = await getCompany(companyId);
+    setStatefulCompany(_company);
+    setCompany(_company);
+  }
 
   useEffect(() => {
     handleRefresh()
   }, []);
 
   const handleRefresh = () => {
-    const interval = setInterval(() => {
-      setUpdatedTime(getUpdatedTime());
-    }, 500);
-    setLoading(false)
-    return () => clearInterval(interval);
+    setLoading(true);
+    setUpdatedTime(getUpdatedTime());
+    fetchData()
+      .then(() => {
+        setLoading(false);
+      })
+      .catch((err) => {
+        setAlertEvent(getReasonAlert(err));
+        setLoading(false);
+      })
   }
 
   const handleSubmitEdit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     const newCompany = {
-      name: data.get('name'),
+      name: company?.name,
       address: data.get('address'),
       email: data.get('email'),
       phone: data.get('phone'),

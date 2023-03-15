@@ -1,7 +1,7 @@
 // @ts-ignore
 import {BrowserRouter, Outlet, Route, Routes as Router, useParams,} from "react-router-dom";
 import React, {lazy} from 'react';
-import {AuthProvider, RequireAuth, useAuth} from "../Components/Providers/Authorization/Authorization.provider";
+import {AuthProvider, RequireAuth} from "../Components/Providers/Authorization/Authorization.provider";
 import {AlertProvider} from "../Components/Providers/Alert/Alert.provider";
 import PodsPage from "./Private/Pods/Pods.page";
 import PageFrame from "../Components/PageFrame/PageFrame";
@@ -30,73 +30,84 @@ const Login = lazy(() => import("./Public/login/login.page"));
 const NoMatch = lazy(() => import("./NoMatch/NoMatch"));
 
 const Routes = () => {
-  const {loggedUser} = useAuth();
   return (
     <AuthProvider>
       <AlertProvider>
         <ConfirmationProvider>
           <BrowserRouter>
-            <CompanyProvider>
-              <Router>
-                <Route path="/" element={<Login/>}/>
-                <Route path="login" element={<Login/>}/>
-                <Route path="/app/settings" element={<SettingsPage/>}/>
-                <Route path="/app/companies" element={
+            <Router>
+              <Route path="/" element={<Login/>}/>
+              <Route path="login" element={<Login/>}/>
+              <Route path="/app/settings" element={
+                <CompanyProvider>
+                  <RequireAuth>
+                    <SettingsPage/>
+                  </RequireAuth>
+                </CompanyProvider>
+              }/>
+              <Route path="/app/companies" element={
+                <CompanyProvider>
                   <RequireAuth>
                     <CompaniesPage/>
                   </RequireAuth>
-                }/>
-                <Route path="/app/companies/:companyId" element={
-                  <CompanyDetailsPage/>
-                }/>
-                <Route path="/app/companies/:companyId" element={
+                </CompanyProvider>
+              }/>
+              <Route path="/app/companies/:companyId" element={
+                <CompanyProvider>
+                  <RequireAuth>
+                    <CompanyDetailsPage/>
+                  </RequireAuth>
+                </CompanyProvider>
+              }/>
+              <Route path="/app/companies/:companyId" element={
+                <CompanyProvider>
                   <RequireAuth>
                     <PageFrame>
                       <Outlet/>
                     </PageFrame>
                   </RequireAuth>
-                }>
-                  <Route path="local-units">
-                    <Route index element={<LocalUnitsPage/>}/>
-                    <Route path=":localUnitId" element={<LocalUnitDetailsPage/>}/>
-                  </Route>
-                  <Route path="departments">
-                    <Route index element={<DepartmentsPage/>}/>
-                    <Route path=":departmentId" element={<DepartmentDetailsPage/>}/>
-                  </Route>
-                  <Route path="hr">
-                    <Route index element={<HRPage/>}/>
-                    <Route path=":hrId" element={<HRDetailsPage/>}/>
-                  </Route>
-                  <Route path="properties">
-                    <Route index element={<PropertiesPage/>}/>
-                    <Route path=":propertyId" element={<PropertyDetailsPage/>}/>
-                  </Route>
-                  <Route path="vehicles">
-                    <Route index element={<VehiclesPage/>}/>
-                    <Route path=":vehicleId" element={<VehicleDetailsPage/>}/>
-                  </Route>
-                  <Route path="equipments">
-                    <Route index element={<EquipmentsPage/>}/>
-                    <Route path=":equipmentId" element={<EquipmentDetailsPage/>}/>
-                  </Route>
-                  <Route path="timetables">
-                    <Route index element={<TimetablesPage/>}/>
-                    <Route path=":timetableId" element={<DepartmentDetailsPage/>}/>
-                  </Route>
-                  <Route path="documents">
-                    <Route index element={<DocumentsPage/>}/>
-                    <Route path=":documentId" element={<DocumentDetailsPage/>}/>
-                  </Route>
-                  <Route path="pods">
-                    <Route index element={<PodsPage/>}/>
-                    <Route path=":podId" element={<PodsPage/>}/>
-                  </Route>
-                  <Route path="*" element={<NoMatch/>}/>
+                </CompanyProvider>
+              }>
+                <Route path="local-units">
+                  <Route index element={<LocalUnitsPage/>}/>
+                  <Route path=":localUnitId" element={<LocalUnitDetailsPage/>}/>
+                </Route>
+                <Route path="departments">
+                  <Route index element={<DepartmentsPage/>}/>
+                  <Route path=":departmentId" element={<DepartmentDetailsPage/>}/>
+                </Route>
+                <Route path="hr">
+                  <Route index element={<HRPage/>}/>
+                  <Route path=":hrId" element={<HRDetailsPage/>}/>
+                </Route>
+                <Route path="properties">
+                  <Route index element={<PropertiesPage/>}/>
+                  <Route path=":propertyId" element={<PropertyDetailsPage/>}/>
+                </Route>
+                <Route path="vehicles">
+                  <Route index element={<VehiclesPage/>}/>
+                  <Route path=":vehicleId" element={<VehicleDetailsPage/>}/>
+                </Route>
+                <Route path="equipments">
+                  <Route index element={<EquipmentsPage/>}/>
+                  <Route path=":equipmentId" element={<EquipmentDetailsPage/>}/>
+                </Route>
+                <Route path="timetables">
+                  <Route index element={<TimetablesPage/>}/>
+                  <Route path=":timetableId" element={<DepartmentDetailsPage/>}/>
+                </Route>
+                <Route path="documents">
+                  <Route index element={<DocumentsPage/>}/>
+                  <Route path=":documentId" element={<DocumentDetailsPage/>}/>
+                </Route>
+                <Route path="pods">
+                  <Route index element={<PodsPage/>}/>
+                  <Route path=":podId" element={<PodsPage/>}/>
                 </Route>
                 <Route path="*" element={<NoMatch/>}/>
-              </Router>
-            </CompanyProvider>
+              </Route>
+              <Route path="*" element={<NoMatch/>}/>
+            </Router>
           </BrowserRouter>
         </ConfirmationProvider>
       </AlertProvider>

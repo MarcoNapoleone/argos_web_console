@@ -26,7 +26,7 @@ import NotificationsOutlinedIcon from "@mui/icons-material/NotificationsOutlined
 import {useNavigate} from "react-router-dom";
 import {useAuth} from "../../../Components/Providers/Authorization/Authorization.provider";
 import {useCurrentCompany} from "../../../Components/Providers/Company/Company.provider";
-import {Id} from "../../../services/entities";
+import {Id} from "../../../entities/entities";
 import {deleteCookie, setCookie} from "../../../services/connectors/cookies";
 import MainPage from "../../../Components/MainPage/MainPage";
 
@@ -79,8 +79,8 @@ function CompaniesPage() {
 
   const logout = async () => {
     deleteCookie("token")
-    navigate("/login")
     setLoggedUser(null)
+    navigate("/login")
   }
 
   return (

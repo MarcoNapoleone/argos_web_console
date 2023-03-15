@@ -55,9 +55,9 @@ type PageParamsType = {
 interface DetailsPageProps {
   icon?: React.ReactNode,
   title: string,
-  updatedTime: string,
-  loading: boolean,
-  onRefresh: () => void,
+  updatedTime?: string,
+  loading?: boolean,
+  onRefresh?: () => void,
   onSubmit?: (event: React.FormEvent<HTMLFormElement>) => void,
   onDelete?: () => void,
   onEditMode?: () => void,
@@ -199,12 +199,15 @@ const DetailsPage: FC<DetailsPageProps> = (
             </PageTitle>
           </Grid>
           <Grid item container spacing={1}>
-            <Grid item>
-              <SyncButton updatedTime={updatedTime} onClick={onRefresh}/>
-            </Grid>
-            <Grid item>
-              {!loading && chips}
-            </Grid>
+            {updatedTime
+              && <Grid item>
+                <SyncButton updatedTime={updatedTime} onClick={onRefresh}/>
+              </Grid>}
+            {chips
+              && <Grid item>
+                {!loading && chips}
+              </Grid>
+            }
           </Grid>
           <Grid item mt={3}>
             {loading
@@ -261,7 +264,7 @@ const DetailsPage: FC<DetailsPageProps> = (
       </Container>
       {anchors?.length > 0 && !isMobile
         && <Box
-          pt={23}
+          pt={updatedTime ? 23 : 19}
           pr={2}
           sx={{
             top: '0px',
@@ -283,6 +286,7 @@ const DetailsPage: FC<DetailsPageProps> = (
                   sx={{
                     width: '100%',
                     bgcolor: 'background.default',
+                    fontWeight: 800
                   }}
                 >
                   Contents

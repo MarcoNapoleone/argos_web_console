@@ -1,7 +1,7 @@
 import {servicePath} from "./connectors/axios";
-import {setCookie} from "./connectors/cookies";
+import {getCookie, setCookie} from "./connectors/cookies";
 import {User} from "./users.services";
-import {UUID} from "./entities";
+import {UUID} from "../entities/entities";
 
 export const login = async (email: string, pwd: string) => {
   let user = {} as User;
@@ -30,7 +30,12 @@ export const login = async (email: string, pwd: string) => {
 export const getUser = async (uuid: UUID): Promise<User> => {
   let user = {} as User
   await servicePath
-    .get(`/users/${uuid}`)
+    .get(`/users/${uuid}`,
+      {
+        headers: {
+          'Authorization': `Bearer ${getCookie('token')}`
+        }
+      })
     .then(async res => {
         if (res.status !== 200) {
           return new Error(res.data["message"])

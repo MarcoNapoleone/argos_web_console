@@ -29,7 +29,7 @@ import FileRow from "../FileRow/FileRow";
 import {styled} from "@mui/material/styles";
 import EmptyGridContent from "../../NoContentIcon/EmptyGridContent";
 import {useParams} from "react-router-dom";
-import {Id} from "../../../services/entities";
+import {Id} from "../../../entities/entities";
 
 type SortType = 'name' | 'date' | 'size';
 type ViewType = 'row' | 'grid';
