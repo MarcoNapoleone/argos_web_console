@@ -4,6 +4,8 @@ import React, {FC} from "react";
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import {styled} from '@mui/system';
 import {Document} from "../../../services/documents.services";
+import {FileType, getFileIcon} from "../../../utils/getFileIcon";
+
 const SelectedBadge = styled(Badge)`
   & .MuiBadge-badge {
     padding: 0;
@@ -43,72 +45,61 @@ const FileCard: FC<FileCardProps> = (
         ? <Skeleton variant="rectangular" animation="wave" sx={{borderRadius: '8px'}}>
           <Card
             sx={{
-              height: '70px',
-              width: '60px',
+              height: '90px',
+              width: '80px',
               borderRadius: '8px',
             }}
           />
         </Skeleton>
-        : <Grid
-          container
-          direction="column"
-          justifyContent="center"
-          alignItems="center"
-          wrap="nowrap"
-        >
-          <Grid item>
-            <SelectedBadge
-              sx={{
-                top: '2px',
-                right: '2px',
-                p: 0,
-                '& .MuiBadge-badge': {
-                  bgcolor: 'background.paper'
-                }
-              }}
-              badgeContent={
-                selected
-                  ? <CheckCircleIcon
-                    color="primary"
-                    fontSize="small"
-                  />
-                  : null
-              }
+        : <Stack justifyContent="center" alignItems="center">
+          <Card
+            variant="outlined"
+            sx={{
+              height: '90px',
+              width: '80px',
+              borderRadius: '8px',
+              bgcolor: selected ? (theme) => alpha(theme.palette.primary.main, 0.1) : "background.paper",
+              borderColor: selected ? 'primary.main' : "",
+            }}
+          >
+            <CardActionArea onClick={onClick} sx={{height: '100%', width: '100%'}}
+                            disabled={disabled || uploadingMode}
             >
-              <Card
-                variant="outlined"
-                sx={{
-                  height: '70px',
-                  width: '60px',
-                  borderRadius: '8px',
-                  bgcolor: selected ? (theme) => alpha(theme.palette.primary.main, 0.1) : "background.paper",
-                  borderColor: selected ? 'primary.main' : "",
-                }}
+              <Stack
+                justifyContent="center"
+                alignItems="center"
               >
-                <CardActionArea onClick={onClick} sx={{height: '100%', width: '100%'}}
-                                disabled={disabled || uploadingMode}>
-                  <Stack
-                    justifyContent="center"
-                    alignItems="center"
-                  >
-                    {uploadingMode
-                      ? <CircularProgress size={24}/>
-                      : <InsertDriveFileOutlinedIcon fontSize="large" color="primary"/>
-                    }
-                  </Stack>
-                </CardActionArea>
-              </Card>
-            </SelectedBadge>
-          </Grid>
-          <Grid item>
-            <Typography variant="caption" color={selected ? "primary" : "default"}>
-              {Boolean(title)
-                ? title.length < 10 ? title : title.substring(0, 7) + '...'
-                : file?.name.length < 10 ? file?.name : file?.name.substring(0, 7) + '...'
-              }
-            </Typography>
-          </Grid>
-        </Grid>
+                {uploadingMode
+                  ? <CircularProgress size={24}/>
+                  : getFileIcon(file?.fileType.split('/')[0] as FileType, "large")
+                }
+              </Stack>
+            </CardActionArea>
+          </Card>
+          <Typography
+            textAlign={"center"}
+            sx={{
+              width: selected ? '80px' : '60px',
+              zIndex: selected ? 1000 : 'default',
+              wordWrap: 'break-word'
+            }}
+            variant="caption"
+            color={selected ? "primary" : "default"}
+          >
+            {Boolean(title)
+              ? title.length < 10
+                ? title
+                : selected
+                  ? title
+                  : title.substring(0, 7) + '...'
+              : file?.name.length < 10
+                ? file?.name
+                : selected
+                  ? file?.name
+                  : file?.name.substring(0, 7) + '...'
+            }
+          </Typography>
+        </Stack>
       }
     </>
   );

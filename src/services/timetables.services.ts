@@ -2,7 +2,7 @@ import {Id, UUID} from "../entities/entities";
 import {servicePath} from "./connectors/axios";
 import {getCookie} from "./connectors/cookies";
 
-export class Document {
+export class Timetable {
   id?: Id;
   uuid?: UUID;
   name?: string;
@@ -18,10 +18,10 @@ export class Document {
   updatedAt?: Date;
 }
 
-export const defaultDocuments: Document[] = [];
-export const defaultDocument: Document = {};
+export const defaultDocuments: Timetable[] = [];
+export const defaultDocument: Timetable = {};
 
-export async function getAllDocuments(companyId: Id): Promise<Document[]> {
+export async function getAllDocuments(companyId: Id): Promise<Timetable[]> {
   let data = [];
   await servicePath
     .get(`/companies/${companyId}/documents`, {
@@ -38,7 +38,7 @@ export async function getAllDocuments(companyId: Id): Promise<Document[]> {
   return data;
 }
 
-export async function getDocument(documentId: Id): Promise<Document> {
+export async function getDocument(documentId: Id): Promise<Timetable> {
     let data = {};
     await servicePath
       .get(`/departments/${documentId}`, {

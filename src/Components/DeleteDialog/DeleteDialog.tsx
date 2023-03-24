@@ -11,19 +11,22 @@ import {
   Fade,
 } from "@mui/material";
 import {useTheme} from "@mui/material/styles";
+import {LoadingButton} from "@mui/lab";
 
 type DeleteDialogProps = {
   title: string,
   open: boolean,
   setOpen: (state: boolean) => void;
   handleDelete: (e: any) => void,
+  loading?: boolean,
 }
 const DeleteDialog: React.FC<DeleteDialogProps> = (
   {
     title,
     open,
     setOpen,
-    handleDelete
+    handleDelete,
+    loading = false,
   }
 ) => {
   const theme = useTheme();
@@ -54,8 +57,9 @@ const DeleteDialog: React.FC<DeleteDialogProps> = (
               cancel
             </Box>
           </Button>
-          <Button
+          <LoadingButton
             color="error"
+            loading={loading}
             sx={{
               backgroundColor: alpha(theme.palette.error.main, 0.2),
               "&:hover": {
@@ -67,7 +71,7 @@ const DeleteDialog: React.FC<DeleteDialogProps> = (
             <Box mx={2}>
               delete
             </Box>
-          </Button>
+          </LoadingButton>
         </DialogActions>
       </Box>
     </Dialog>

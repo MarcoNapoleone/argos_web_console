@@ -25,18 +25,18 @@ interface StorageTheme {
 }
 
 export const ThemeModeContext = React.createContext({
-    mode: 'light' as string,
-    setMode: (mode: string) => {
-    },
-    palette: {
-      primaryLight: indigo["900"],
-      secondaryLight: red["800"],
-      primaryDark: teal["200"],
-      secondaryDark: deepOrange["300"],
-    } as Palette,
-    setPalette: (palette: Palette) => {
-    },
-  });
+  mode: 'light' as string,
+  setMode: (mode: string) => {
+  },
+  palette: {
+    primaryLight: indigo["900"],
+    secondaryLight: red["800"],
+    primaryDark: teal["200"],
+    secondaryDark: deepOrange["300"],
+  } as Palette,
+  setPalette: (palette: Palette) => {
+  },
+});
 
 interface ThemeProps {
   children?: React.ReactNode,
@@ -87,6 +87,9 @@ const Theme: React.FC<ThemeProps> = ({children}) => {
             },
             '& .MuiDataGrid-columnHeaderTitleContainer': {
               padding: 0,
+            },
+            '& .MuiDataGrid-row, .Mui-selected': {
+              borderRadius: '32px'
             },
             '& .MuiDataGrid-columnsContainer': {
               borderTop: `1px solid ${
@@ -203,6 +206,7 @@ const Theme: React.FC<ThemeProps> = ({children}) => {
       MuiToggleButton: {
         styleOverrides: {
           root: {
+            color: theme.palette.text.secondary,
             borderRadius: '32px',
             border: 'none',
             "&.MuiToggleButtonGroup-grouped": {

@@ -22,7 +22,7 @@ import {defaultDepartments} from "../../../services/departments.services";
 import DatagridTable from "../../../Components/DatagridComponents/DatagridTable";
 import {GridColumns} from "@mui/x-data-grid";
 import OpenInNewOutlinedIcon from "@mui/icons-material/OpenInNewOutlined";
-import FileContainer from "../../../Components/files/FileContainer/FileContainer";
+import FileContainer from "../../../Components/Files/FileContainer/FileContainer";
 import {defaultDocuments, getDocumentsByRefId} from "../../../services/documents.services";
 
 type PageParamsType = {
@@ -425,9 +425,12 @@ const LocalUnitDetailsPage = () => {
         <Grid item>
           <FileContainer
             loading={loading}
+            moduleName="local-units"
+            onSubmit={handleRefresh}
+            onDeleted={handleRefresh}
             files={documents}
             refId={localUnitId}
-            moduleName="local-units"
+           companyId={companyId}
           />
         </Grid>
       </Grid>

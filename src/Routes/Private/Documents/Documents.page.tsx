@@ -6,15 +6,14 @@ import MainPage from "../../../Components/MainPage/MainPage";
 import {GridColumns} from "@mui/x-data-grid";
 import OpenInNewOutlinedIcon from "@mui/icons-material/OpenInNewOutlined";
 import DeleteDialog from "../../../Components/DeleteDialog/DeleteDialog";
-
 import {useNavigate, useParams} from "react-router-dom";
 import {useTheme} from "@mui/material/styles";
 import {getReasonAlert} from "../../../utils/requestAlertHandler";
 import {useCurrentCompany} from "../../../Components/Providers/Company/Company.provider";
 import {Document, getAllDocuments} from "../../../services/documents.services";
-import FileContainer from "../../../Components/files/FileContainer/FileContainer";
+import FileContainer from "../../../Components/Files/FileContainer/FileContainer";
 import {getUpdatedTime} from "../../../utils/dateHandler";
-
+import {getModuleByName} from "../../../services/modules.services";
 
 type PageParamsType = {
   companyId: string;
@@ -30,104 +29,19 @@ const DocumentsPage = () => {
   const [updatedTime, setUpdatedTime] = useState(getUpdatedTime());
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const {setAlertEvent} = useContext(useAlertContext);
-  const [documents, setDocuments] = useState<Document[]>([])
+  const [documents, setDocuments] = useState<Document[]>([]);
+  const  [moduleName, setModuleName] = useState<string>("");
 
   const fetchData = async () => {
     const _documents = await getAllDocuments(companyId)
+    const _module = await getModuleByName("companies")
+    setModuleName(_module.name)
     setDocuments(_documents);
   }
 
   useEffect(() => {
     handleRefresh()
   }, []);
-
-  const RenderMoreButton = (e: any) => {
-    const handleMoreClick = () => {
-      navigate(`/app/companies/${e.row.companyId}/local-units/${e.row.id}`);
-    };
-    return (
-      <IconButton
-        onClick={handleMoreClick}
-        size="small"
-      >
-        <OpenInNewOutlinedIcon/>
-      </IconButton>
-    );
-  }
-
-  const RenderDeleteButton = (e: any) => {
-    const handleDeleteClick = async () => {
-      setLoading(true);
-
-    };
-    return (
-      <>
-        <IconButton
-          onClick={() => setOpenDeleteDialog(true)}
-          size="small"
-        >
-          <DeleteIcon/>
-        </IconButton>
-        <DeleteDialog
-          open={openDeleteDialog}
-          setOpen={setOpenDeleteDialog}
-          handleDelete={handleDeleteClick}
-          title="Department"
-        />
-      </>
-    );
-  }
-
-  const rows = documents.map((document) => {
-    return {
-      id: document.id,
-      name: document.name,
-      description: document.description,
-      refId: document.refId,
-      moduleId: document.moduleId,
-      fileType: document.fileType,
-      path: document.path
-    }
-  })
-  const columns: GridColumns = [
-    {
-      field: 'id',
-      headerName: 'Id',
-      width: 90,
-      align: 'center',
-      editable: false,
-      headerAlign: 'center',
-    },
-    {
-      field: 'name',
-      headerName: 'Nome',
-      minWidth: 150,
-      editable: false,
-      flex: 1,
-    },
-    {
-      field: 'more',
-      headerName: 'More',
-      description: 'Details',
-      align: 'center',
-      renderCell: RenderMoreButton,
-      width: 90,
-      editable: false,
-      sortable: false,
-      headerAlign: 'center',
-    },
-    {
-      field: 'edit',
-      headerName: 'Edit',
-      description: 'Edit, Delete',
-      align: 'center',
-      renderCell: RenderDeleteButton,
-      width: 110,
-      editable: false,
-      sortable: false,
-      headerAlign: 'center',
-    }
-  ];
 
   const handleRefresh = () => {
     setLoading(true)
@@ -146,7 +60,15 @@ const DocumentsPage = () => {
       //icon={<DescriptionOutlinedIcon fontSize="large"/>}
       onRefresh={handleRefresh}
       updatedTime={updatedTime}>
-      <FileContainer files={documents} setFiles={setDocuments} loading={loading}/>
+      <FileContainer
+        files={documents}
+        onSubmit={handleRefresh}
+        onDeleted={handleRefresh}
+        loading={loading}
+        moduleName={moduleName}
+        refId={companyId}
+        companyId={companyId}
+      />
     </MainPage>
   );
 }

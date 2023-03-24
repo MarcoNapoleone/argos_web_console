@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {useContext, useState} from 'react';
+import {useContext, useEffect, useState} from 'react';
 import {CSSObject, styled, Theme, useTheme} from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import MuiDrawer from '@mui/material/Drawer';
@@ -82,6 +82,8 @@ const PageFrame: React.FC<PageFrameProps> = ({children, title}) => {
   const {company, setCompany} = useCurrentCompany();
   const {companyId} = useParams<PageParamsType>();
   const [nestedListToggle, setNestedListToggle] = useState(true)
+  const pagePath = location.pathname.split('/')[4];
+  const isCompanyBasePath = location.pathname.split('/')[4] === 'companies' && pagePath === undefined;
 
   const handlePageSelection = (pagePath: string) => {
     navigate(`/app/companies/${company.id}/${pagePath}`)
@@ -121,8 +123,7 @@ const PageFrame: React.FC<PageFrameProps> = ({children, title}) => {
   };
 
   const DrawerContent = () => {
-    const pagePath = location.pathname.slice(17).split('/')[0];
-    const isCompanyBasePath = location.pathname.slice(5).split('/')[0] === 'companies' && pagePath === '';
+
     return (
       <Box px={1} pb={2} sx={{height: '100%'}} id="drawer-content-id">
         <Stack direction="column" sx={{height: '100%'}} spacing={1} justifyContent="space-between">

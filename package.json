@@ -6,6 +6,7 @@
     "@emotion/react": "^11.10.5",
     "@emotion/styled": "^11.10.5",
     "@mui/icons-material": "^5.10.16",
+    "@mui/lab": "^5.0.0-alpha.53",
     "@mui/material": "^5.10.17",
     "@mui/styles": "^5.10.16",
     "@mui/x-data-grid": "^5.17.14",
@@ -18,6 +19,7 @@
     "axios": "^1.2.1",
     "i18next": "^22.4.5",
     "i18next-browser-languagedetector": "^7.0.1",
+    "js-file-download": "^0.4.12",
     "jwt-decode": "^3.1.2",
     "react": "^18.2.0",
     "react-cookie": "^4.1.1",
@@ -35,6 +37,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
+    "set-gcp-bucket-cors": "gcloud storage buckets update gs://argos-dev --cors-file=bucket-cors-settings.json",
     "lint": "eslint --ext .js,.jsx,.ts,.tsx --fix src/",
     "deploy": "react-scripts build && firebase deploy"
   },
